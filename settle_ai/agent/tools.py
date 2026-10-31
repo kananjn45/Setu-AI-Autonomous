@@ -11,6 +11,12 @@ import time
 import logging
 from datetime import datetime, timezone
 from typing import Dict, Any, Optional
+from settle_ai.agent.interfaces import (
+    AbstractBankSwitch,
+    AbstractMerchantLedger,
+    AbstractSoundboxIoT,
+    AbstractNotificationGateway,
+)
 from settle_ai.agent.schemas import (
     BankSwitchResponse,
     BankStatus,
@@ -23,7 +29,7 @@ from settle_ai.agent.schemas import (
 logger = logging.getLogger("settle_ai.tools")
 
 
-class BankSwitchTool:
+class BankSwitchTool(AbstractBankSwitch):
     """Interacts with NPCI / Banking Switch to verify transaction clearing state."""
 
     def __init__(self, api_base_url: Optional[str] = None):
@@ -101,6 +107,19 @@ class BankSwitchTool:
             raw_message="DECLINED: Transaction not found on NPCI clearing switch. Zero funds debited.",
         )
 
+    def search_transactions(
+        self,
+        merchant_id: str,
+        amount: float,
+        time_window_seconds: int = 600,
+    ) -> list:
+        """Searches transactions for a merchant by amount within recent window."""
+        results = []
+        for rrn, record in self._database.items():
+            if abs(record["amount"] - amount) < 0.01:
+                results.append(self.verify_transaction(rrn, amount_hint=amount))
+        return results
+
     def register_transaction(
         self,
         rrn: str,
@@ -121,18 +140,21 @@ class BankSwitchTool:
 
 
 
-class SoundboxIoTTool:
+class SoundboxIoTTool(AbstractSoundboxIoT):
     """Interacts with MQTT broker & Soundbox hardware telemetry."""
 
     def __init__(self, mqtt_host: Optional[str] = None):
         self.mqtt_host = mqtt_host
         # Simulated device telemetry registry
-        self._devices: Dict[str, Dict[str, Any]] = {
+                self._devices: Dict[str, Dict[str, Any]] = {
             "SB_DELHI_0841": {
                 "merchant_id": "MERCH_GUPTA_TEA",
                 "status": SoundboxStatus.PACKET_DROPPED,
                 "rssi_dbm": -88,
                 "battery": 76,
+                "volume": 80,
+                "is_online": True,
+                "firmware_version": "v4.2.1-pytm",
                 "pending_queue": 1,
                 "last_played_rrn": "339182740192",
             },
@@ -141,6 +163,9 @@ class SoundboxIoTTool:
                 "status": SoundboxStatus.OFFLINE,
                 "rssi_dbm": -104,
                 "battery": 42,
+                "volume": 75,
+                "is_online": False,
+                "firmware_version": "v4.1.0-pytm",
                 "pending_queue": 2,
                 "last_played_rrn": "229103948123",
             },
@@ -170,6 +195,24 @@ class SoundboxIoTTool:
             last_played_rrn=dev["last_played_rrn"],
         )
 
+    def set_volume_remote(self, device_id: str, volume_percent: int) -> bool:
+        """Remotely adjusts hardware speaker volume via simulated MQTT command."""
+        logger.info(f"[SoundboxIoTTool] Remotely setting volume on {device_id} to {volume_percent}%")
+        if device_id in self._devices:
+            self._devices[device_id]["volume"] = max(0, min(100, volume_percent))
+            if self._devices[device_id]["status"] == SoundboxStatus.MUTED and volume_percent > 0:
+                self._devices[device_id]["status"] = SoundboxStatus.ONLINE
+            return True
+        return False
+
+    def push_firmware_ota(self, device_id: str, target_version: str) -> bool:
+        """Pushes mock OTA firmware update to Soundbox."""
+        logger.info(f"[SoundboxIoTTool] Pushing OTA firmware {target_version} to {device_id}")
+        if device_id in self._devices:
+            self._devices[device_id]["firmware_version"] = target_version
+            return True
+        return False
+
     def push_audio_chirp(self, device_id: str, rrn: str, amount: float) -> bool:
         """Pushes MQTT audio chirp payload to trigger physical Soundbox chime."""
         logger.info(f"[SoundboxIoTTool] Pushing audio chirp payload: Device {device_id}, Amount ₹{amount}, RRN {rrn}")
@@ -183,7 +226,7 @@ class SoundboxIoTTool:
         return True
 
 
-class MerchantLedgerTool:
+class MerchantLedgerTool(AbstractMerchantLedger):
     """Interacts with Core Settlement Ledger with strict idempotency."""
 
     def __init__(self):
@@ -202,6 +245,29 @@ class MerchantLedgerTool:
         if rrn in self._settled_rrns:
             return self._settled_rrns[rrn].status
         return LedgerStatus.UNCREDITED
+
+    def find_credits(
+        self,
+        merchant_id: str,
+        amount: Optional[float] = None,
+        rrn: Optional[str] = None,
+    ) -> list:
+        """Finds confirmed ledger credit records matching merchant, amount, and/or UTR."""
+        matches = []
+        for r, rec in self._settled_rrns.items():
+            if rec.merchant_id == merchant_id:
+                if rrn and rec.rrn == rrn:
+                    matches.append(rec)
+                elif amount and abs(rec.amount - amount) < 0.01:
+                    matches.append(rec)
+        return matches
+
+    def record_settlement_sync(self, merchant_id: str, rrn: str, amount: float) -> LedgerRecord:
+        """
+        Synchronizes confirmed payment to merchant settlement ledger.
+        SETU never moves remitter money; this updates internal merchant settlement records.
+        """
+        return self.post_provisional_credit(merchant_id, rrn, amount)
 
     def post_provisional_credit(self, merchant_id: str, rrn: str, amount: float) -> LedgerRecord:
         """
@@ -244,7 +310,7 @@ class MerchantLedgerTool:
         return record
 
 
-class MerchantNotificationTool:
+class MerchantNotificationTool(AbstractNotificationGateway):
     """Dispatches real-time omnichannel messages (WhatsApp / SMS)."""
 
     def __init__(self):

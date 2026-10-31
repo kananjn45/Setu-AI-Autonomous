@@ -9,6 +9,28 @@ from pydantic import BaseModel, Field
 from datetime import datetime, timezone
 
 
+class CanonicalTxState(str, Enum):
+    """The 6 exact mutually exclusive transaction states mandated by Phase 1."""
+    CREDITED = "CREDITED"  # Confirmed on ledger -> replay chime + speak UTR
+    PENDING = "PENDING"  # In clearing flight -> expected resolution window
+    FAILED_REVERSAL_DUE = "FAILED_REVERSAL_DUE"  # Remitter failed -> auto-reversal deadline
+    DEEMED_SUCCESS = "DEEMED_SUCCESS"  # Approved at switch, awaiting batch sync
+    NOT_FOUND = "NOT_FOUND"  # Zero debit record -> say not received
+    AMBIGUOUS = "AMBIGUOUS"  # Multiple matching transactions -> ask clarifying question
+
+
+class RootCauseLabel(str, Enum):
+    """The strict root-cause labels for dispute categorization."""
+    PAYER_BANK_DECLINE = "PAYER_BANK_DECLINE"
+    NPCI_TIMEOUT = "NPCI_TIMEOUT"
+    CREDITED_DEVICE_OFFLINE = "CREDITED_DEVICE_OFFLINE"
+    DEVICE_MUTED = "DEVICE_MUTED"
+    DEVICE_LOW_POWER = "DEVICE_LOW_POWER"
+    WEAK_SIGNAL = "WEAK_SIGNAL"
+    FALSE_CLAIM = "FALSE_CLAIM"
+    OTHER = "OTHER"
+
+
 class BankStatus(str, Enum):
     SUCCESS = "SUCCESS"  # Account debited, cleared at switch
     PENDING = "PENDING"  # In flight at clearing house
@@ -89,6 +111,8 @@ class SoundboxTelemetry(BaseModel):
     status: SoundboxStatus
     rssi_dbm: int = Field(default=-75, description="Cellular signal strength")
     battery_percentage: int = 85
+    volume_level: int = 80
+    is_online: bool = True
     firmware_version: str = "v4.2.1-pytm"
     last_ping_utc: str
     pending_audio_queue: int = 0
@@ -135,6 +159,14 @@ class StepLog(BaseModel):
 # --- LangGraph State Definition ---
 
 class AgentState(BaseModel):
+    # Canonical Resolution & Diagnostics
+    canonical_state: Optional[CanonicalTxState] = None
+    root_cause_label: Optional[RootCauseLabel] = None
+    risk_score: float = 0.0
+    risk_case_file: Optional[Dict[str, Any]] = None
+    clarifying_question: Optional[str] = None
+    device_remediation_applied: Optional[str] = None
+
     # Dispute details
     dispute_id: str
     merchant_id: str
