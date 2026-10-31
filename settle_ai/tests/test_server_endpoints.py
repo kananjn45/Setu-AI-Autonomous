@@ -164,3 +164,22 @@ def test_whatsapp_user_10000_query_escalated_and_rejected():
     assert rej_res["agent_state"]["hitl_approved"] is False
     assert rej_res["agent_state"]["ledger_credited"] is False
 
+
+
+def test_resolve_dispute_api_fake_payment_produces_fraud_alarm_never_prapt_hue():
+    """Ensures that fake transactions resolved via API return fraud alarm and never 'prapt hue' audio."""
+    from settle_ai.server import resolve_dispute_api, DisputeRequest
+
+    req = DisputeRequest(
+        query_text="Customer ne fake paytm screenshot dikhaya 500 rupaye ka RRN FAKE_882233",
+        amount_override=500.0,
+        rrn_override="FAKE_882233",
+    )
+    res = resolve_dispute_api(req)
+
+    assert res["agent_state"]["fraud_alert_triggered"] is True
+    assert res["agent_state"]["ledger_credited"] is False
+    assert res["soundbox_audio"] is not None
+    assert res["soundbox_audio"].get("is_fraud_alarm") is True
+    assert "prapt hue" not in res["soundbox_audio"]["text"]
+    assert "fraud transaction hai" in res["soundbox_audio"]["text"]

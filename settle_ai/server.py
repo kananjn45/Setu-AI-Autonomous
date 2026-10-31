@@ -271,7 +271,10 @@ def execute_teammate_mission(req: MissionRequest):
     )
     final_state = orchestrator.resolve_dispute(grievance)
     soundbox_audio = None
-    if final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
+    if final_state.fraud_alert_triggered:
+        audio_file = os.path.join(audio_dir, "chirp_security_warning.wav")
+        soundbox_audio = tts_synthesizer.synthesize_security_alarm(amount=req.amount, output_file_path=audio_file)
+    elif final_state.soundbox_pushed and final_state.ledger_credited and not final_state.hitl_required:
         audio_file = os.path.join(audio_dir, f"chirp_{rrn}.wav")
         soundbox_audio = tts_synthesizer.synthesize_chirp(amount=req.amount, output_file_path=audio_file)
 
@@ -288,7 +291,7 @@ def execute_teammate_mission(req: MissionRequest):
 
 
 @app.post("/api/dispute/resolve")
-async def resolve_dispute_api(req: DisputeRequest):
+def resolve_dispute_api(req: DisputeRequest):
     """
     Executes end-to-end resolution:
     1. Sarvam NLU entity extraction (RRN, Amount, Intent)
@@ -317,7 +320,10 @@ async def resolve_dispute_api(req: DisputeRequest):
 
     # 3. Audio synthesis on settlement
     soundbox_audio = None
-    if final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
+    if final_state.fraud_alert_triggered:
+        audio_file = os.path.join(audio_dir, "chirp_security_warning.wav")
+        soundbox_audio = tts_synthesizer.synthesize_security_alarm(amount=amount, output_file_path=audio_file)
+    elif final_state.soundbox_pushed and final_state.ledger_credited and not final_state.hitl_required:
         audio_file = os.path.join(audio_dir, f"chirp_{rrn}.wav")
         soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
 
@@ -338,7 +344,7 @@ async def resolve_dispute_api(req: DisputeRequest):
 
 
 @app.post("/api/dispute/approve-hitl")
-async def approve_hitl_api(req: HitlApprovalRequest):
+def approve_hitl_api(req: HitlApprovalRequest):
     """Resumes an interrupted high-value or anomalous dispute with supervisor approval."""
     try:
         resumed_state = orchestrator.approve_hitl(
@@ -430,7 +436,7 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
         if final_state.fraud_alert_triggered:
             audio_file = os.path.join(audio_dir, "chirp_security_warning.wav")
             soundbox_audio = tts_synthesizer.synthesize_security_alarm(amount=amount, output_file_path=audio_file)
-        elif final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
+        elif final_state.soundbox_pushed and final_state.ledger_credited and not final_state.hitl_required:
             audio_file = os.path.join(audio_dir, f"chirp_{rrn}.wav")
             soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
 
@@ -913,7 +919,7 @@ async def websocket_dispute_stream(websocket: WebSocket):
                     if final_state.fraud_alert_triggered:
                         audio_file = os.path.join(audio_dir, "chirp_security_warning.wav")
                         soundbox_audio = tts_synthesizer.synthesize_security_alarm(amount=amount, output_file_path=audio_file)
-                    elif final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
+                    elif final_state.soundbox_pushed and final_state.ledger_credited and not final_state.hitl_required:
                         audio_file = os.path.join(audio_dir, f"chirp_{rrn}.wav")
                         soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
 

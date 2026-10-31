@@ -84,7 +84,7 @@ class SoundboxVoiceSynthesizer:
         Synthesizes an authentic high-impact emergency security alert alarm.
         Guaranteed to announce 'Saavdhan! Yeh ek fraud transaction hai. Paytm par koi paisa prapt nahi hua hai.'
         """
-        text = "🚨 Saavdhan! Yeh ek fraud transaction hai. Paytm par koi paisa prapt nahi hua hai."
+        text = "🚨 Saavdhan! Yeh ek fraud transaction hai. Samaan na dein. Paytm par koi paisa prapt nahi hua hai."
         logger.info(f"[SoundboxTTS] Synthesizing FRAUD VOICE ALARM (amount: ₹{amount:,.2f})")
 
         audio_bytes = None
@@ -99,7 +99,7 @@ class SoundboxVoiceSynthesizer:
         if (not audio_bytes or len(audio_bytes) < 1000) and self.client:
             try:
                 resp = self.client.text_to_speech.convert(
-                    text="सावधान! यह एक फ्रॉड ट्रांजैक्शन है। पेटीएम पर कोई पैसा प्राप्त नहीं हुआ है।",
+                    text="सावधान! यह एक फ्रॉड ट्रांजैक्शन है। सामान न दें। पेटीएम पर कोई पैसा प्राप्त नहीं हुआ है।",
                     language_code="hi-IN",
                     model="bulbul:v3"
                 )
