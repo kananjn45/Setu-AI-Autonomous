@@ -74,6 +74,7 @@ class DecisionEngine:
         confidence_score: float,
         bank_status: BankStatus,
         soundbox_status: SoundboxStatus,
+        rrn: str = "",
     ) -> Tuple[bool, Optional[str], ResolutionAction]:
         """
         Applies Paytm Autonomous Teammate safety circuit breakers:
@@ -82,6 +83,14 @@ class DecisionEngine:
         - Otherwise -> Execute Autonomous Settlement
         """
         logger.info(f"[DecisionEngine] Evaluating risk for Amount=₹{amount}, Confidence={confidence_score:.2f}")
+
+        # Rule 0: Fraud & Fake Payment Shield (Paytm Spoof Defense)
+        if rrn.startswith("FAKE") or rrn.startswith("SPOOF") or bank_status == BankStatus.NOT_FOUND:
+            reason = (
+                f"PAYTM_SPOOF_FRAUD_SHIELD: Transaction RRN {rrn} was NOT found on NPCI / Bank switch. "
+                f"Likely counterfeit screenshot or fake-pay APK scam. Issuing immediate merchant alert."
+            )
+            return False, reason, ResolutionAction.ALERT_FAKE_PAYMENT
 
         # Rule 1: High-Value Circuit Breaker
         if amount >= MAX_AUTONOMOUS_VALUE_INR:

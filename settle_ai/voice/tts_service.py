@@ -62,6 +62,25 @@ class SoundboxVoiceSynthesizer:
         audio_base64 = None
         audio_bytes = None
 
+        # Fast Cache Hit: If cached audio file already exists for this chime, load instantly
+        if output_file_path and os.path.exists(output_file_path) and os.path.getsize(output_file_path) > 100:
+            try:
+                with open(output_file_path, "rb") as f:
+                    audio_bytes = f.read()
+                audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+                logger.info(f"[SoundboxTTS] Loaded cached chime from disk ({len(audio_bytes)} bytes): {output_file_path}")
+                return {
+                    "amount": amount,
+                    "text": text,
+                    "language_code": language_code,
+                    "audio_base64": audio_base64,
+                    "audio_data_url": f"data:audio/wav;base64,{audio_base64}",
+                    "byte_size": len(audio_bytes),
+                    "output_path": output_file_path,
+                }
+            except Exception as e:
+                logger.warning(f"[SoundboxTTS] Could not read cached audio: {e}")
+
         if self.client:
             try:
                 # Call Sarvam AI Bulbul TTS
@@ -75,7 +94,7 @@ class SoundboxVoiceSynthesizer:
                     audio_bytes = base64.b64decode(audio_base64)
                     logger.info(f"[SoundboxTTS] Successfully synthesized {len(audio_bytes)} audio bytes via Sarvam AI.")
             except Exception as e:
-                logger.error(f"[SoundboxTTS] Sarvam TTS call failed: {e}. Falling back to synthetic mock audio.")
+                logger.error(f"[SoundboxTTS] Sarvam TTS call failed: {e}. Falling back to cached or synthetic audio.")
 
         # Fallback if API unavailable
         if audio_bytes is None:

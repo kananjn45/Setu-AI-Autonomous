@@ -197,5 +197,58 @@ def test_scenario_5_event_streaming(orchestrator):
         print(f"  ~ Streamed node: {n}")
 
 
+def test_scenario_6_fake_payment_paytm_spoof_shield(orchestrator):
+    """
+    Scenario 6: Paytm Spoof / Fake Payment Interception.
+    Simulates a fraudulent customer claiming payment with an invalid RRN.
+    Verifies SETU intercepts the fraud, halts ledger credit, and sounds security alarm.
+    """
+    grievance = DisputeGrievance(
+        dispute_id="DSP_TEST_006_SPOOF",
+        merchant_id="MERCH_GUPTA_TEA",
+        device_id="SB_DELHI_0841",
+        rrn="FAKE99900011",
+        amount=500.0,
+        voice_transcript="Customer keh raha hai usne ₹500 pay kar diya screenshot dikhaya",
+        channel=DisputeChannel.INDIC_VOICE,
+        merchant_name="Gupta Tea Stall",
+    )
+
+    final_state = orchestrator.resolve_dispute(grievance)
+
+    assert final_state.is_completed is True
+    assert final_state.fraud_alert_triggered is True
+    assert final_state.ledger_credited is False, "Fraudulent transaction should NEVER credit ledger!"
+    assert "COUNTERFEIT PAYMENT INTERCEPTED" in final_state.final_resolution_message
+    print("\n[PAYTM SPOOF SHIELD VERIFIED] Intercepted fake transaction without ledger loss.")
+
+
+def test_scenario_7_proactive_sales_upgrade_evaluation(orchestrator):
+    """
+    Scenario 7: Measurable Sales Outcome — Proactive Hardware Upgrade Pitch.
+    When a merchant with an obsolete Soundbox 2G experiences packet drops,
+    SETU resolves the dispute AND autonomously attaches a Soundbox 4G Pro upgrade offer.
+    """
+    grievance = DisputeGrievance(
+        dispute_id="DSP_TEST_007_SALES",
+        merchant_id="MERCH_GUPTA_TEA",
+        device_id="SB_DELHI_0841",
+        rrn="410294820192",
+        amount=350.0,
+        voice_transcript="Bhaiya 350 rupaye kata par Soundbox nahi bola",
+        channel=DisputeChannel.INDIC_VOICE,
+        merchant_name="Gupta Tea Stall",
+    )
+
+    final_state = orchestrator.resolve_dispute(grievance)
+
+    assert final_state.is_completed is True
+    assert final_state.ledger_credited is True
+    assert final_state.sales_outcome_recorded is True
+    assert final_state.sales_pitch_generated is not None
+    assert "Soundbox 4G Pro" in final_state.sales_pitch_generated
+    print(f"\n[SALES ENGINE VERIFIED] Generated proactive upgrade pitch: {final_state.sales_pitch_generated}")
+
+
 if __name__ == "__main__":
     pytest.main(["-v", __file__])

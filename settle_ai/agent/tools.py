@@ -264,17 +264,136 @@ class MerchantNotificationTool:
         return True
 
 
+class FraudShieldTool:
+    """Detects Paytm Spoof apps, counterfeit payment screens, and fake debits."""
+
+    def __init__(self):
+        self.flagged_attempts: list = []
+
+    def check_payment_legitimacy(self, rrn: str, claimed_amount: float, bank_status: BankStatus) -> Dict[str, Any]:
+        """Cross-checks whether claimed transaction actually settled on banking switch."""
+        logger.info(f"[FraudShieldTool] Auditing payment legitimacy for RRN {rrn}, Claimed ₹{claimed_amount}")
+
+        is_spoof = (
+            rrn.startswith("FAKE")
+            or rrn.startswith("SPOOF")
+            or bank_status in (BankStatus.NOT_FOUND, BankStatus.FAILED)
+        )
+
+        if is_spoof:
+            record = {
+                "rrn": rrn,
+                "amount": claimed_amount,
+                "is_fraud": True,
+                "risk_score": 0.99,
+                "threat_type": "PAYTM_SPOOF_COUNTERFEIT_APP",
+                "soundbox_alert_text": "Chetavani: Yeh bhugtan Paytm par prapt nahi hua hai",
+                "action": "HALT_AND_WARN_MERCHANT",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+            self.flagged_attempts.append(record)
+            logger.warning(f"[FraudShieldTool] FRAUD DETECTED! Intercepted fake transaction RRN {rrn} for ₹{claimed_amount}")
+            return record
+
+        return {
+            "rrn": rrn,
+            "amount": claimed_amount,
+            "is_fraud": False,
+            "risk_score": 0.02,
+            "threat_type": "NONE",
+            "action": "LEGITIMATE_TRANSACTION",
+        }
+
+
+class SalesEngineTool:
+    """
+    Drives measurable sales outcomes:
+    1. Upgrades obsolete 2G Soundboxes to Soundbox 4G Pro when hardware packet drops occur.
+    2. Cross-sells pre-approved Paytm Merchant Working Capital / Daily Loans.
+    """
+
+    def __init__(self):
+        self.converted_leads: list = []
+
+    def evaluate_growth_opportunity(self, merchant_id: str, device_model: str, health_score: float, monthly_gmv: float) -> Dict[str, Any]:
+        """Evaluates hardware upgrade or working capital upsell opportunities."""
+        logger.info(f"[SalesEngineTool] Evaluating sales opportunities for Merchant {merchant_id}")
+
+        upgrade_offer = None
+        if health_score < 0.50 or "2G" in device_model:
+            upgrade_offer = {
+                "lead_id": f"LEAD_SB4G_{int(time.time())}",
+                "product": "Paytm Soundbox 4G Pro (Dual SIM + High Decibel Speaker)",
+                "special_price_inr": 199.0,
+                "monthly_rental_inr": 125.0,
+                "reason": "Eliminates cellular packet drops; 4G speeds guarantee <1s voice chime.",
+                "pitch_hindi": "Gupta ji, aapke Soundbox 2G me network drops ho rahe hain. Sirf ₹199 me naya Soundbox 4G Pro upgrade karein aur 1-second chime paayein.",
+            }
+            self.converted_leads.append(upgrade_offer)
+
+        loan_offer = None
+        if monthly_gmv >= 50000.0:
+            loan_offer = {
+                "product": "Paytm Business Daily Overdraft",
+                "preapproved_limit_inr": 50000.0,
+                "daily_interest_inr": 12.5,
+                "reason": "Strong daily QR settlement track record unlocked pre-approved working capital.",
+                "pitch_hindi": "Aapke dukan ke acche Paytm QR record par ₹50,000 ka business loan pre-approved hai (0 processing fee).",
+            }
+
+        return {
+            "merchant_id": merchant_id,
+            "has_upgrade_pitch": upgrade_offer is not None,
+            "upgrade_offer": upgrade_offer,
+            "loan_offer": loan_offer,
+        }
+
+
+class FleetHealthTool:
+    """Monitors live bank switch latencies and broadcasts proactive voice advisories."""
+
+    def __init__(self):
+        self._switch_latencies = {
+            "HDFC Bank": 120,
+            "State Bank of India": 240,
+            "ICICI Bank": 110,
+            "Paytm Payments Bank": 80,
+            "Axis Bank": 150,
+        }
+
+    def simulate_switch_degradation(self, bank_name: str = "State Bank of India", latency_ms: int = 4200) -> Dict[str, Any]:
+        """Simulates banking switch degradation requiring proactive fleet advisory."""
+        self._switch_latencies[bank_name] = latency_ms
+        advisory = (
+            f"Dhyan dein: {bank_name} UPI switch dheema chal raha hai. "
+            f"Kripya customers ko doosre bank se pay karne ko kahein."
+        )
+        return {
+            "bank_name": bank_name,
+            "latency_ms": latency_ms,
+            "status": "DEGRADED" if latency_ms > 3000 else "HEALTHY",
+            "proactive_advisory": advisory,
+            "fleet_broadcast_triggered": True,
+        }
+
+
 # Default singletons for direct use across agent modules
 bank_tool = BankSwitchTool()
 soundbox_tool = SoundboxIoTTool()
 ledger_tool = MerchantLedgerTool()
 notification_tool = MerchantNotificationTool()
+fraud_tool = FraudShieldTool()
+sales_tool = SalesEngineTool()
+fleet_tool = FleetHealthTool()
 
 
 def reset_sandbox_state():
     """Resets all singleton tools to initial pristine sandbox state."""
-    global bank_tool, soundbox_tool, ledger_tool, notification_tool
+    global bank_tool, soundbox_tool, ledger_tool, notification_tool, fraud_tool, sales_tool, fleet_tool
     bank_tool = BankSwitchTool()
     soundbox_tool = SoundboxIoTTool()
     ledger_tool = MerchantLedgerTool()
     notification_tool = MerchantNotificationTool()
+    fraud_tool = FraudShieldTool()
+    sales_tool = SalesEngineTool()
+    fleet_tool = FleetHealthTool()

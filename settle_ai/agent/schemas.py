@@ -38,6 +38,29 @@ class ResolutionAction(str, Enum):
     PROVISIONAL_CREDIT_AND_NOTIFY = "PROVISIONAL_CREDIT_AND_NOTIFY"
     ESCALATE_HITL = "ESCALATE_HITL"
     REJECT_DISPUTE = "REJECT_DISPUTE"
+    ALERT_FAKE_PAYMENT = "ALERT_FAKE_PAYMENT"
+    TRIGGER_SALES_UPGRADE = "TRIGGER_SALES_UPGRADE"
+    BROADCAST_SWITCH_ADVISORY = "BROADCAST_SWITCH_ADVISORY"
+
+
+class MissionType(str, Enum):
+    SERVICE_DISPUTE = "SERVICE_DISPUTE"
+    FRAUD_SPOOF_DEFENSE = "FRAUD_SPOOF_DEFENSE"
+    SALES_HARDWARE_UPGRADE = "SALES_HARDWARE_UPGRADE"
+    SALES_WORKING_CAPITAL = "SALES_WORKING_CAPITAL"
+    PROACTIVE_SWITCH_HEALTH = "PROACTIVE_SWITCH_HEALTH"
+
+
+class MerchantContext(BaseModel):
+    merchant_id: str = "MERCH_GUPTA_TEA"
+    merchant_name: str = "Gupta Tea Stall"
+    merchant_tier: str = "GOLD"  # GOLD, SILVER, PLATINUM
+    monthly_gmv: float = 85000.0
+    dispute_rate: float = 0.002
+    device_model: str = "Soundbox 2G Classic"
+    device_health_score: float = 0.45  # Low score (< 0.50) triggers proactive sales upgrade
+    loan_eligible: bool = True
+    loan_preapproved_limit: float = 50000.0
 
 
 class DisputeChannel(str, Enum):
@@ -150,6 +173,15 @@ class AgentState(BaseModel):
     notification_dispatched: bool = False
     final_resolution_message: str = ""
     is_completed: bool = False
+
+    # Teammate Mission & Context
+    mission_type: MissionType = MissionType.SERVICE_DISPUTE
+    merchant_context: Optional[MerchantContext] = None
+    fraud_alert_triggered: bool = False
+    sales_pitch_generated: Optional[str] = None
+    sales_outcome_recorded: bool = False
+    proactive_advisory: Optional[str] = None
+    teammate_summary: Optional[str] = None
 
     # Compliance & Guardrails (NeMo / RBI TAT)
     audit_hash_sha256: Optional[str] = None
