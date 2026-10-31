@@ -113,3 +113,21 @@ def test_hitl_reject_endpoint():
     assert rej_res["agent_state"]["hitl_approved"] is False
     assert rej_res["agent_state"]["ledger_credited"] is False
     assert "DISPUTE REJECTED" in rej_res["message"]
+
+
+def test_whatsapp_fake_payment_intercepted():
+    """Verifies that fake payment queries via WhatsApp trigger fraud shield without ledger credit."""
+    from settle_ai.server import handle_whatsapp_message, WhatsAppMessageRequest
+
+    req = WhatsAppMessageRequest(
+        message_text="Customer ne fake paytm screenshot dikhaya 400 rupaye ka RRN FAKE_991122",
+        amount_hint=400.0,
+        rrn_hint="FAKE_991122",
+    )
+    res = handle_whatsapp_message(req)
+
+    assert res["fraud_detected"] is True
+    assert res["is_settled"] is False
+    assert res["agent_state"]["ledger_credited"] is False
+    assert "Fake Payment Intercepted" in res["reply_text"]
+    assert res["digital_receipt"]["status"] == "BLOCKED_FRAUD_INTERCEPTED"

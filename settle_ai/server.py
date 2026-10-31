@@ -385,23 +385,26 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
         rrn = req.rrn_hint or entities.get("rrn") or f"4102{int(time.time()*1000) % 100000000:08d}"
         amount = req.amount_hint if req.amount_hint is not None else entities.get("amount", 400.0)
 
-        # Correlate if recent missed
-        if not entities.get("has_explicit_rrn") and req.device_id in soundbox_tool._devices:
-            recent_missed = soundbox_tool._devices[req.device_id].get("last_missed_rrn")
-            if recent_missed:
-                rrn = recent_missed
+        # Correlate if recent missed (only for legitimate non-fraud queries)
+        is_fraud = rrn.startswith("FAKE") or rrn.startswith("SPOOF") or entities.get("intent") == "PAYTM_SPOOF_FRAUD"
 
-        if rrn in bank_tool._database:
-            bank_tool._database[rrn]["amount"] = amount
-        else:
-            bank_tool.register_transaction(
-                rrn=rrn,
-                amount=amount,
-                status=BankStatus.SUCCESS,
-                customer_vpa="rahul.sharma@okhdfcbank",
-                payer_bank="HDFC Bank",
-                raw_message="WhatsApp merchant grievance cleared on switch",
-            )
+        if not is_fraud:
+            if not entities.get("has_explicit_rrn") and req.device_id in soundbox_tool._devices:
+                recent_missed = soundbox_tool._devices[req.device_id].get("last_missed_rrn")
+                if recent_missed:
+                    rrn = recent_missed
+
+            if rrn in bank_tool._database:
+                bank_tool._database[rrn]["amount"] = amount
+            else:
+                bank_tool.register_transaction(
+                    rrn=rrn,
+                    amount=amount,
+                    status=BankStatus.SUCCESS,
+                    customer_vpa="rahul.sharma@okhdfcbank",
+                    payer_bank="HDFC Bank",
+                    raw_message="WhatsApp merchant grievance cleared on switch",
+                )
 
         dispute_id = f"DSP_WA_{int(time.time())}_{rrn[-4:]}"
         grievance = DisputeGrievance(
@@ -471,7 +474,8 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
             "dispute_id": dispute_id,
             "rrn": rrn,
             "amount": amount,
-            "is_settled": final_state.is_completed,
+            "is_settled": final_state.is_completed and final_state.ledger_credited,
+            "fraud_detected": final_state.fraud_alert_triggered,
             "hitl_tripped": final_state.hitl_required and not final_state.hitl_approved,
             "agent_state": final_state.model_dump(),
             "soundbox_audio": soundbox_audio,
@@ -480,7 +484,7 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
                 "merchant_name": req.merchant_name,
                 "amount": amount,
                 "rrn": rrn,
-                "status": "PROVISIONALLY_CREDITED" if final_state.is_completed else "SUPERVISOR_HOLD",
+                "status": "BLOCKED_FRAUD_INTERCEPTED" if final_state.fraud_alert_triggered else ("PROVISIONALLY_CREDITED" if final_state.ledger_credited else "SUPERVISOR_HOLD"),
                 "sha256_audit_seal": audit_hash,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
@@ -680,6 +684,8 @@ async def websocket_dispute_stream(websocket: WebSocket):
                 await websocket.send_json({"event": "NLU_START", "text": query_text})
                 entities = nlu_extractor.extract_grievance_entities(query_text)
                 rrn = rrn_override or entities["rrn"]
+                if entities.get("intent") == "PAYTM_SPOOF_FRAUD" and not rrn.startswith("FAKE"):
+                    rrn = f"FAKE_{rrn}"
                 amount = float(amount_override) if amount_override is not None else float(entities["amount"])
 
                 await websocket.send_json({

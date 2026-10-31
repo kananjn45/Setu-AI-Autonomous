@@ -68,11 +68,12 @@ class MerchantGrievanceExtractor:
 
         # 4. If not found via words, look for numeric patterns (e.g. ₹400, 400 rupaye, 15,000, 500 ka, 400 kate)
         if amount is None:
-            amt_match = re.search(r"(?:₹|rs\.?|inr)?\s*(\d+(?:,\d{3})*(?:\.\d+)?)\s*(?:rupaye|rupees?|rs|ka|wali|wala|k?ate|par|\b)", norm_text, re.IGNORECASE)
+            # Strip 12-digit RRN to prevent it from matching as amount
+            text_without_rrn = norm_text.replace(rrn, "") if rrn else norm_text
+            amt_match = re.search(r"(?:₹|rs\.?|inr)?\s*(\d+(?:,\d{3})*(?:\.\d+)?)\s*(?:rupaye|rupees?|rs|ka|wali|wala|k?ate|par|\b)", text_without_rrn, re.IGNORECASE)
             if amt_match:
                 amt_str = amt_match.group(1).replace(",", "")
-                # Avoid picking the 12-digit RRN as the amount
-                if len(amt_str) <= 8 and (not rrn or amt_str != rrn):
+                if len(amt_str) <= 8:
                     try:
                         amount = float(amt_str)
                     except ValueError:
@@ -80,7 +81,12 @@ class MerchantGrievanceExtractor:
 
         # 5. Intent detection
         lower_text = norm_text.lower()
-        if any(w in lower_text for w in ["fake", "spoof", "screenshot", "screen dikha", "nakli", "dhokha", "farzi", "scam", "chor"]):
+        fraud_keywords = [
+            "fake", "spoof", "screenshot", "screen dikha", "nakli", "dhokha", "farzi",
+            "scam", "chor", "counterfeit", "bogus", "fraud", "scammer", "fake paytm",
+            "fake payment", "fraudster", "chalak", "dhokhadhadi", "jhuth"
+        ]
+        if any(w in lower_text for w in fraud_keywords):
             intent = "PAYTM_SPOOF_FRAUD"
         elif "soundbox" in lower_text and ("nahi bola" in lower_text or "aawaz nahi" in lower_text or "silent" in lower_text):
             intent = "SOUNDBOX_SILENT"
@@ -106,7 +112,12 @@ class MerchantGrievanceExtractor:
         if regex_amt is not None:
             import time
             if regex_intent == "PAYTM_SPOOF_FRAUD":
-                eff_rrn = regex_rrn or f"FAKE_{int(time.time()*1000) % 1000000:06d}"
+                if regex_rrn and regex_rrn.startswith("FAKE"):
+                    eff_rrn = regex_rrn
+                elif regex_rrn:
+                    eff_rrn = f"FAKE_{regex_rrn}"
+                else:
+                    eff_rrn = f"FAKE_{int(time.time()*1000) % 1000000:06d}"
             else:
                 eff_rrn = regex_rrn or f"4102{int(time.time()*1000) % 100000000:08d}"
             logger.info(f"[IndicNLU] Fast regex matched: RRN={eff_rrn}, Amount=₹{regex_amt}, Intent={regex_intent}")
@@ -129,7 +140,7 @@ class MerchantGrievanceExtractor:
                     "Extract the following fields from the merchant's Hindi or English grievance:\n"
                     "- rrn: 12-digit UPI Retrieval Reference Number (string of 12 digits, or null if absent)\n"
                     "- amount: transaction amount in INR (float, or null if absent)\n"
-                    "- intent: one of ['SOUNDBOX_SILENT', 'PAYMENT_MISSING', 'DOUBLE_DEBIT', 'REVERSAL_PENDING']\n"
+                    "- intent: one of ['SOUNDBOX_SILENT', 'PAYMENT_MISSING', 'DOUBLE_DEBIT', 'REVERSAL_PENDING', 'PAYTM_SPOOF_FRAUD']\n"
                     "- language: detected language (e.g. 'hi', 'en', 'hinglish')\n"
                     "Output ONLY a valid JSON object. Do not include markdown codeblocks or extra text."
                 )
@@ -149,14 +160,19 @@ class MerchantGrievanceExtractor:
                     reply_content = re.sub(r"\s*```$", "", reply_content)
 
                 data = json.loads(reply_content)
-                extracted_rrn = data.get("rrn") or regex_rrn or f"4102{int(time.time()*1000) % 100000000:08d}"
-                extracted_amt = data.get("amount") or regex_amt or 350.0
+                eff_intent = data.get("intent", regex_intent)
+                if eff_intent == "PAYTM_SPOOF_FRAUD":
+                    extracted_rrn = data.get("rrn") or (f"FAKE_{regex_rrn}" if regex_rrn and not regex_rrn.startswith("FAKE") else (regex_rrn or f"FAKE_{int(time.time()*1000) % 1000000:06d}"))
+                    extracted_amt = data.get("amount") or regex_amt or 400.0
+                else:
+                    extracted_rrn = data.get("rrn") or regex_rrn or f"4102{int(time.time()*1000) % 100000000:08d}"
+                    extracted_amt = data.get("amount") or regex_amt or 350.0
 
                 logger.info(f"[IndicNLU] Sarvam-105B extracted: RRN={extracted_rrn}, Amount=₹{extracted_amt}")
                 return {
                     "rrn": str(extracted_rrn),
                     "amount": float(extracted_amt),
-                    "intent": data.get("intent", regex_intent),
+                    "intent": eff_intent,
                     "confidence": 0.95,
                     "raw_transcript": text,
                     "source": "SARVAM_105B",
@@ -166,10 +182,16 @@ class MerchantGrievanceExtractor:
 
         # Default fallback
         import time
-        fallback_rrn = regex_rrn or f"4102{int(time.time()*1000) % 100000000:08d}"
+        if regex_intent == "PAYTM_SPOOF_FRAUD":
+            fallback_rrn = f"FAKE_{regex_rrn}" if regex_rrn and not regex_rrn.startswith("FAKE") else (regex_rrn or f"FAKE_{int(time.time()*1000) % 1000000:06d}")
+            fallback_amt = regex_amt or 400.0
+        else:
+            fallback_rrn = regex_rrn or f"4102{int(time.time()*1000) % 100000000:08d}"
+            fallback_amt = regex_amt or 350.0
+
         return {
             "rrn": fallback_rrn,
-            "amount": regex_amt or 350.0,
+            "amount": fallback_amt,
             "intent": regex_intent,
             "confidence": 0.95 if regex_amt else 0.75,
             "raw_transcript": text,
