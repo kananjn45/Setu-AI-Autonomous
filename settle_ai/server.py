@@ -396,9 +396,13 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
 
         final_state = orchestrator.resolve_dispute(grievance)
 
-        # Generate Soundbox chime if settled
+        # Generate Soundbox chime if settled or warning if fraud
         soundbox_audio = None
-        if final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
+        if final_state.fraud_alert_triggered:
+            audio_file = os.path.join(audio_dir, "chirp_security_warning.wav")
+            soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
+            soundbox_audio["text"] = "Chetavani: Yeh bhugtan Paytm par prapt nahi hua hai"
+        elif final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
             audio_file = os.path.join(audio_dir, f"chirp_{rrn}.wav")
             soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
 
@@ -406,7 +410,18 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
         short_hash = audit_hash[:12] if audit_hash else "SHA256-OK"
         new_bal_str = f"₹{final_state.ledger_record.balance_after:,.2f}" if final_state.ledger_record else "Updated"
 
-        if final_state.is_completed and not final_state.hitl_required:
+        if final_state.fraud_alert_triggered:
+            reply_text = (
+                f"🚨 *Paytm Security Alert — Fake Payment Intercepted*\n\n"
+                f"Attention {req.merchant_name},\n"
+                f"Transaction of *₹{amount:,.2f}* (RRN: `{rrn}`) was audited against the NPCI bank switch.\n\n"
+                f"• *Switch Result:* NO FUNDS DEBITED / NOT FOUND (U30)\n"
+                f"• *Fraud Shield:* Counterfeit screenshot / Paytm Spoof detected\n"
+                f"• *Ledger Action:* Credit HALTED (₹0.00 released)\n"
+                f"• *Soundbox Alert:* Security warning chime broadcasted\n\n"
+                f"⚠️ *Action Required:* Do NOT deliver goods against this screenshot."
+            )
+        elif final_state.is_completed and not final_state.hitl_required:
             reply_text = (
                 f"✅ *Paytm for Business — Settlement Confirmation*\n\n"
                 f"Hello {req.merchant_name},\n"

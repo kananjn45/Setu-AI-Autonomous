@@ -1577,7 +1577,7 @@
             <div style="font-size: 12px; font-weight: 800; color: #00875a; display: flex; align-items: center; gap: 6px;">
               🟢 Mission 1: Service
             </div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--paytm-navy); margin: 3px 0;">Soundbox 4G Drop (₹400)</div>
+            <div id="mission1-amt-card" style="font-size: 11px; font-weight: 700; color: var(--paytm-navy); margin: 3px 0;">Soundbox 4G Drop (₹400)</div>
             <div style="font-size: 10px; color: var(--text-muted);">Autonomous Sweep & Hindi Voice Chime</div>
           </button>
 
@@ -1585,7 +1585,7 @@
             <div style="font-size: 12px; font-weight: 800; color: var(--paytm-red); display: flex; align-items: center; gap: 6px;">
               🚨 Mission 2: Fraud Shield
             </div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--paytm-navy); margin: 3px 0;">Paytm Spoof Fake Pay</div>
+            <div id="mission2-amt-card" style="font-size: 11px; font-weight: 700; color: var(--paytm-navy); margin: 3px 0;">Paytm Spoof Fake Pay (₹400)</div>
             <div style="font-size: 10px; color: var(--text-muted);">Intercept Fake Screenshot & Trigger Alarm</div>
           </button>
 
@@ -1692,6 +1692,14 @@
             <span class="preset-amount">₹420.00</span>
           </div>
           <div class="preset-desc">Switch shows auto-reversal in flight. AI posts provisional credit and dispatches dual WhatsApp receipts.</div>
+        </button>
+
+        <button class="preset-card" onclick="runPreset('spoof_scam')" style="border-color:#fca5a5; background:#fffbfb;">
+          <div class="preset-top">
+            <span class="preset-title" style="color:var(--paytm-red);">🚨 Paytm Spoof Fake Pay</span>
+            <span class="preset-amount" id="preset-spoof-amt" style="color:var(--paytm-red);">₹400.00</span>
+          </div>
+          <div class="preset-desc">Customer shows counterfeit payment screen. SETU audits switch, halts ledger credit, and sounds alarm chime.</div>
         </button>
 
       </div>
@@ -1903,6 +1911,7 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
           <button type="button" class="wa-chip" onclick="sendWhatsAppQuick('Bhaiya ₹400 kata par Soundbox silent hai. RRN 410294820192', 400, '410294820192')">₹400 Drop</button>
           <button type="button" class="wa-chip" onclick="sendWhatsAppQuick('Order ₹15,000 ruka hua hai RRN 883920194821', 15000, '883920194821')">₹15k Hold</button>
           <button type="button" class="wa-chip" onclick="sendWhatsAppQuick('Customer bol raha hai 420 kat gaye RRN 772910394812', 420, '772910394812')">₹420 Reversal</button>
+          <button type="button" class="wa-chip" onclick="const a = currentBillAmount || 400; sendWhatsAppQuick('Customer bol raha hai ₹' + a + ' pay kar diya nakli screenshot dikhaya RRN FAKE_482019', a, 'FAKE_482019')" style="border-color:#fca5a5; color:#b91c1c;">🚨 Fake Pay</button>
         </div>
 
         <div class="wa-input-bar">
@@ -1947,20 +1956,23 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
       }
 
       if (missionId === 'SERVICE_DISPUTE') {
-        addLog('MISSION_CONTROL', '🟢 Triggering Mission 1: Zero-Touch Service Dispute (₹400 Drop)...');
+        const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
+        addLog('MISSION_CONTROL', `🟢 Triggering Mission 1: Zero-Touch Service Dispute (₹${amt.toFixed(2)} Drop)...`);
         ws.send(JSON.stringify({
           action: 'RUN_DISPUTE',
-          query_text: 'Bhaiya humari dukan pe 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192',
-          amount_override: 400.0,
+          query_text: `Bhaiya humari dukan pe ${Math.round(amt)} rupaye kata par Soundbox nahi bola. RRN number hai 410294820192`,
+          amount_override: amt,
           rrn_override: '410294820192'
         }));
       } else if (missionId === 'FRAUD_SPOOF') {
-        addLog('MISSION_CONTROL', '🚨 Triggering Mission 2: Paytm Spoof Fake-Payment Defense...');
+        const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
+        const fakeRrn = 'FAKE_' + Math.floor(100000 + Math.random() * 900000);
+        addLog('MISSION_CONTROL', `🚨 Triggering Mission 2: Paytm Spoof Fake-Payment Defense for ₹${amt.toFixed(2)} (RRN: ${fakeRrn})...`);
         ws.send(JSON.stringify({
           action: 'RUN_DISPUTE',
-          query_text: 'Customer bol raha hai ₹500 pay kar diya screenshot dikhaya RRN FAKE_990011',
-          amount_override: 500.0,
-          rrn_override: 'FAKE_990011'
+          query_text: `Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya aur screenshot dikhaya RRN ${fakeRrn}`,
+          amount_override: amt,
+          rrn_override: fakeRrn
         }));
       } else if (missionId === 'HITL_SUPERVISOR') {
         addLog('MISSION_CONTROL', '🛡️ Triggering Mission 4: High-Value Human Co-Piloting Order (₹15,000)...');
@@ -2075,10 +2087,28 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
         if (state.fraud_alert_triggered) {
           // Paytm Spoof Intercepted
           document.getElementById('sb-amount').textContent = '⚠️ SPOOF ALERT';
-          document.getElementById('sb-status').textContent = '🚨 FAKE PAYMENT (NO BANK DEBIT)';
+          document.getElementById('sb-status').textContent = `🚨 FAKE PAYMENT (₹${state.amount.toFixed(2)} BLOCKED)`;
           document.getElementById('sb-led').className = 'sb-led alert';
           document.getElementById('story-text').innerHTML = `🚨 <strong>Counterfeit Payment Intercepted!</strong> Bank switch confirmed ZERO debit for RRN ${state.rrn}. Security warning chime sounded. ₹${state.amount.toFixed(2)} fraud loss prevented!`;
-          addLog('SETU_SHIELD', `🚨 BLOCKED FAKE PAYMENT: Bank switch shows NO debit for RRN ${state.rrn}. Security alarm sounded.`);
+          addLog('SETU_SHIELD', `🚨 BLOCKED FAKE PAYMENT: Bank switch shows NO debit for RRN ${state.rrn}. Security alarm sounded. ₹${state.amount.toFixed(2)} merchant loss prevented.`);
+
+          // Show security alert in WhatsApp chat
+          const waArea = document.getElementById('wa-messages-area');
+          if (waArea) {
+            const div = document.createElement('div');
+            div.className = 'wa-bubble wa-bot';
+            div.style.border = '1px solid #ef4444';
+            div.style.background = '#fef2f2';
+            div.innerHTML = `
+              <div style="color:#b91c1c; font-weight:800; font-size:12px;">🚨 PAYTM FRAUD SHIELD WARNING</div>
+              <div style="font-size:11px; margin-top:4px; color:#991b1b;">
+                <strong>Nakli Payment Pakda Gaya:</strong> Grahak ne ₹${state.amount.toFixed(2)} ka fake Paytm Spoof screen dikhaya (RRN ${state.rrn}). NPCI Bank switch par koi paisa debit nahi hua. Kripya samaan na dein!
+              </div>
+              <div class="wa-ts">${new Date().toLocaleTimeString()}</div>
+            `;
+            waArea.appendChild(div);
+            waArea.scrollTop = waArea.scrollHeight;
+          }
 
           if (data.soundbox_audio && data.soundbox_audio.audio_data_url) {
             playAudio(data.soundbox_audio.audio_data_url);
@@ -2196,6 +2226,15 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
           amount_override: 420.0,
           rrn_override: '772910394812',
         };
+      } else if (type === 'spoof_scam') {
+        const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
+        const fakeRrn = 'FAKE_' + Math.floor(100000 + Math.random() * 900000);
+        payload = {
+          action: 'RUN_DISPUTE',
+          query_text: `Customer bol raha hai ₹${Math.round(amt)} pay kar diya aur nakli screen dikhaya RRN ${fakeRrn}`,
+          amount_override: amt,
+          rrn_override: fakeRrn,
+        };
       }
       ws.send(JSON.stringify(payload));
     }
@@ -2280,6 +2319,20 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
         payBtn.innerHTML = `⚡ Pay ${formatted} via UPI (Simulate 4G Drop)`;
       }
 
+      const fakeBtn = document.getElementById('btn-fake-pay');
+      if (fakeBtn) {
+        fakeBtn.innerHTML = `🚨 Simulate Fake Paytm (Spoof App) for ${formatted}`;
+      }
+
+      const m1Card = document.getElementById('mission1-amt-card');
+      if (m1Card) m1Card.textContent = `Soundbox 4G Drop (${formatted})`;
+
+      const m2Card = document.getElementById('mission2-amt-card');
+      if (m2Card) m2Card.textContent = `Paytm Spoof Fake Pay (${formatted})`;
+
+      const presetSpoof = document.getElementById('preset-spoof-amt');
+      if (presetSpoof) presetSpoof.textContent = formatted;
+
       // Update chip active classes
       document.querySelectorAll('.bill-chip').forEach(c => c.classList.remove('active'));
       const activeChip = document.getElementById(`chip-${Math.round(amt)}`);
@@ -2302,6 +2355,10 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
       if (btn) {
         btn.disabled = false;
         btn.innerHTML = `⚡ Pay ₹${currentBillAmount.toFixed(2)} via UPI (Simulate 4G Drop)`;
+      }
+      const fakeBtn = document.getElementById('btn-fake-pay');
+      if (fakeBtn) {
+        fakeBtn.innerHTML = `🚨 Simulate Fake Paytm (Spoof App) for ₹${currentBillAmount.toFixed(2)}`;
       }
     }
 
@@ -2355,6 +2412,19 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
         btn.disabled = false;
         btn.innerHTML = `⚡ Pay ₹${amt.toFixed(2)} via UPI (Simulate 4G Drop)`;
       }
+    }
+
+    function simulateFakePay() {
+      const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
+      const fakeRrn = 'FAKE_' + Math.floor(100000 + Math.random() * 900000);
+      closeQrModal();
+      addLog('FRAUD_SIMULATOR', `🚨 Customer presented counterfeit Paytm Spoof screen for ₹${amt.toFixed(2)} (Fake RRN: ${fakeRrn}). SETU intercepting...`);
+      ws.send(JSON.stringify({
+        action: 'RUN_DISPUTE',
+        query_text: `Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya nakli screenshot dikhaya RRN ${fakeRrn}`,
+        amount_override: amt,
+        rrn_override: fakeRrn
+      }));
     }
 
     function applySimulatedGrievance(query, rrn, amount) {
@@ -2704,6 +2774,7 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
     window.onload = () => {
       initWS();
       refreshBalances();
+      updateBillAmountDisplay(currentBillAmount);
     };
   </script>
 
@@ -2855,6 +2926,10 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
 
           <button id="btn-cust-pay" class="btn-customer-pay" onclick="simulateCustomerPay()">
             ⚡ Pay ₹400.00 via UPI (Simulate 4G Drop)
+          </button>
+
+          <button id="btn-fake-pay" class="btn-customer-pay" style="background:#ea2934; margin-top:8px; border-color:#b91c1c; box-shadow:0 2px 8px rgba(234,41,52,0.35);" onclick="simulateFakePay()">
+            🚨 Simulate Fake Paytm (Spoof App) for ₹400.00
           </button>
 
           <div id="phone-alert" class="phone-result-alert"></div>
