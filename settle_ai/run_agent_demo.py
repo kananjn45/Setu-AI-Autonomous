@@ -18,11 +18,25 @@ workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if workspace_root not in sys.path:
     sys.path.insert(0, workspace_root)
 
-# Auto-delegate to .venv python if executed via unconfigured global python
+# Auto-delegate to workspace .venv if executed via an unconfigured python environment
 venv_python = os.path.join(workspace_root, ".venv", "Scripts", "python.exe")
-if sys.prefix == sys.base_prefix and os.path.exists(venv_python) and os.path.abspath(sys.executable) != os.path.abspath(venv_python):
-    import subprocess
-    sys.exit(subprocess.call([venv_python] + sys.argv))
+is_running_in_project_venv = os.path.normcase(os.path.abspath(sys.executable)) == os.path.normcase(os.path.abspath(venv_python))
+
+try:
+    import rich
+    import langgraph
+except ImportError:
+    if os.path.exists(venv_python) and not is_running_in_project_venv:
+        import subprocess
+        sys.exit(subprocess.call([venv_python] + sys.argv))
+    else:
+        print("\n[!] Required dependencies missing from the current Python environment.")
+        print(f"[*] Interpreter: {sys.executable}")
+        print("[*] Automatically installing dependencies from requirements.txt...\n")
+        import subprocess
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", os.path.join(workspace_root, "requirements.txt")])
+        import rich
+        import langgraph
 
 import time
 from rich.console import Console
