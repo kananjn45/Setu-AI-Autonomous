@@ -82,10 +82,10 @@ class SoundboxVoiceSynthesizer:
     ) -> Dict[str, Any]:
         """
         Synthesizes an authentic high-impact emergency security alert alarm.
-        Guaranteed to NEVER announce 'prapt hue' confirmation.
+        Guaranteed to announce 'Saavdhan! Yeh ek fraud transaction hai. Paytm par koi paisa prapt nahi hua hai.'
         """
-        text = f"🚨 Chetavani! Nakli bhugtan (Paytm Spoof) pakda gaya. ₹{amount:,.2f} par koi paisa prapt nahi hua hai."
-        logger.info(f"[SoundboxTTS] Synthesizing SECURITY ALARM (amount: ₹{amount:,.2f})")
+        text = "🚨 Saavdhan! Yeh ek fraud transaction hai. Paytm par koi paisa prapt nahi hua hai."
+        logger.info(f"[SoundboxTTS] Synthesizing FRAUD VOICE ALARM (amount: ₹{amount:,.2f})")
 
         audio_bytes = None
         if output_file_path and os.path.exists(output_file_path) and os.path.getsize(output_file_path) > 100:
@@ -95,15 +95,30 @@ class SoundboxVoiceSynthesizer:
             except Exception as e:
                 logger.warning(f"[SoundboxTTS] Could not read cached alarm audio: {e}")
 
+        # If not cached or too small, synthesize via Sarvam Bulbul TTS
+        if (not audio_bytes or len(audio_bytes) < 1000) and self.client:
+            try:
+                resp = self.client.text_to_speech.convert(
+                    text="सावधान! यह एक फ्रॉड ट्रांजैक्शन है। पेटीएम पर कोई पैसा प्राप्त नहीं हुआ है।",
+                    language_code="hi-IN",
+                    model="bulbul:v3"
+                )
+                if resp.audios and len(resp.audios) > 0:
+                    audio_bytes = base64.b64decode(resp.audios[0])
+                    logger.info(f"[SoundboxTTS] Successfully synthesized {len(audio_bytes)} fraud warning voice bytes via Sarvam AI.")
+            except Exception as e:
+                logger.error(f"[SoundboxTTS] Sarvam TTS call failed for fraud warning: {e}")
+
         if not audio_bytes or len(audio_bytes) < 1000:
             audio_bytes = self.generate_alarm_siren_bytes()
-            if output_file_path:
-                try:
-                    os.makedirs(os.path.dirname(os.path.abspath(output_file_path)), exist_ok=True)
-                    with open(output_file_path, "wb") as f:
-                        f.write(audio_bytes)
-                except Exception as e:
-                    logger.warning(f"[SoundboxTTS] Could not cache alarm: {e}")
+
+        if output_file_path:
+            try:
+                os.makedirs(os.path.dirname(os.path.abspath(output_file_path)), exist_ok=True)
+                with open(output_file_path, "wb") as f:
+                    f.write(audio_bytes)
+            except Exception as e:
+                logger.warning(f"[SoundboxTTS] Could not cache alarm: {e}")
 
         audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
         return {
