@@ -146,7 +146,7 @@ class SoundboxIoTTool(AbstractSoundboxIoT):
     def __init__(self, mqtt_host: Optional[str] = None):
         self.mqtt_host = mqtt_host
         # Simulated device telemetry registry
-                self._devices: Dict[str, Dict[str, Any]] = {
+        self._devices: Dict[str, Dict[str, Any]] = {
             "SB_DELHI_0841": {
                 "merchant_id": "MERCH_GUPTA_TEA",
                 "status": SoundboxStatus.PACKET_DROPPED,
@@ -456,11 +456,10 @@ fleet_tool = FleetHealthTool()
 
 def reset_sandbox_state():
     """Resets all singleton tools to initial pristine sandbox state."""
-    global bank_tool, soundbox_tool, ledger_tool, notification_tool, fraud_tool, sales_tool, fleet_tool
-    bank_tool = BankSwitchTool()
-    soundbox_tool = SoundboxIoTTool()
-    ledger_tool = MerchantLedgerTool()
-    notification_tool = MerchantNotificationTool()
-    fraud_tool = FraudShieldTool()
-    sales_tool = SalesEngineTool()
-    fleet_tool = FleetHealthTool()
+    bank_tool.__init__()
+    soundbox_tool.__init__()
+    ledger_tool.__init__()
+    notification_tool.__init__()
+    fraud_tool.__init__()
+    sales_tool.__init__()
+    fleet_tool.__init__()

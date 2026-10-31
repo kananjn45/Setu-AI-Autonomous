@@ -1,6 +1,6 @@
 """
 SETTLE.AI Agent Package
-Exports schemas, decision engine, tools, state graph, and orchestrator.
+Exports schemas, decision engine, tools, state graph, orchestrator, state resolver, chime guard, device diagnostics, and audit logger.
 """
 
 from settle_ai.agent.schemas import (
@@ -15,6 +15,8 @@ from settle_ai.agent.schemas import (
     DisputeGrievance,
     AgentState,
     StepLog,
+    CanonicalTxState,
+    RootCauseLabel,
 )
 from settle_ai.agent.tools import (
     BankSwitchTool,
@@ -27,6 +29,10 @@ from settle_ai.agent.tools import (
     notification_tool,
 )
 from settle_ai.agent.decision_engine import DecisionEngine
+from settle_ai.agent.state_resolver import TransactionStateResolver
+from settle_ai.agent.chime_guard import SoundboxChimeGuard
+from settle_ai.agent.device_diagnostics import DeviceDiagnosticsEngine, DeviceDiagnosticResult
+from settle_ai.agent.audit_logger import audit_logger, AuditLogger, AuditLogEntry
 from settle_ai.agent.state_graph import build_settle_agent_graph
 from settle_ai.agent.orchestrator import SettleOrchestrator, orchestrator
 
@@ -42,6 +48,8 @@ __all__ = [
     "DisputeGrievance",
     "AgentState",
     "StepLog",
+    "CanonicalTxState",
+    "RootCauseLabel",
     "BankSwitchTool",
     "SoundboxIoTTool",
     "MerchantLedgerTool",
@@ -51,6 +59,13 @@ __all__ = [
     "ledger_tool",
     "notification_tool",
     "DecisionEngine",
+    "TransactionStateResolver",
+    "SoundboxChimeGuard",
+    "DeviceDiagnosticsEngine",
+    "DeviceDiagnosticResult",
+    "audit_logger",
+    "AuditLogger",
+    "AuditLogEntry",
     "build_settle_agent_graph",
     "SettleOrchestrator",
     "orchestrator",
