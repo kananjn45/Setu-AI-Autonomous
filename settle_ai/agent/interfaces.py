@@ -107,3 +107,4 @@ class AbstractNotificationGateway(ABC):
     ) -> bool:
         """Dispatches resolution receipt or fraud security advisory."""
         pass
+
