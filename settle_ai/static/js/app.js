@@ -79,7 +79,7 @@ function handleStream(data) {
     resetPipeline();
     addLog('Voice AI', `Listening to query: "${data.text}"`);
     document.getElementById('node-ingest').classList.add('active');
-    document.getElementById('story-text').innerHTML = `🎙️ <strong>Step 1:</strong> Listening to merchant query: <em>"${data.text}"</em>`;
+    document.getElementById('story-text').innerHTML = `<strong>Step 1:</strong> Listening to merchant query: <em>"${data.text}"</em>`;
   }
   else if (data.event === 'NLU_COMPLETE') {
     document.getElementById('node-ingest').classList.remove('active');
@@ -123,25 +123,25 @@ function handleStream(data) {
     if (nodeName === 'node_diagnose_bank') {
       if (currentDisputeIsFraud) {
         document.getElementById('desc-bank').innerHTML = `<span style="color:#ea2934; font-weight:800;">BANK CONFIRMED:</span> Zero money debited from customer!`;
-        document.getElementById('story-text').innerHTML = `🏦 <strong>Step 2: Bank Check:</strong> <span style="color:#ea2934; font-weight:800;">ZERO MONEY DEBITED</span> at bank. This was a fake payment attempt!`;
+        document.getElementById('story-text').innerHTML = `<strong>Step 2: Bank Check:</strong> <span style="color:#ea2934; font-weight:800;">ZERO MONEY DEBITED</span> at bank. This was a fake payment attempt!`;
       } else {
-        document.getElementById('story-text').innerHTML = `🏦 <strong>Step 2: Bank Check:</strong> Bank confirms payment was debited from customer account successfully.`;
+        document.getElementById('story-text').innerHTML = `<strong>Step 2: Bank Check:</strong> Bank confirms payment was debited from customer account successfully.`;
       }
     } else if (nodeName === 'node_diagnose_iot') {
       if (currentDisputeIsFraud) {
         document.getElementById('desc-iot').innerHTML = `<span style="color:#ea2934; font-weight:800;">SOUNDBOX SILENT:</span> No real transaction ever took place.`;
-        document.getElementById('story-text').innerHTML = `📡 <strong>Step 3: Soundbox Check:</strong> Speaker was silent because no real payment occurred!`;
+        document.getElementById('story-text').innerHTML = `<strong>Step 3: Soundbox Check:</strong> Speaker was silent because no real payment occurred!`;
       } else {
-        document.getElementById('story-text').innerHTML = `📡 <strong>Step 3: Soundbox Check:</strong> Soundbox signal was momentarily weak. Packet dropped in transit.`;
+        document.getElementById('story-text').innerHTML = `<strong>Step 3: Soundbox Check:</strong> Soundbox signal was momentarily weak. Packet dropped in transit.`;
       }
     } else if (nodeName === 'node_evaluate_risk') {
       if (currentDisputeIsFraud) {
         document.getElementById('desc-risk').innerHTML = `<span style="color:#ea2934; font-weight:800;">FAKE PAY BLOCKED:</span> Counterfeit screenshot detected.`;
-        document.getElementById('story-text').innerHTML = `🚨 <strong>Step 5: Fraud Defense:</strong> Counterfeit screen detected! Halting credit immediately to protect merchant.`;
+        document.getElementById('story-text').innerHTML = `<strong>Step 5: Fraud Defense:</strong> Counterfeit screen detected! Halting credit immediately to protect merchant.`;
       } else if (data.step_summary && data.step_summary.includes('HALT')) {
-        document.getElementById('story-text').innerHTML = `⚠️ <strong>Safety Limit:</strong> Amount is above ₹5,000. Paused for manager 1-click review.`;
+        document.getElementById('story-text').innerHTML = `<strong>Safety Limit:</strong> Amount is above ₹5,000. Paused for manager 1-click review.`;
       } else {
-        document.getElementById('story-text').innerHTML = `🛡️ <strong>Step 5: Safety Check:</strong> Payment verified safe (98% confidence). Proceeding to ring Soundbox!`;
+        document.getElementById('story-text').innerHTML = `<strong>Step 5: Safety Check:</strong> Payment verified safe (98% confidence). Proceeding to ring Soundbox!`;
       }
     } else if (nodeName === 'node_autonomous_settle') {
       if (currentDisputeIsFraud) {
@@ -158,11 +158,11 @@ function handleStream(data) {
         settleEl.className = 'pipeline-step fraud-alert';
         document.getElementById('desc-settle').innerHTML = `<span style="color:#ea2934; font-weight:800;">FRAUD BLOCKED:</span> ₹0.00 released. Security alert sounded.`;
       }
-      document.getElementById('sb-amount').textContent = '⚠️ FAKE PAY';
-      document.getElementById('sb-status').textContent = `🚨 SCAM BLOCKED (₹${state.amount.toFixed(2)} PREVENTED)`;
+      document.getElementById('sb-amount').textContent = 'FAKE PAYMENT';
+      document.getElementById('sb-status').textContent = `SCAM BLOCKED (₹${state.amount.toFixed(2)} PREVENTED)`;
       document.getElementById('sb-led').className = 'led-circle alert';
-      document.getElementById('story-text').innerHTML = `🚨 <strong>Fake Payment Blocked!</strong> Bank confirmed NO money was debited for Ref ${state.rrn}. Security warning sounded. Saved merchant ₹${state.amount.toFixed(2)}!`;
-      addLog('Fraud Defense', `🚨 BLOCKED FAKE PAYMENT: Bank shows NO debit for Ref ${state.rrn}. Saved ₹${state.amount.toFixed(2)}.`);
+      document.getElementById('story-text').innerHTML = `<strong>Fake Payment Blocked:</strong> Bank confirmed NO money was debited for Ref ${state.rrn}. Security warning sounded. Saved merchant ₹${state.amount.toFixed(2)}!`;
+      addLog('Fraud Defense', `Blocked fake payment: Bank shows NO debit for Ref ${state.rrn}. Saved ₹${state.amount.toFixed(2)}.`);
 
       const waArea = document.getElementById('wa-messages-area');
       if (waArea) {
@@ -171,7 +171,7 @@ function handleStream(data) {
         div.style.border = '1px solid #ef4444';
         div.style.background = '#fef2f2';
         div.innerHTML = `
-          <div style="color:#b91c1c; font-weight:800; font-size:12px;">🚨 PAYTM FRAUD SHIELD WARNING</div>
+          <div style="color:#b91c1c; font-weight:800; font-size:12px;">PAYTM FRAUD DEFENSE WARNING</div>
           <div style="font-size:11px; margin-top:4px; color:#991b1b; line-height:1.45;">
             <strong>Nakli Payment Pakda Gaya:</strong> Grahak ne ₹${state.amount.toFixed(2)} ka nakli Paytm Spoof screen dikhaya (Ref: ${state.rrn}). Bank par koi paisa debit nahi hua. Kripya samaan na dein!
           </div>
@@ -188,11 +188,11 @@ function handleStream(data) {
     } else if (state.hitl_required && !state.hitl_approved) {
       renderSupervisorCard(state);
       document.getElementById('sb-led').className = 'led-circle alert';
-      document.getElementById('sb-status').textContent = '⚠️ Awaiting Manager 1-Click Review';
-      document.getElementById('story-text').innerHTML = `⚠️ <strong>Safety Limit Active:</strong> ${state.hitl_reason}<br>Please review the Manager Desk below and click <strong>Approve &amp; Settle</strong> or <strong>Reject Claim</strong>.`;
+      document.getElementById('sb-status').textContent = 'Awaiting Manager Review';
+      document.getElementById('story-text').innerHTML = `<strong>Safety Limit Active:</strong> ${state.hitl_reason}<br>Please review the Manager Desk below and click <strong>Approve &amp; Settle</strong> or <strong>Reject Claim</strong>.`;
     } else {
       document.getElementById('sb-amount').textContent = `₹${state.amount.toFixed(2)}`;
-      document.getElementById('sb-status').textContent = '✅ Payment Verified & Reconciled';
+      document.getElementById('sb-status').textContent = 'Payment Verified & Reconciled';
       document.getElementById('sb-led').className = 'led-circle';
 
       const waArea = document.getElementById('wa-messages-area');
@@ -200,7 +200,7 @@ function handleStream(data) {
         const div = document.createElement('div');
         div.className = 'wa-bubble wa-bot';
         div.innerHTML = `
-          <div>✅ <strong>Payment Verified &amp; Added to Balance</strong></div>
+          <div><strong>Payment Verified &amp; Added to Balance</strong></div>
           <div style="font-size:11px; margin-top:2px;">₹${state.amount.toFixed(2)} (Ref: ${state.rrn}) has been added to your settlement account. Soundbox confirmed.</div>
           <div class="wa-ts">${new Date().toLocaleTimeString()}</div>
         `;
@@ -208,7 +208,7 @@ function handleStream(data) {
         waArea.scrollTop = waArea.scrollHeight;
       }
 
-      document.getElementById('story-text').innerHTML = `🎉 <strong>Resolved in &lt; 1 second!</strong> Soundbox audio alert played and shopkeeper account credited.`;
+      document.getElementById('story-text').innerHTML = `<strong>Resolved in &lt; 1 second:</strong> Soundbox audio alert played and shopkeeper account credited.`;
 
       if (data.soundbox_audio && data.soundbox_audio.audio_data_url) {
         playAudio(data.soundbox_audio.audio_data_url);
@@ -222,15 +222,15 @@ function handleStream(data) {
     if (hitlContainer) {
       hitlContainer.innerHTML = `
         <div style="background:#e6f7f3; border:1px solid #00b386; border-radius:12px; padding:16px; text-align:center; color:#005c45; font-size:13px;">
-          ✅ <strong>Manager Approval Completed!</strong><br>
+          <strong>Manager Approval Completed!</strong><br>
           Payment <strong>${state.dispute_id}</strong> (₹${state.amount.toFixed(2)}) approved and credited to merchant account.
         </div>
       `;
     }
     document.getElementById('sb-amount').textContent = `₹${state.amount.toFixed(2)}`;
-    document.getElementById('sb-status').textContent = '✅ Manager Approved & Settled';
+    document.getElementById('sb-status').textContent = 'Manager Approved & Settled';
     document.getElementById('sb-led').className = 'led-circle';
-    document.getElementById('story-text').innerHTML = `✅ <strong>Manager Approved:</strong> ₹${state.amount.toFixed(2)} credited to merchant balance.`;
+    document.getElementById('story-text').innerHTML = `<strong>Manager Approved:</strong> ₹${state.amount.toFixed(2)} credited to merchant balance.`;
 
     addLog('Manager', `1-Click Approval executed. ₹${state.amount.toFixed(2)} credited to merchant balance.`);
 
@@ -245,16 +245,16 @@ function handleStream(data) {
     if (hitlContainer) {
       hitlContainer.innerHTML = `
         <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:12px; padding:16px; text-align:center; color:#9f1239; font-size:13px;">
-          <div style="font-weight:800; font-size:14px; color:#be123c; margin-bottom:4px;">✕ Claim Rejected by Manager</div>
+          <div style="font-weight:800; font-size:14px; color:#be123c; margin-bottom:4px;">Claim Rejected by Manager</div>
           Claim for ₹${state.amount.toFixed(2)} denied.<br>
           <span style="font-size:12px; color:#e11d48; font-weight:600;">Zero funds released. Recorded in compliance log.</span>
         </div>
       `;
     }
     document.getElementById('sb-amount').textContent = `₹${state.amount.toFixed(2)}`;
-    document.getElementById('sb-status').textContent = '❌ CLAIM REJECTED BY MANAGER';
+    document.getElementById('sb-status').textContent = 'CLAIM REJECTED BY MANAGER';
     document.getElementById('sb-led').className = 'led-circle alert';
-    document.getElementById('story-text').innerHTML = `❌ <strong>Manager Rejected Claim:</strong> ₹${state.amount.toFixed(2)} order denied after checking bank records. Zero money released.`;
+    document.getElementById('story-text').innerHTML = `<strong>Manager Rejected Claim:</strong> ₹${state.amount.toFixed(2)} order denied after checking bank records. Zero money released.`;
 
     const waArea = document.getElementById('wa-messages-area');
     if (waArea) {
@@ -263,7 +263,7 @@ function handleStream(data) {
       div.style.border = '1px solid #fecdd3';
       div.style.background = '#fff1f2';
       div.innerHTML = `
-        <div style="color:#be123c; font-weight:800; font-size:12px;">❌ PAYTM NOTICE — CLAIM REJECTED</div>
+        <div style="color:#be123c; font-weight:800; font-size:12px;">PAYTM NOTICE — CLAIM REJECTED</div>
         <div style="font-size:11px; margin-top:4px; color:#9f1239;">
           Dispute for <strong>₹${state.amount.toFixed(2)}</strong> (Ref ${state.rrn}) was reviewed by Manager and <strong>REJECTED</strong>.<br>
           <em>Note:</em> Zero balance credited.
@@ -288,11 +288,11 @@ function renderSupervisorCard(state) {
   container.innerHTML = `
     <div class="manager-review-box">
       <div class="manager-review-top">
-        <div class="manager-review-title">🛡️ Manager 1-Click Review Desk</div>
+        <div class="manager-review-title">Manager 1-Click Review Desk</div>
         <span class="manager-review-pill">Review Required</span>
       </div>
       <div class="manager-reason-box">
-        ⚠️ <strong>${state.hitl_reason}</strong>
+        <strong>${state.hitl_reason}</strong>
       </div>
       <div class="dossier-4col-grid">
         <div class="dossier-cell"><span class="label">Reference No</span><div class="value">${state.rrn}</div></div>
@@ -302,10 +302,10 @@ function renderSupervisorCard(state) {
       </div>
       <div class="review-action-btns">
         <button type="button" class="btn-approve-clean" onclick="approveSupervisor('${state.dispute_id}')">
-          ⚡ Approve &amp; Settle (₹${state.amount.toFixed(0)})
+          Approve &amp; Settle (₹${state.amount.toFixed(0)})
         </button>
         <button type="button" class="btn-reject-clean" onclick="rejectSupervisor('${state.dispute_id}')">
-          ✕ Reject Claim
+          Reject Claim
         </button>
       </div>
     </div>
@@ -461,7 +461,7 @@ async function triggerTeammateMission(missionId) {
   if (missionId === 'SERVICE_DISPUTE') {
     const tab = document.getElementById('tab-mission1'); if (tab) tab.classList.add('active');
     const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
-    addLog('SETU', `🟢 Scenario 1: Silent Soundbox (₹${amt.toFixed(2)} Drop)...`);
+    addLog('SETU', `Scenario 1: Silent Soundbox (₹${amt.toFixed(2)} Drop)...`);
     ws.send(JSON.stringify({
       action: 'RUN_DISPUTE',
       query_text: `Bhaiya humari dukan pe ${Math.round(amt)} rupaye kata par Soundbox nahi bola. RRN number hai 410294820192`,
@@ -473,7 +473,7 @@ async function triggerTeammateMission(missionId) {
     const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
     const fakeRrn = 'FAKE_' + Math.floor(100000 + Math.random() * 900000);
     currentDisputeIsFraud = true;
-    addLog('SETU', `🚨 Scenario 2: Fake Payment App Intercepted for ₹${amt.toFixed(2)}...`);
+    addLog('SETU', `Scenario 2: Fake Payment App Intercepted for ₹${amt.toFixed(2)}...`);
     ws.send(JSON.stringify({
       action: 'RUN_DISPUTE',
       query_text: `Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya aur screenshot dikhaya RRN ${fakeRrn}`,
@@ -482,13 +482,13 @@ async function triggerTeammateMission(missionId) {
     }));
   } else if (missionId === 'SALES_UPGRADE') {
     const tab = document.getElementById('tab-mission3'); if (tab) tab.classList.add('active');
-    addLog('SETU', '📈 Scenario 3: Soundbox Hardware Check & 4G Pro Upgrade Offer...');
+    addLog('SETU', 'Scenario 3: Soundbox Hardware Check & 4G Pro Upgrade Offer...');
     resetPipeline();
     document.getElementById('node-ingest').classList.add('completed');
     document.getElementById('node-diagnose_iot').classList.add('completed');
-    document.getElementById('sb-status').textContent = '📈 Hardware Check: Weak 2G Signal Detected';
+    document.getElementById('sb-status').textContent = 'Hardware Check: Weak 2G Signal Detected';
     document.getElementById('sb-amount').textContent = 'UPGRADE 4G PRO';
-    document.getElementById('story-text').innerHTML = `📈 <strong>Device Check Complete:</strong> Soundbox has old 2G cellular signal (-98dBm). Generated 1-Click Upgrade Offer to Paytm Soundbox 4G Pro at ₹199!`;
+    document.getElementById('story-text').innerHTML = `<strong>Device Check Complete:</strong> Soundbox has old 2G cellular signal (-98dBm). Generated 1-Click Upgrade Offer to Paytm Soundbox 4G Pro at ₹199!`;
     addLog('Store Growth', 'Merchant Gupta Tea Stall diagnosed with old 2G signal drops. Offered Soundbox 4G Pro upgrade at ₹199.');
 
     const waArea = document.getElementById('wa-messages-area');
@@ -496,7 +496,7 @@ async function triggerTeammateMission(missionId) {
       const div = document.createElement('div');
       div.className = 'wa-bubble wa-bot';
       div.innerHTML = `
-        <div style="color:#7c3aed; font-weight:800; font-size:12px;">📈 PAYTM BUSINESS DEVICE UPGRADE</div>
+        <div style="color:#7c3aed; font-weight:800; font-size:12px;">PAYTM BUSINESS DEVICE UPGRADE</div>
         <div style="font-size:11px; margin-top:4px;">Namaste Gupta ji! Aapke Soundbox 2G me mobile signal kamzor hai jisse awaz nahi aati.</div>
         <div style="background:#f5f3ff; border:1px solid #c4b5fd; border-radius:8px; padding:8px; margin-top:6px; font-size:11px;">
           <strong>Paytm Soundbox 4G Pro (Dual SIM + Louder Speaker)</strong><br>
@@ -509,7 +509,7 @@ async function triggerTeammateMission(missionId) {
     }
   } else if (missionId === 'HITL_SUPERVISOR') {
     const tab = document.getElementById('tab-mission4'); if (tab) tab.classList.add('active');
-    addLog('SETU', '🛡️ Scenario 4: Large Order Review (₹15,000)...');
+    addLog('SETU', 'Scenario 4: Large Order Review (₹15,000)...');
     ws.send(JSON.stringify({
       action: 'RUN_DISPUTE',
       query_text: 'Sharma Kirana Store ka 15,000 rupaye ruka hua hai RRN 883920194821',
@@ -518,12 +518,12 @@ async function triggerTeammateMission(missionId) {
     }));
   } else if (missionId === 'PROACTIVE_FLEET') {
     const tab = document.getElementById('tab-mission5'); if (tab) tab.classList.add('active');
-    addLog('SETU', '📡 Scenario 5: Bank Server Delay Notice...');
+    addLog('SETU', 'Scenario 5: Bank Server Delay Notice...');
     resetPipeline();
     document.getElementById('node-diagnose_bank').classList.add('completed');
-    document.getElementById('sb-status').textContent = '📡 BANK NOTICE: SBI DELAYS DETECTED';
+    document.getElementById('sb-status').textContent = 'BANK NOTICE: SBI DELAYS DETECTED';
     document.getElementById('sb-led').className = 'led-circle alert';
-    document.getElementById('story-text').innerHTML = `📡 <strong>Bank Slowdown Notice:</strong> Detected SBI server delay. Sent 1-line Hindi voice warning to 10,482 Soundboxes!`;
+    document.getElementById('story-text').innerHTML = `<strong>Bank Slowdown Notice:</strong> Detected SBI server delay. Sent 1-line Hindi voice warning to 10,482 Soundboxes!`;
     addLog('Fleet Monitor', 'SBI UPI server slow (4,250ms). Spoke 1-line Hindi warning to 10,482 Soundboxes: "Dhyan dein: SBI server dheema hai..."');
     playAudio('/static/audio/chirp_switch_advisory.wav');
   }
@@ -597,10 +597,10 @@ function updateBillAmountDisplay(amt) {
   }
 
   const payBtn = document.getElementById('btn-cust-pay');
-  if (payBtn) payBtn.innerHTML = `⚡ Pay ${formatted} via UPI (Simulate Weak Internet)`;
+  if (payBtn) payBtn.innerHTML = `Pay ${formatted} via UPI (Simulate Weak Internet)`;
 
   const fakeBtn = document.getElementById('btn-fake-pay');
-  if (fakeBtn) fakeBtn.innerHTML = `🚨 Fake Payment Screen (${formatted})`;
+  if (fakeBtn) fakeBtn.innerHTML = `Fake Payment Screen (${formatted})`;
 
   const m1Card = document.getElementById('mission1-amt-card');
   if (m1Card) m1Card.textContent = `Weak Internet Drop (${formatted})`;
@@ -626,11 +626,11 @@ function openQrModal() {
   const btn = document.getElementById('btn-cust-pay');
   if (btn) {
     btn.disabled = false;
-    btn.innerHTML = `⚡ Pay ₹${currentBillAmount.toFixed(2)} via UPI (Simulate Weak Internet)`;
+    btn.innerHTML = `Pay ₹${currentBillAmount.toFixed(2)} via UPI (Simulate Weak Internet)`;
   }
   const fakeBtn = document.getElementById('btn-fake-pay');
   if (fakeBtn) {
-    fakeBtn.innerHTML = `🚨 Fake Payment Screen (₹${currentBillAmount.toFixed(2)})`;
+    fakeBtn.innerHTML = `Fake Payment Screen (₹${currentBillAmount.toFixed(2)})`;
   }
 }
 
@@ -642,7 +642,7 @@ async function simulateCustomerPay() {
   const btn = document.getElementById('btn-cust-pay');
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = '⏳ Processing UPI Payment...';
+    btn.innerHTML = 'Processing UPI Payment...';
   }
   const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
 
@@ -661,14 +661,14 @@ async function simulateCustomerPay() {
       alertBox.style.background = '#f0fdf4';
       alertBox.style.border = '1px solid #bbf7d0';
       alertBox.innerHTML = `
-        <div style="font-weight:800; font-size:13px; color:#15803d;">✅ ₹${data.amount.toFixed(2)} Debited Successfully</div>
+        <div style="font-weight:800; font-size:13px; color:#15803d;">₹${data.amount.toFixed(2)} Debited Successfully</div>
         <div style="font-size:12px; margin-top:3px;"><strong>Reference No:</strong> <span class="tabular-num">${data.rrn}</span></div>
         <div style="font-size:12px;"><strong>Bank:</strong> ${data.payer_bank} (Customer account debited)</div>
         <div style="margin-top:6px; color:#b91c1c; font-weight:700; font-size:12px;">
-          ⚠️ Soundbox Alert: Weak internet drop! Soundbox remained silent.
+          Soundbox Alert: Weak internet drop! Soundbox remained silent.
         </div>
         <button onclick="applySimulatedGrievance('${data.suggested_query}', '${data.rrn}', ${data.amount})" style="margin-top:8px; background:var(--paytm-navy); color:#fff; border:none; border-radius:6px; padding:8px 12px; font-weight:800; font-size:12px; cursor:pointer;">
-          🎙️ Raise Shopkeeper Grievance for ₹${data.amount.toFixed(0)}
+          Raise Shopkeeper Grievance for ₹${data.amount.toFixed(0)}
         </button>
       `;
     }
@@ -678,7 +678,7 @@ async function simulateCustomerPay() {
     document.getElementById('sb-toggle-badge').style.color = '#f59e0b';
     document.getElementById('sb-net-text').textContent = '4G (Weak)';
     document.getElementById('sb-led').className = 'led-circle alert';
-    document.getElementById('sb-status').textContent = '⚠️ Weak Signal (Missed Alert ' + data.rrn.slice(-4) + ')';
+    document.getElementById('sb-status').textContent = 'Weak Signal (Missed Alert ' + data.rrn.slice(-4) + ')';
     
     addLog('Simulator', `Customer debited ₹${data.amount.toFixed(2)} (Ref: ...${data.rrn.slice(-4)}). Weak internet simulated.`);
   } catch (err) {
@@ -686,7 +686,7 @@ async function simulateCustomerPay() {
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = `⚡ Pay ₹${amt.toFixed(2)} via UPI (Simulate Weak Internet)`;
+      btn.innerHTML = `Pay ₹${amt.toFixed(2)} via UPI (Simulate Weak Internet)`;
     }
   }
 }
@@ -703,7 +703,7 @@ function simulateFakePay() {
     alertBox.style.background = '#fef2f2';
     alertBox.style.border = '1.5px solid #ef4444';
     alertBox.innerHTML = `
-      <div style="font-weight:800; font-size:13px; color:#b91c1c;">⚠️ COUNTERFEIT PAYMENT SCREEN DETECTED</div>
+      <div style="font-weight:800; font-size:13px; color:#b91c1c;">COUNTERFEIT PAYMENT SCREEN DETECTED</div>
       <div style="font-size:12px; margin-top:3px;"><strong>Fake Ref No:</strong> <span class="tabular-num" style="color:#991b1b;">${fakeRrn}</span></div>
       <div style="font-size:12px;"><strong>Amount Claimed:</strong> ₹${amt.toFixed(2)} (Fake App Screen)</div>
       <div style="margin-top:4px; font-size:12px; color:#7f1d1d; font-weight:600;">Bank Check: ZERO MONEY DEBITED. Stopping scam...</div>
@@ -712,7 +712,7 @@ function simulateFakePay() {
 
   setTimeout(() => {
     closeQrModal();
-    addLog('Simulator', `🚨 Customer showed fake payment screen for ₹${amt.toFixed(2)} (Ref: ...${fakeRrn.slice(-4)}). SETU stopping scam...`);
+    addLog('Simulator', `Customer showed fake payment screen for ₹${amt.toFixed(2)} (Ref: ...${fakeRrn.slice(-4)}). SETU stopping scam...`);
     ws.send(JSON.stringify({
       action: 'RUN_DISPUTE',
       query_text: `Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya nakli screenshot dikhaya RRN ${fakeRrn}`,
@@ -817,7 +817,7 @@ async function stopMicRecording() {
   clearInterval(recTimerInterval);
   document.getElementById('recording-bar').style.display = 'none';
   document.getElementById('btn-record-mic').style.background = '#ffffff';
-  document.getElementById('mic-icon').textContent = '🎙️';
+  document.getElementById('mic-icon').textContent = '●';
   document.getElementById('mic-text').textContent = 'Speak via Live Mic';
 
   if (scriptNode) scriptNode.disconnect();
@@ -925,32 +925,32 @@ async function sendWhatsAppMessage(overrideText, amountHint, rrnHint) {
       botDiv.style.border = '1px solid #ef4444';
       botDiv.style.background = '#fef2f2';
       botDiv.innerHTML = `
-        <div style="color:#b91c1c; font-weight:800; font-size:12px;">🚨 PAYTM FRAUD SHIELD WARNING</div>
+        <div style="color:#b91c1c; font-weight:800; font-size:12px;">PAYTM FRAUD DEFENSE WARNING</div>
         <div style="font-size:11px; margin-top:4px; color:#991b1b; line-height:1.45;">
           <strong>Nakli Payment Pakda Gaya:</strong> Grahak ne ₹${data.amount.toFixed(2)} ka nakli Paytm screen dikhaya (Ref: <code class="tabular-num">${data.rrn}</code>).<br>
           • <strong>Bank Check:</strong> <span style="font-weight:800; color:#dc2626;">ZERO MONEY DEBITED</span><br>
           • <strong>Account Impact:</strong> ₹0.00 Released (No money given)<br>
           • <strong>Soundbox Alert:</strong> Security Warning Chime Played<br>
           <div style="margin-top:6px; background:#fee2e2; border:1px solid #fca5a5; padding:6px 8px; border-radius:6px; color:#7f1d1d; font-weight:700;">
-            ⚠️ Warning: Samaan na dein! This was a fake payment attempt.
+            Warning: Samaan na dein! This was a fake payment attempt.
           </div>
         </div>
         <div class="wa-ts">${timeStr}</div>
       `;
-      document.getElementById('sb-amount').textContent = '⚠️ FAKE PAY';
-      document.getElementById('sb-status').textContent = `🚨 SCAM BLOCKED (₹${data.amount.toFixed(2)})`;
+      document.getElementById('sb-amount').textContent = 'FAKE PAYMENT';
+      document.getElementById('sb-status').textContent = `SCAM BLOCKED (₹${data.amount.toFixed(2)})`;
       document.getElementById('sb-led').className = 'led-circle alert';
       if (data.soundbox_audio && data.soundbox_audio.audio_data_url) {
         playAudio(data.soundbox_audio.audio_data_url);
       }
-      addLog('WhatsApp', `🚨 Fraud Shield Intercepted fake payment of ₹${data.amount.toFixed(2)}!`);
+      addLog('WhatsApp', `Fraud Defense intercepted fake payment of ₹${data.amount.toFixed(2)}.`);
     } else if (data.is_settled && !data.hitl_tripped) {
       const shortHash = data.digital_receipt && data.digital_receipt.sha256_audit_seal
         ? data.digital_receipt.sha256_audit_seal.slice(0, 14) + '...'
         : 'SHA256-VERIFIED';
 
       botDiv.innerHTML = `
-        <div>✅ <strong>Payment Verified &amp; Added to Balance</strong></div>
+        <div><strong>Payment Verified &amp; Added to Balance</strong></div>
         <div style="font-size:11px; margin-top:2px; color:#374151;">Fixed in under 45 seconds automatically.</div>
         <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-top:6px; font-size:11px;">
           <div><strong>Amount:</strong> <span class="tabular-num">₹${data.amount.toFixed(2)}</span></div>
@@ -965,13 +965,13 @@ async function sendWhatsAppMessage(overrideText, amountHint, rrnHint) {
         playAudio(data.soundbox_audio.audio_data_url);
       }
       document.getElementById('sb-amount').textContent = `₹${data.amount.toFixed(2)}`;
-      document.getElementById('sb-status').textContent = '✅ WhatsApp Grievance Reconciled';
+      document.getElementById('sb-status').textContent = 'WhatsApp Grievance Reconciled';
       document.getElementById('sb-led').className = 'led-circle';
       refreshBalances();
-      addLog('WhatsApp', `Dispute settled via WhatsApp for ₹${data.amount.toFixed(2)}!`);
+      addLog('WhatsApp', `Dispute settled via WhatsApp for ₹${data.amount.toFixed(2)}.`);
     } else {
       botDiv.innerHTML = `
-        <div style="color:#b45309; font-weight:700;">🛡️ Large Amount Manager Review</div>
+        <div style="color:#b45309; font-weight:700;">Large Amount Manager Review</div>
         <div style="font-size:11px; margin-top:4px;">Dispute for <strong>₹${data.amount.toFixed(2)}</strong> (Ref: <span class="tabular-num">${data.rrn}</span>) is above the ₹5,000 safety limit.</div>
         <div style="font-size:11px; margin-top:4px; color:#4b5563;">An Operations Manager has received this on their desk for 1-click review.</div>
         <div class="wa-ts">${timeStr}</div>

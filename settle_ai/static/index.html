@@ -66,37 +66,37 @@
   <nav class="scenarios-nav">
     <div class="scenarios-inner">
       <div class="scenarios-title">
-        <span>⚡</span> Quick Scenarios:
+        Quick Scenarios:
       </div>
 
       <div class="scenarios-grid">
         
         <button class="mission-tab active" id="tab-mission1" onclick="triggerTeammateMission('SERVICE_DISPUTE')">
-          <div class="tab-badge" style="color: var(--paytm-green);">🟢 1. Silent Soundbox</div>
+          <div class="tab-badge" style="color: var(--paytm-green);">1. Silent Soundbox</div>
           <div class="tab-title" id="mission1-amt-card">Weak Internet Drop (₹400)</div>
           <div class="tab-desc">Bank debited, speaker missed alert. Re-plays chime in &lt;1s.</div>
         </button>
 
         <button class="mission-tab" id="tab-mission2" onclick="triggerTeammateMission('FRAUD_SPOOF')">
-          <div class="tab-badge" style="color: var(--paytm-red);">🚨 2. Fake Pay App</div>
+          <div class="tab-badge" style="color: var(--paytm-red);">2. Fake Pay App</div>
           <div class="tab-title" id="mission2-amt-card">Counterfeit Screen (₹400)</div>
           <div class="tab-desc">Customer shows fake screenshot. Stops money, sounds alarm.</div>
         </button>
 
         <button class="mission-tab" id="tab-mission3" onclick="triggerTeammateMission('SALES_UPGRADE')">
-          <div class="tab-badge" style="color: #7c3aed;">📈 3. Device Upgrade</div>
+          <div class="tab-badge" style="color: #7c3aed;">3. Device Upgrade</div>
           <div class="tab-title">Soundbox 4G Pro</div>
           <div class="tab-desc">Detects old 2G signal drops. Offers 1-click ₹199 upgrade.</div>
         </button>
 
         <button class="mission-tab" id="tab-mission4" onclick="triggerTeammateMission('HITL_SUPERVISOR')">
-          <div class="tab-badge" style="color: var(--paytm-amber);">🛡️ 4. Big Payment Review</div>
+          <div class="tab-badge" style="color: var(--paytm-amber);">4. Manager Review</div>
           <div class="tab-title">Large ₹15,000 Order</div>
           <div class="tab-desc">Pauses safely for 1-click human manager review.</div>
         </button>
 
         <button class="mission-tab" id="tab-mission5" onclick="triggerTeammateMission('PROACTIVE_FLEET')">
-          <div class="tab-badge" style="color: var(--paytm-cyan);">📡 5. Bank Notice</div>
+          <div class="tab-badge" style="color: var(--paytm-cyan);">5. Bank Delay Notice</div>
           <div class="tab-title">SBI Switch Delay</div>
           <div class="tab-desc">SBI server slow. Speaks 1-line voice warning to shops.</div>
         </button>
@@ -113,7 +113,7 @@
       
       <div class="clean-card">
         <div class="card-header">
-          <h2 class="card-title">🏪 Shop Counter &amp; Soundbox</h2>
+          <h2 class="card-title">Shop Counter &amp; Soundbox</h2>
           <span class="card-pill" id="store-pill">Gupta Tea Stall (Delhi)</span>
         </div>
         <div class="card-content">
@@ -122,7 +122,7 @@
           <div class="soundbox-widget">
             <div class="soundbox-top">
               <div class="soundbox-brand">
-                <span>🔊</span> PAYTM SOUNDBOX 4G
+                PAYTM SOUNDBOX 4G
               </div>
               <div class="soundbox-meta">
                 <span id="sb-net-text">4G Signal</span>
@@ -139,7 +139,7 @@
 
             <div class="soundbox-actions">
               <button class="btn-weak-net" onclick="toggleSoundboxNetwork()">
-                <span>⚡ Simulate Weak Internet</span>
+                <span>Simulate Weak Internet</span>
                 <span id="sb-toggle-badge" style="color: var(--paytm-amber); font-weight: 700;">Signal Weak</span>
               </button>
 
@@ -148,7 +148,7 @@
 
           <!-- Soundbox Voice Player -->
           <div class="audio-player-strip" id="audio-pill">
-            <span style="font-size: 12px; font-weight: 800; color: #047857;">🔊 Soundbox Spoke:</span>
+            <span style="font-size: 12px; font-weight: 800; color: #047857;">Soundbox Spoke:</span>
             <audio id="audio-player" controls autoplay style="height: 30px; flex: 1;"></audio>
           </div>
 
@@ -166,7 +166,7 @@
             <div class="input-action-row">
               <input type="number" class="amount-input-box tabular-num" id="qr-bill-amount" value="400" min="1" max="50000" step="10" oninput="onBillAmountChange(this.value)">
               <button type="button" class="btn-qr-scan" onclick="openQrModal()">
-                📲 Customer QR Scan
+                Customer QR Scan
               </button>
             </div>
           </div>
@@ -177,7 +177,7 @@
             <div class="preset-grid">
               <button class="preset-card" onclick="runPreset('350_drop')">
                 <div class="preset-top">
-                  <span>🟢 Silent Soundbox</span>
+                  <span>Silent Soundbox</span>
                   <span class="tabular-num">₹400.00</span>
                 </div>
                 <div class="preset-desc">Payment cleared, speaker quiet. Fixes &amp; rings in 1 second.</div>
@@ -185,7 +185,7 @@
 
               <button class="preset-card" onclick="runPreset('spoof_scam')" style="border-color: var(--paytm-red-border); background: #fffcfc;">
                 <div class="preset-top" style="color: var(--paytm-red);">
-                  <span>🚨 Fake Screen App</span>
+                  <span>Fake Screen App</span>
                   <span id="preset-spoof-amt" class="tabular-num">₹400.00</span>
                 </div>
                 <div class="preset-desc">Customer shows fake app. Stops money &amp; warns shopkeeper.</div>
@@ -193,7 +193,7 @@
 
               <button class="preset-card" onclick="runPreset('420_reversal')">
                 <div class="preset-top">
-                  <span>🔄 Auto-Refund Delay</span>
+                  <span>Auto-Refund Delay</span>
                   <span class="tabular-num">₹420.00</span>
                 </div>
                 <div class="preset-desc">Bank taking time. Adds temporary balance + WhatsApp alert.</div>
@@ -201,7 +201,7 @@
 
               <button class="preset-card" onclick="runPreset('15000_hitl')">
                 <div class="preset-top">
-                  <span>🛡️ Large ₹15,000 Bill</span>
+                  <span>Large Order Review</span>
                   <span class="tabular-num">₹15,000.00</span>
                 </div>
                 <div class="preset-desc">Above ₹5,000 safety limit. Sends to manager for 1-click review.</div>
@@ -222,14 +222,14 @@
 
             <div class="mic-buttons-row">
               <button type="button" class="btn-record-large" id="btn-record-mic" onclick="toggleMicRecording()">
-                <span id="mic-icon">🎙️</span>
+                <span id="mic-icon">●</span>
                 <span id="mic-text">Speak via Live Mic</span>
               </button>
               <button type="button" class="btn-sample-light" onclick="useSampleSpeech()">
-                ⚡ Sample Voice
+                Sample Voice
               </button>
               <button type="button" class="btn-sample-light" onclick="useSampleFakeSpeech()" style="color: var(--paytm-red); border-color: var(--paytm-red-border);">
-                🚨 Fake Pay Sample
+                Fake Pay Sample
               </button>
             </div>
 
@@ -241,7 +241,7 @@
             <textarea id="query-input" class="voice-textarea" placeholder="Speak via mic or type in simple words, e.g.:&#10;Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></textarea>
 
             <button class="btn-solve-primary" onclick="submitCustomQuery()">
-              <span>🚀 Fix Payment Dispute Now</span>
+              <span>Resolve Payment Dispute</span>
             </button>
           </div>
 
@@ -255,7 +255,7 @@
       
       <!-- Live Status Narrative -->
       <div class="story-card-minimal">
-        <div class="story-card-title">💡 What SETU is Doing Right Now</div>
+        <div class="story-card-title">Live Resolution Status</div>
         <div class="story-card-body" id="story-text">
           SETU is ready. Waiting for shopkeeper query. Will check bank, check Soundbox, verify fraud safety, and fix the issue in under 1 second.
         </div>
@@ -264,7 +264,7 @@
       <!-- Solution Steps Card -->
       <div class="clean-card">
         <div class="card-header">
-          <h2 class="card-title">⚙️ How SETU Resolves It (Step-by-Step)</h2>
+          <h2 class="card-title">Resolution Pipeline (Step-by-Step)</h2>
           <span class="card-pill" id="engine-status">All Systems Healthy</span>
         </div>
         <div class="card-content">
@@ -342,7 +342,7 @@
           <!-- Manager 1-Click Review Desk -->
           <div class="supervisor-desk-container" id="hitl-container">
             <div style="background: var(--bg-subtle); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 14px; text-align: center; color: var(--text-soft); font-size: 12px;">
-              🛡️ <strong>Manager Review Desk:</strong> All clear. No payments currently need human sign-off.
+              <strong>Manager Review Desk:</strong> All clear. No payments currently need human sign-off.
             </div>
           </div>
 
@@ -369,7 +369,7 @@
                 <div class="wa-ts">09:15 AM ✓✓</div>
               </div>
               <div class="wa-bubble wa-bot">
-                <div>✅ <strong>Payment Solved:</strong> ₹400.00 credit ho gaya hai aur Soundbox chime re-push kar di gayi hai.</div>
+                <div><strong>Payment Solved:</strong> ₹400.00 credit ho gaya hai aur Soundbox chime re-push kar di gayi hai.</div>
                 <div class="wa-ts" id="wa-time">09:15 AM</div>
               </div>
             </div>
@@ -394,7 +394,7 @@
           </div>
 
           <!-- Activity Log -->
-          <div style="margin-bottom: 6px;"><span class="section-label" style="margin-bottom: 0;">📋 Recent Activity</span></div>
+          <div style="margin-bottom: 6px;"><span class="section-label" style="margin-bottom: 0;">Recent Activity</span></div>
           <div class="system-log-terminal" id="op-log">
             <div class="log-item">
               <span class="time">Now</span>
@@ -414,7 +414,7 @@
   <div id="qr-modal-overlay" class="modal-overlay" onclick="if(event.target===this) closeQrModal()">
     <div class="clean-modal">
       <div class="modal-head">
-        <h3 class="modal-title">📲 Customer UPI Payment Simulator</h3>
+        <h3 class="modal-title">Customer UPI Payment Simulator</h3>
         <button class="modal-close" onclick="closeQrModal()">✕</button>
       </div>
       <div class="modal-content">
@@ -436,11 +436,11 @@
 
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <button id="btn-cust-pay" style="background: var(--paytm-green); color: #fff; border: none; border-radius: 8px; padding: 11px 14px; font-weight: 800; font-size: 12px; cursor: pointer;" onclick="simulateCustomerPay()">
-            ⚡ Real UPI Payment (Simulate Silent Soundbox)
+            Real UPI Payment (Simulate Silent Soundbox)
           </button>
 
           <button id="btn-fake-pay" style="background: var(--paytm-red); color: #fff; border: none; border-radius: 8px; padding: 11px 14px; font-weight: 800; font-size: 12px; cursor: pointer;" onclick="simulateFakePay()">
-            🚨 Fake Payment App Screen (Scam Test)
+            Fake Payment App Screen (Scam Test)
           </button>
         </div>
 
