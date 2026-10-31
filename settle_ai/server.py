@@ -669,9 +669,14 @@ async def websocket_dispute_stream(websocket: WebSocket):
 
                 final_state = orchestrator.get_dispute(dispute_id)
                 soundbox_audio = None
-                if final_state and (final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required)):
-                    audio_file = os.path.join(audio_dir, f"chirp_{rrn}.wav")
-                    soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
+                if final_state:
+                    if final_state.fraud_alert_triggered:
+                        audio_file = os.path.join(audio_dir, "chirp_security_warning.wav")
+                        soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
+                        soundbox_audio["text"] = "Chetavani: Yeh bhugtan Paytm par prapt nahi hua hai"
+                    elif final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
+                        audio_file = os.path.join(audio_dir, f"chirp_{rrn}.wav")
+                        soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
 
                 await websocket.send_json({
                     "event": "RESOLUTION_FINALIZED",

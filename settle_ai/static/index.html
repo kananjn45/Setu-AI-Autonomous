@@ -1941,69 +1941,71 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
     }
 
     async function triggerTeammateMission(missionId) {
-      addLog('MISSION_CONTROL', `⚡ Executing Teammate Mission: ${missionId}...`);
-      try {
-        const res = await fetch('/api/teammate/mission', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            mission_id: missionId,
-            amount: missionId === 'HITL_SUPERVISOR' ? 15000.0 : (missionId === 'FRAUD_SPOOF' ? 500.0 : 400.0),
-            merchant_name: 'Gupta Tea Stall',
-            device_id: 'SB_DELHI_0841'
-          })
-        });
-        const data = await res.json();
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        addLog('MISSION_CONTROL', 'Connecting to real-time WebSocket... please wait 1 second.');
+        return;
+      }
 
-        if (missionId === 'FRAUD_SPOOF') {
-          document.getElementById('sb-amount').textContent = '⚠️ SPOOF ALERT';
-          document.getElementById('sb-status').textContent = '🚨 FAKE PAYMENT INTERCEPTED (NO BANK DEBIT)';
-          document.getElementById('sb-led').className = 'sb-led alert';
-          addLog('SETU_SHIELD', `🚨 BLOCKED FAKE PAYMENT: ${data.message}`);
-          if (data.audio && data.audio.audio_data_url) {
-            playAudio(data.audio.audio_data_url);
-          }
-          alert('🚨 SETU FRAUD SHIELD TRIGGERED!\n\n• Threat: Customer presented counterfeit Paytm Spoof screenshot\n• Audit: Zero funds debited on NPCI / Bank switch\n• Teammate Action: Soundbox security alarm sounded, merchant saved ₹500 loss\n• Outcome: 100% fraud deflection, zero ledger leakage.');
-        } else if (missionId === 'PROACTIVE_FLEET') {
-          document.getElementById('sb-status').textContent = '📡 FLEET ADVISORY: SBI UPI Switch Latency 4,250ms';
-          addLog('SETU_FLEET', `📡 PROACTIVE FLEET ADVISORY: ${data.message}`);
-          if (data.audio && data.audio.audio_data_url) {
-            playAudio(data.audio.audio_data_url);
-          }
-          alert('📡 SETU PROACTIVE FLEET GUARDIAN!\n\n• Condition: SBI UPI clearing switch latency spiked to 4,250ms\n• Teammate Action: Broadcasted 1-sentence Hindi voice advisory to 10,482 Soundboxes\n• Outcome: Prevented merchant queue panic before transactions failed.');
-        } else if (missionId === 'SALES_UPGRADE') {
-          addLog('SETU_SALES', `📈 HARDWARE WEAR DETECTED: Diagnosed obsolete 2G hardware and created Soundbox 4G Pro upgrade lead!`);
-          alert('📈 SETU SALES ENGINE ACTIVE!\n\n• Merchant: Gupta Tea Stall (Monthly GMV: ₹85,000)\n• Diagnosis: Obsolete Soundbox 2G experiencing repeated cellular drops\n• Pitch Generated: "Gupta ji, aapke Soundbox 2G me network drops ho rahe hain. Sirf ₹199 me naya Soundbox 4G Pro upgrade karein aur 1-second chime paayein."\n• Measurable Sales Outcome: 1-Click Hardware Upgrade Lead Logged in Paytm CRM.');
-        } else if (missionId === 'HITL_SUPERVISOR') {
-          document.getElementById('sb-amount').textContent = '₹15,000.00';
-          document.getElementById('sb-status').textContent = '⚠️ Halted: Awaiting Supervisor Approval';
-          document.getElementById('sb-led').className = 'sb-led alert';
-          addLog('SETU_HITL', `🛡️ High-Value Order of ₹15,000 halted. Supervisor Incident Dossier compiled!`);
-          if (data.agent_state) {
-            renderSupervisorCard(data.agent_state);
-          }
-          refreshBalances();
-          alert('🛡️ SAFETY CIRCUIT BREAKER TRIPPED!\n\n• Transaction: ₹15,000.00 (Exceeds ₹5,000 autonomous threshold)\n• Teammate Action: Paused DAG execution, compiled structured incident dossier\n• Co-Piloting: Ready on Supervisor Desk for 1-Click sign-off.');
-        } else if (missionId === 'SALES_UPGRADE') {
-          addLog('SETU_SALES', `📈 HARDWARE WEAR DETECTED: Diagnosed obsolete 2G hardware and created Soundbox 4G Pro upgrade lead!`);
-          document.getElementById('sb-status').textContent = '📈 Upgrade Recommended: Soundbox 4G Pro';
-          alert('📈 SETU SALES ENGINE ACTIVE!\n\n• Merchant: Gupta Tea Stall (Monthly GMV: ₹85,000)\n• Diagnosis: Obsolete Soundbox 2G experiencing repeated cellular drops\n• Pitch Generated: "Gupta ji, aapke Soundbox 2G me network drops ho rahe hain. Sirf ₹199 me naya Soundbox 4G Pro upgrade karein aur 1-second chime paayein."\n• Measurable Sales Outcome: 1-Click Hardware Upgrade Lead Logged in Paytm CRM.');
-        } else {
-          // Standard dispute
-          if (data.soundbox_audio && data.soundbox_audio.audio_data_url) {
-            playAudio(data.soundbox_audio.audio_data_url);
-          }
-          document.getElementById('sb-amount').textContent = '₹400.00';
-          document.getElementById('sb-status').textContent = '✅ Payment Verified & Reconciled (<1s)';
-          document.getElementById('sb-led').className = 'sb-led ready';
-          document.getElementById('wa-text').textContent = 
-            `Paytm Alert: ₹400.00 has been credited to your settlement balance. Soundbox audio confirmed.`;
-          document.getElementById('wa-time').textContent = new Date().toLocaleTimeString();
-          refreshBalances();
-          addLog('SETU_SETTLE', `✅ Autonomously settled ₹400 in <1s! Soundbox chime broadcasted.`);
+      if (missionId === 'SERVICE_DISPUTE') {
+        addLog('MISSION_CONTROL', '🟢 Triggering Mission 1: Zero-Touch Service Dispute (₹400 Drop)...');
+        ws.send(JSON.stringify({
+          action: 'RUN_DISPUTE',
+          query_text: 'Bhaiya humari dukan pe 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192',
+          amount_override: 400.0,
+          rrn_override: '410294820192'
+        }));
+      } else if (missionId === 'FRAUD_SPOOF') {
+        addLog('MISSION_CONTROL', '🚨 Triggering Mission 2: Paytm Spoof Fake-Payment Defense...');
+        ws.send(JSON.stringify({
+          action: 'RUN_DISPUTE',
+          query_text: 'Customer bol raha hai ₹500 pay kar diya screenshot dikhaya RRN FAKE_990011',
+          amount_override: 500.0,
+          rrn_override: 'FAKE_990011'
+        }));
+      } else if (missionId === 'HITL_SUPERVISOR') {
+        addLog('MISSION_CONTROL', '🛡️ Triggering Mission 4: High-Value Human Co-Piloting Order (₹15,000)...');
+        ws.send(JSON.stringify({
+          action: 'RUN_DISPUTE',
+          query_text: 'Sharma Kirana Store ka 15,000 rupaye ruka hua hai RRN 883920194821',
+          amount_override: 15000.0,
+          rrn_override: '883920194821'
+        }));
+      } else if (missionId === 'SALES_UPGRADE') {
+        addLog('MISSION_CONTROL', '📈 Triggering Mission 3: Hardware Diagnostics & Soundbox 4G Pro Upgrade Pitch...');
+        resetPipeline();
+        document.getElementById('node-ingest').classList.add('completed');
+        document.getElementById('node-diagnose_iot').classList.add('completed');
+        document.getElementById('sb-status').textContent = '📈 Hardware Diagnostic: 2G Obsolescence Detected';
+        document.getElementById('sb-amount').textContent = 'UPGRADE 4G PRO';
+        document.getElementById('story-text').innerHTML = `📈 <strong>Hardware Diagnostic Complete:</strong> Device model is obsolete 2G with signal RSSI -98dBm. Generated 1-Click Upgrade Pitch to Paytm Soundbox 4G Pro at ₹199!`;
+        addLog('SALES_ENGINE', 'Merchant Gupta Tea Stall diagnosed with 2G hardware wear-and-tear. Dispatched Soundbox 4G Pro upgrade pitch at ₹199. Lead created in Paytm CRM.');
+
+        // Post upgrade offer directly into WhatsApp chat
+        const waArea = document.getElementById('wa-messages-area');
+        if (waArea) {
+          const div = document.createElement('div');
+          div.className = 'wa-bubble wa-bot';
+          div.innerHTML = `
+            <div style="color:#7c3aed; font-weight:800; font-size:12px;">📈 PAYTM BUSINESS HARDWARE UPGRADE</div>
+            <div style="font-size:11px; margin-top:4px;">Namaste Gupta ji! Aapke Soundbox 2G me cellular signal kamzor hai jisse packets drop ho rahe hain.</div>
+            <div style="background:#f5f3ff; border:1px solid #c4b5fd; border-radius:8px; padding:8px; margin-top:6px; font-size:11px;">
+              <strong>Paytm Soundbox 4G Pro (Dual SIM + High Decibel Speaker)</strong><br>
+              <span style="color:#6b21a8; font-weight:700;">Special Upgrade Price: ₹199</span> (Save ₹300)
+            </div>
+            <div class="wa-ts">${new Date().toLocaleTimeString()}</div>
+          `;
+          waArea.appendChild(div);
+          waArea.scrollTop = waArea.scrollHeight;
         }
-      } catch (err) {
-        addLog('ERROR', `Mission execution failed: ${err.message}`);
+      } else if (missionId === 'PROACTIVE_FLEET') {
+        addLog('MISSION_CONTROL', '📡 Triggering Mission 5: Proactive Fleet Switch Latency Guardian...');
+        resetPipeline();
+        document.getElementById('node-diagnose_bank').classList.add('completed');
+        document.getElementById('sb-status').textContent = '📡 FLEET ADVISORY: SBI LATENCY 4,250ms';
+        document.getElementById('sb-led').className = 'sb-led alert';
+        document.getElementById('story-text').innerHTML = `📡 <strong>Proactive Fleet Guardian Active:</strong> Detected State Bank of India UPI switch slowdown (4,250ms). Broadcasted 1-sentence Hindi advisory to 10,482 Soundboxes!`;
+        addLog('FLEET_GUARDIAN', 'SBI UPI clearing switch latency spiked to 4,250ms. Broadcasted 1-sentence Hindi advisory to 10,482 Soundboxes: "Dhyan dein: SBI UPI switch dheema hai..."');
+        playAudio('/static/audio/chirp_switch_advisory.wav');
       }
     }
 
@@ -2070,7 +2072,19 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
       else if (data.event === 'RESOLUTION_FINALIZED') {
         const state = data.final_state;
 
-        if (state.hitl_required && !state.hitl_approved) {
+        if (state.fraud_alert_triggered) {
+          // Paytm Spoof Intercepted
+          document.getElementById('sb-amount').textContent = '⚠️ SPOOF ALERT';
+          document.getElementById('sb-status').textContent = '🚨 FAKE PAYMENT (NO BANK DEBIT)';
+          document.getElementById('sb-led').className = 'sb-led alert';
+          document.getElementById('story-text').innerHTML = `🚨 <strong>Counterfeit Payment Intercepted!</strong> Bank switch confirmed ZERO debit for RRN ${state.rrn}. Security warning chime sounded. ₹${state.amount.toFixed(2)} fraud loss prevented!`;
+          addLog('SETU_SHIELD', `🚨 BLOCKED FAKE PAYMENT: Bank switch shows NO debit for RRN ${state.rrn}. Security alarm sounded.`);
+
+          if (data.soundbox_audio && data.soundbox_audio.audio_data_url) {
+            playAudio(data.soundbox_audio.audio_data_url);
+          }
+          refreshBalances();
+        } else if (state.hitl_required && !state.hitl_approved) {
           // Render Supervisor Card
           renderSupervisorCard(state);
           document.getElementById('sb-led').className = 'sb-led alert';
