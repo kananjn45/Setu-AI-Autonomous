@@ -68,6 +68,11 @@ class HitlApprovalRequest(BaseModel):
     supervisor_notes: str = "Approved by Operations Lead after reviewing banking switch logs."
 
 
+class HitlRejectRequest(BaseModel):
+    dispute_id: str
+    supervisor_notes: str = "Dispute rejected by Operations Supervisor after clearing logs audit."
+
+
 class BankStatusOverrideRequest(BaseModel):
     rrn: str
     status: str  # SUCCESS, REVERSAL_INITIATED, FAILED
@@ -350,6 +355,23 @@ async def approve_hitl_api(req: HitlApprovalRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@app.post("/api/dispute/reject-hitl")
+def reject_hitl_api(req: HitlRejectRequest):
+    """Rejects an escalated dispute with supervisor explanation."""
+    try:
+        rejected_state = orchestrator.reject_hitl(
+            dispute_id=req.dispute_id,
+            supervisor_notes=req.supervisor_notes,
+        )
+        return {
+            "status": "REJECTED_BY_SUPERVISOR",
+            "agent_state": rejected_state.model_dump(),
+            "message": rejected_state.final_resolution_message,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 @app.post("/api/whatsapp/message")
 def handle_whatsapp_message(req: WhatsAppMessageRequest):
     """
@@ -363,23 +385,26 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
         rrn = req.rrn_hint or entities.get("rrn") or f"4102{int(time.time()*1000) % 100000000:08d}"
         amount = req.amount_hint if req.amount_hint is not None else entities.get("amount", 400.0)
 
-        # Correlate if recent missed
-        if not entities.get("has_explicit_rrn") and req.device_id in soundbox_tool._devices:
-            recent_missed = soundbox_tool._devices[req.device_id].get("last_missed_rrn")
-            if recent_missed:
-                rrn = recent_missed
+        # Correlate if recent missed (only for legitimate non-fraud queries)
+        is_fraud = rrn.startswith("FAKE") or rrn.startswith("SPOOF") or entities.get("intent") == "PAYTM_SPOOF_FRAUD"
 
-        if rrn in bank_tool._database:
-            bank_tool._database[rrn]["amount"] = amount
-        else:
-            bank_tool.register_transaction(
-                rrn=rrn,
-                amount=amount,
-                status=BankStatus.SUCCESS,
-                customer_vpa="rahul.sharma@okhdfcbank",
-                payer_bank="HDFC Bank",
-                raw_message="WhatsApp merchant grievance cleared on switch",
-            )
+        if not is_fraud:
+            if not entities.get("has_explicit_rrn") and req.device_id in soundbox_tool._devices:
+                recent_missed = soundbox_tool._devices[req.device_id].get("last_missed_rrn")
+                if recent_missed:
+                    rrn = recent_missed
+
+            if rrn in bank_tool._database:
+                bank_tool._database[rrn]["amount"] = amount
+            else:
+                bank_tool.register_transaction(
+                    rrn=rrn,
+                    amount=amount,
+                    status=BankStatus.SUCCESS,
+                    customer_vpa="rahul.sharma@okhdfcbank",
+                    payer_bank="HDFC Bank",
+                    raw_message="WhatsApp merchant grievance cleared on switch",
+                )
 
         dispute_id = f"DSP_WA_{int(time.time())}_{rrn[-4:]}"
         grievance = DisputeGrievance(
@@ -396,9 +421,13 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
 
         final_state = orchestrator.resolve_dispute(grievance)
 
-        # Generate Soundbox chime if settled
+        # Generate Soundbox chime if settled or warning if fraud
         soundbox_audio = None
-        if final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
+        if final_state.fraud_alert_triggered:
+            audio_file = os.path.join(audio_dir, "chirp_security_warning.wav")
+            soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
+            soundbox_audio["text"] = "Chetavani: Yeh bhugtan Paytm par prapt nahi hua hai"
+        elif final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
             audio_file = os.path.join(audio_dir, f"chirp_{rrn}.wav")
             soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
 
@@ -406,7 +435,18 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
         short_hash = audit_hash[:12] if audit_hash else "SHA256-OK"
         new_bal_str = f"₹{final_state.ledger_record.balance_after:,.2f}" if final_state.ledger_record else "Updated"
 
-        if final_state.is_completed and not final_state.hitl_required:
+        if final_state.fraud_alert_triggered:
+            reply_text = (
+                f"🚨 *Paytm Security Alert — Fake Payment Intercepted*\n\n"
+                f"Attention {req.merchant_name},\n"
+                f"Transaction of *₹{amount:,.2f}* (RRN: `{rrn}`) was audited against the NPCI bank switch.\n\n"
+                f"• *Switch Result:* NO FUNDS DEBITED / NOT FOUND (U30)\n"
+                f"• *Fraud Shield:* Counterfeit screenshot / Paytm Spoof detected\n"
+                f"• *Ledger Action:* Credit HALTED (₹0.00 released)\n"
+                f"• *Soundbox Alert:* Security warning chime broadcasted\n\n"
+                f"⚠️ *Action Required:* Do NOT deliver goods against this screenshot."
+            )
+        elif final_state.is_completed and not final_state.hitl_required:
             reply_text = (
                 f"✅ *Paytm for Business — Settlement Confirmation*\n\n"
                 f"Hello {req.merchant_name},\n"
@@ -434,7 +474,8 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
             "dispute_id": dispute_id,
             "rrn": rrn,
             "amount": amount,
-            "is_settled": final_state.is_completed,
+            "is_settled": final_state.is_completed and final_state.ledger_credited,
+            "fraud_detected": final_state.fraud_alert_triggered,
             "hitl_tripped": final_state.hitl_required and not final_state.hitl_approved,
             "agent_state": final_state.model_dump(),
             "soundbox_audio": soundbox_audio,
@@ -443,7 +484,7 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
                 "merchant_name": req.merchant_name,
                 "amount": amount,
                 "rrn": rrn,
-                "status": "PROVISIONALLY_CREDITED" if final_state.is_completed else "SUPERVISOR_HOLD",
+                "status": "BLOCKED_FRAUD_INTERCEPTED" if final_state.fraud_alert_triggered else ("PROVISIONALLY_CREDITED" if final_state.ledger_credited else "SUPERVISOR_HOLD"),
                 "sha256_audit_seal": audit_hash,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
@@ -643,6 +684,8 @@ async def websocket_dispute_stream(websocket: WebSocket):
                 await websocket.send_json({"event": "NLU_START", "text": query_text})
                 entities = nlu_extractor.extract_grievance_entities(query_text)
                 rrn = rrn_override or entities["rrn"]
+                if entities.get("intent") == "PAYTM_SPOOF_FRAUD" and not rrn.startswith("FAKE"):
+                    rrn = f"FAKE_{rrn}"
                 amount = float(amount_override) if amount_override is not None else float(entities["amount"])
 
                 await websocket.send_json({
@@ -696,6 +739,16 @@ async def websocket_dispute_stream(websocket: WebSocket):
                     "dispute_id": dispute_id,
                     "final_state": resumed.model_dump(),
                     "soundbox_audio": chirp,
+                })
+
+            elif action == "REJECT_HITL":
+                dispute_id = data.get("dispute_id")
+                notes = data.get("supervisor_notes", "Dispute rejected by Operations Supervisor after switch audit.")
+                rejected = orchestrator.reject_hitl(dispute_id=dispute_id, supervisor_notes=notes)
+                await websocket.send_json({
+                    "event": "HITL_REJECTED_FINAL",
+                    "dispute_id": dispute_id,
+                    "final_state": rejected.model_dump(),
                 })
 
     except WebSocketDisconnect:

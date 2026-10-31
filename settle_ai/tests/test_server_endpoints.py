@@ -85,3 +85,49 @@ def test_whatsapp_message_high_value_circuit_breaker():
     assert data["hitl_tripped"] is True
     assert data["is_settled"] is False
     assert "exceeds the ₹5,000 autonomous threshold" in data["reply_text"]
+
+
+def test_hitl_reject_endpoint():
+    """Tests synchronous rejection of an escalated dispute by operations supervisor."""
+    from settle_ai.server import reject_hitl_api, HitlRejectRequest, handle_whatsapp_message, WhatsAppMessageRequest
+
+    # Create escalated dispute first
+    req = WhatsAppMessageRequest(
+        message_text="Sharma Kirana 15000 hold RRN 883920194821",
+        merchant_name="Sharma Kirana Store",
+        merchant_id="MERCH_SHARMA_KIRANA",
+        device_id="SB_MUMBAI_0112",
+        amount_hint=15000.0,
+        rrn_hint="883920194821",
+    )
+    res = handle_whatsapp_message(req)
+    disp_id = res["dispute_id"]
+
+    reject_req = HitlRejectRequest(
+        dispute_id=disp_id,
+        supervisor_notes="Claim audited: customer cancelled order at counter. Dispute rejected.",
+    )
+    rej_res = reject_hitl_api(reject_req)
+
+    assert rej_res["status"] == "REJECTED_BY_SUPERVISOR"
+    assert rej_res["agent_state"]["hitl_approved"] is False
+    assert rej_res["agent_state"]["ledger_credited"] is False
+    assert "DISPUTE REJECTED" in rej_res["message"]
+
+
+def test_whatsapp_fake_payment_intercepted():
+    """Verifies that fake payment queries via WhatsApp trigger fraud shield without ledger credit."""
+    from settle_ai.server import handle_whatsapp_message, WhatsAppMessageRequest
+
+    req = WhatsAppMessageRequest(
+        message_text="Customer ne fake paytm screenshot dikhaya 400 rupaye ka RRN FAKE_991122",
+        amount_hint=400.0,
+        rrn_hint="FAKE_991122",
+    )
+    res = handle_whatsapp_message(req)
+
+    assert res["fraud_detected"] is True
+    assert res["is_settled"] is False
+    assert res["agent_state"]["ledger_credited"] is False
+    assert "Fake Payment Intercepted" in res["reply_text"]
+    assert res["digital_receipt"]["status"] == "BLOCKED_FRAUD_INTERCEPTED"

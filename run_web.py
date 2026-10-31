@@ -58,4 +58,4 @@ if __name__ == "__main__":
     except Exception:
         pass
 
-    uvicorn.run("settle_ai.server:app", host=host, port=port, reload=False)
+    uvicorn.run("settle_ai.server:app", host=host, port=port, reload=True)

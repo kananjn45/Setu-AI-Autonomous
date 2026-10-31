@@ -89,29 +89,16 @@ class BankSwitchTool:
             )
 
         # Fraud & Spoof Detection: Intercept unverified/fake RRNs on switch
-        if rrn.startswith("FAKE") or rrn.startswith("SPOOF") or rrn.startswith("UNVERIFIED"):
-            amt = amount_hint if amount_hint is not None else 0.0
-            return BankSwitchResponse(
-                rrn=rrn,
-                amount=amt,
-                status=BankStatus.NOT_FOUND,
-                customer_vpa="unknown.spoof@vpa",
-                payer_bank="Unknown Switch",
-                clearing_timestamp=datetime.now(timezone.utc).isoformat(),
-                gateway_response_code="U30",
-                raw_message="DECLINED: RRN not found on NPCI clearing switch. Zero funds debited.",
-            )
-
-        # Dynamic fallback for arbitrary RRNs
-        amt = amount_hint if amount_hint is not None else 250.0
+        amt = amount_hint if amount_hint is not None else 0.0
         return BankSwitchResponse(
             rrn=rrn,
             amount=amt,
-            status=BankStatus.SUCCESS,
-            customer_vpa="customer.generic@upi",
-            payer_bank="State Bank of India",
+            status=BankStatus.NOT_FOUND,
+            customer_vpa="unknown.spoof@vpa" if (rrn.startswith("FAKE") or rrn.startswith("SPOOF")) else "unregistered.payer@upi",
+            payer_bank="NPCI Clearing Gateway",
             clearing_timestamp=datetime.now(timezone.utc).isoformat(),
-            raw_message="Cleared dynamically via sandbox switch simulator",
+            gateway_response_code="U30",
+            raw_message="DECLINED: Transaction not found on NPCI clearing switch. Zero funds debited.",
         )
 
     def register_transaction(

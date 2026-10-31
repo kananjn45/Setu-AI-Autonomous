@@ -6,6 +6,7 @@ and human-in-the-loop supervisor intervention.
 
 import logging
 import warnings
+from datetime import datetime, timezone
 from typing import Dict, Any, Generator, Optional, List
 from langgraph.checkpoint.memory import MemorySaver
 
@@ -15,6 +16,7 @@ from settle_ai.agent.schemas import (
     DisputeGrievance,
     AgentState,
     ResolutionAction,
+    StepLog,
 )
 from settle_ai.agent.state_graph import build_settle_agent_graph
 
@@ -151,6 +153,43 @@ class SettleOrchestrator:
         final_state = AgentState(**result) if isinstance(result, dict) else result
         self.active_disputes[dispute_id] = final_state
         return final_state
+
+    def reject_hitl(self, dispute_id: str, supervisor_notes: str = "Rejected by Operations Supervisor") -> AgentState:
+        """
+        Rejects an escalated dispute with supervisor rejection sign-off.
+        Halts ledger credit release, logs the supervisor decision, and terminates the dispute as REJECTED.
+        """
+        logger.info(f"[Orchestrator] Rejecting HITL dispute {dispute_id}: {supervisor_notes}")
+        current_state = self.active_disputes.get(dispute_id)
+        if not current_state:
+            config = {"configurable": {"thread_id": dispute_id}}
+            snapshot = self.graph.get_state(config)
+            if snapshot and snapshot.values:
+                current_state = AgentState(**snapshot.values)
+            else:
+                raise ValueError(f"No checkpoint found for dispute_id: {dispute_id}")
+
+        current_state.hitl_approved = False
+        current_state.hitl_supervisor_notes = supervisor_notes
+        current_state.hitl_reviewed_at = datetime.now(timezone.utc).isoformat()
+        current_state.resolution_action = ResolutionAction.REJECT_DISPUTE
+        current_state.ledger_credited = False
+        current_state.soundbox_pushed = False
+        current_state.is_completed = True
+        current_state.final_resolution_message = f"DISPUTE REJECTED: {supervisor_notes}. Zero funds released to merchant ledger."
+
+        step = StepLog(
+            step_id=len(current_state.execution_steps) + 1,
+            node_name="node_reject_hitl",
+            timestamp=datetime.now(timezone.utc).isoformat(),
+            status="COMPLETED",
+            latency_ms=1.2,
+            summary=f"Supervisor REJECTED claim: '{supervisor_notes}'. Ledger release cancelled.",
+            details={"action": "REJECT_DISPUTE", "notes": supervisor_notes, "supervisor": "Ops_Lead_L2"},
+        )
+        current_state.execution_steps.append(step)
+        self.active_disputes[dispute_id] = current_state
+        return current_state
 
     def get_dispute(self, dispute_id: str) -> Optional[AgentState]:
         """Returns the current state of a dispute."""
