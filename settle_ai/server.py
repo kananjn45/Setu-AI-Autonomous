@@ -31,6 +31,12 @@ from settle_ai.voice.stt_service import stt_recognizer
 from settle_ai.voice.nlu_extractor import nlu_extractor
 from settle_ai.voice.tts_service import tts_synthesizer
 from settle_ai.voice.voice_gateway import voice_gateway
+from settle_ai.agent.counter_adjudicator import CounterAdjudicator
+from settle_ai.agent.screenshot_verifier import ScreenshotVerifier
+from settle_ai.agent.offline_sync import OfflineCatchupEngine
+from settle_ai.agent.fleet_incident_detector import FleetIncidentDetector
+from settle_ai.agent.rbi_compliance_clock import RBIComplianceClock
+from settle_ai.agent.red_team_guard import RedTeamAdversarialGuard
 
 logger = logging.getLogger("settle_ai.server")
 
@@ -654,6 +660,200 @@ async def toggle_soundbox_status(device_id: str = "SB_DELHI_0841", status: str =
         soundbox_tool._devices[device_id]["status"] = SoundboxStatus(status)
         return {"device_id": device_id, "new_status": status}
     return {"error": "Device not found"}
+
+
+
+# ==========================================
+# Phase 2 Differentiator API Endpoints
+# ==========================================
+
+class CounterQueryRequest(BaseModel):
+    merchant_id: str = "MERCH_GUPTA_TEA"
+    amount: float
+    device_id: str = "SB_DELHI_0841"
+    window_minutes: int = 10
+    utr_hint: Optional[str] = None
+    merchant_name: str = "Gupta ji"
+
+
+@app.post("/api/counter/verify")
+async def verify_counter_dispute(req: CounterQueryRequest):
+    """Counter-side 45-second instant adjudication ('Setu, 500 aaya kya?')."""
+    result = CounterAdjudicator.adjudicate_counter_query(
+        merchant_id=req.merchant_id,
+        amount=req.amount,
+        device_id=req.device_id,
+        window_minutes=req.window_minutes,
+        utr_hint=req.utr_hint,
+        merchant_name=req.merchant_name,
+    )
+    return {
+        "verdict": result.verdict,
+        "amount": result.amount,
+        "canonical_state": result.canonical_state.value,
+        "can_replay_chime": result.can_replay_chime,
+        "chime_played": result.chime_played,
+        "rrn": result.rrn,
+        "utr_last_4": result.utr_last_4,
+        "spoken_response_hindi": result.spoken_response_hindi,
+        "spoken_response_english": result.spoken_response_english,
+        "matches_count": result.matching_transactions_count,
+        "matched_rrns": result.matched_rrns,
+        "audit_hash_sha256": result.audit_hash_sha256,
+    }
+
+
+class ScreenshotVerifyRequest(BaseModel):
+    merchant_id: str = "MERCH_GUPTA_TEA"
+    screen_text: str
+    expected_amount: Optional[float] = None
+    expected_payee_vpa: Optional[str] = "guptatea@paytm"
+    expected_payee_name: str = "Gupta Tea Stall"
+    extracted_utr_override: Optional[str] = None
+    extracted_amount_override: Optional[float] = None
+
+
+@app.post("/api/screenshot/verify")
+async def verify_customer_screenshot(req: ScreenshotVerifyRequest):
+    """Extracts and cross-correlates customer 'payment successful' screen with ledger."""
+    result = ScreenshotVerifier.verify_screenshot(
+        merchant_id=req.merchant_id,
+        screen_text=req.screen_text,
+        expected_amount=req.expected_amount,
+        expected_payee_vpa=req.expected_payee_vpa,
+        expected_payee_name=req.expected_payee_name,
+        extracted_utr_override=req.extracted_utr_override,
+        extracted_amount_override=req.extracted_amount_override,
+    )
+    return {
+        "verdict": result.verdict,
+        "extracted_utr": result.extracted_utr,
+        "extracted_amount": result.extracted_amount,
+        "extracted_payee": result.extracted_payee,
+        "can_release_goods": result.can_release_goods,
+        "explanation_hindi": result.explanation_hindi,
+        "explanation_english": result.explanation_english,
+        "audit_hash_sha256": result.audit_hash_sha256,
+    }
+
+
+class SoundboxReconnectRequest(BaseModel):
+    device_id: str = "SB_DELHI_0841"
+    merchant_id: str = "MERCH_GUPTA_TEA"
+    offline_minutes: int = 45
+
+
+@app.post("/api/soundbox/reconnect")
+async def trigger_soundbox_reconnect(req: SoundboxReconnectRequest):
+    """Proactively catches up on unannounced credits when Soundbox reconnects after outage."""
+    summary = OfflineCatchupEngine.handle_device_reconnect(
+        device_id=req.device_id,
+        merchant_id=req.merchant_id,
+        offline_minutes=req.offline_minutes,
+    )
+    return {
+        "device_id": summary.device_id,
+        "is_reconnected": summary.is_reconnected,
+        "offline_payments_count": summary.offline_payments_count,
+        "offline_total_amount_inr": summary.offline_total_amount_inr,
+        "spoken_announcement_hindi": summary.spoken_announcement_hindi,
+        "spoken_announcement_english": summary.spoken_announcement_english,
+        "audio_dispatched": summary.audio_dispatched,
+        "audit_hash_sha256": summary.audit_hash_sha256,
+    }
+
+
+class FleetIncidentRequest(BaseModel):
+    bank_name: Optional[str] = "State Bank of India"
+    pincode: Optional[str] = None
+    simulated_latency_ms: int = 4200
+    simulated_failure_rate: float = 0.42
+
+
+@app.post("/api/fleet/incidents")
+async def evaluate_fleet_incidents(req: FleetIncidentRequest):
+    """Clusters systemic bank switch delays or cellular drops into a single incident ticket."""
+    if req.pincode:
+        incident = FleetIncidentDetector.evaluate_pincode_cluster_telemetry(pincode=req.pincode)
+    else:
+        incident = FleetIncidentDetector.evaluate_bank_switch_health(
+            bank_name=req.bank_name or "State Bank of India",
+            simulated_latency_ms=req.simulated_latency_ms,
+            simulated_failure_rate=req.simulated_failure_rate,
+        )
+
+    if not incident:
+        return {"has_incident": False, "message": "Fleet operating normally"}
+
+    return {
+        "has_incident": True,
+        "incident_id": incident.incident_id,
+        "incident_type": incident.incident_type,
+        "target_entity": incident.target_entity,
+        "affected_count": incident.affected_soundboxes_count,
+        "severity": incident.severity,
+        "root_cause_summary": incident.root_cause_summary,
+        "ops_ticket_id": incident.single_ops_ticket_id,
+        "proactive_advisory_hindi": incident.proactive_message_hindi,
+        "proactive_advisory_english": incident.proactive_message_english,
+        "broadcast_dispatched": incident.broadcast_dispatched,
+        "audit_hash_sha256": incident.audit_hash_sha256,
+    }
+
+
+class RBIComplianceClockRequest(BaseModel):
+    rrn: str
+    amount: float
+    transaction_time_iso: Optional[str] = None
+    current_time_iso: Optional[str] = None
+
+
+@app.post("/api/compliance/rbi-clock")
+async def evaluate_rbi_tat_compliance(req: RBIComplianceClockRequest):
+    """Tracks regulatory auto-reversal clock against RBI Harmonised TAT circular."""
+    status = RBIComplianceClock.evaluate_compliance(
+        rrn=req.rrn,
+        amount=req.amount,
+        transaction_time_iso=req.transaction_time_iso or datetime.now(timezone.utc).isoformat(),
+        current_time_iso=req.current_time_iso,
+    )
+    return {
+        "rrn": status.rrn,
+        "amount": status.amount,
+        "clock_state": status.clock_state,
+        "elapsed_hours": status.elapsed_hours,
+        "remaining_hours": status.remaining_hours,
+        "days_overdue": status.days_overdue,
+        "accrued_compensation_inr": status.accrued_compensation_inr,
+        "circular_citation": status.circular_citation,
+        "advisory_summary": status.advisory_summary,
+        "audit_hash_sha256": status.audit_hash_sha256,
+    }
+
+
+class RedTeamTestRequest(BaseModel):
+    merchant_id: str = "MERCH_GUPTA_TEA"
+    user_input_text: str
+    claimed_amount: float = 0.0
+
+
+@app.post("/api/voice/red-team")
+async def evaluate_red_team_adversarial_attempt(req: RedTeamTestRequest):
+    """Live adversarial test: proves SETU refuses social engineering overrides."""
+    result = RedTeamAdversarialGuard.evaluate_adversarial_input(
+        merchant_id=req.merchant_id,
+        user_input_text=req.user_input_text,
+        claimed_amount=req.claimed_amount,
+    )
+    return {
+        "is_adversarial_attempt": result.is_adversarial_attempt,
+        "attack_pattern": result.attack_pattern,
+        "chime_allowed": result.chime_allowed,
+        "refusal_message_hindi": result.refusal_message_hindi,
+        "refusal_message_english": result.refusal_message_english,
+        "audit_severity": result.audit_severity,
+        "audit_hash_sha256": result.audit_hash_sha256,
+    }
 
 
 @app.websocket("/ws/dispute-stream")
