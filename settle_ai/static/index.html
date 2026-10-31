@@ -3,608 +3,630 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Paytm for Business — SETU: Autonomous Operations Teammate</title>
-  <meta name="description" content="SETU: Autonomous AI Teammate for zero-touch dispute adjudication, Soundbox telemetry triage, fraud interception, and CBS ledger resolution.">
+  <title>Paytm for Business — SETU: Autonomous Store Teammate</title>
+  <meta name="description" content="SETU: Autonomous AI Teammate for Paytm merchants. Automatically fixes silent Soundboxes, blocks fake payments, and settles balances in seconds.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
+      /* Official Paytm Brand Palette */
       --paytm-navy: #002970;
-      --paytm-deep: #001738;
+      --paytm-navy-hover: #001f56;
       --paytm-cyan: #00baf2;
       --paytm-cyan-light: #e6f8fd;
+      --paytm-cyan-border: #b3ecfc;
+      --paytm-dark: #07152d;
+      
       --paytm-green: #00b386;
       --paytm-green-light: #e6f7f3;
-      --paytm-amber: #f59e0b;
-      --paytm-amber-light: #fffbeb;
+      --paytm-green-border: #99e1cf;
+      
       --paytm-red: #ea2934;
       --paytm-red-light: #fef2f2;
+      --paytm-red-border: #fca5a5;
+      
+      --paytm-amber: #f59e0b;
+      --paytm-amber-light: #fffbeb;
+      --paytm-amber-border: #fed7aa;
 
-      --bg-body: #f8fafc;
-      --bg-surface: #ffffff;
-      --bg-surface-subtle: #f1f5f9;
-      --border-subtle: #e2e8f0;
-      --border-strong: #cbd5e1;
+      /* Minimal Surface Colors */
+      --bg-page: #f6f8fb;
+      --bg-card: #ffffff;
+      --bg-subtle: #f1f4f9;
+      --border-color: #e2e8f0;
+      --border-hover: #cbd5e1;
 
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #64748b;
+      /* Text Hierarchy */
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-soft: #64748b;
 
-      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
-      --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.08);
+      /* Layout & Shadows */
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
+      --radius-full: 9999px;
+      --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.05);
+      --shadow-card: 0 4px 16px rgba(0, 41, 112, 0.06);
+      --shadow-hover: 0 8px 24px rgba(0, 41, 112, 0.1);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     body {
-      background-color: var(--bg-body);
-      color: var(--text-primary);
+      background-color: var(--bg-page);
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
     }
 
-    /* Top Executive Header */
-    .top-header {
-      background: var(--paytm-deep);
-      color: #ffffff;
-      padding: 12px 32px;
+    /* Minimalist Top Navigation Header */
+    .site-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 32px;
       position: sticky;
       top: 0;
       z-index: 100;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 16px rgba(0, 23, 56, 0.3);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
     }
 
-    .top-header-inner {
-      max-width: 1480px;
+    .header-inner {
+      max-width: 1440px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 20px;
       flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
       gap: 16px;
     }
 
-    .brand-section {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .paytm-logo {
-      font-size: 24px;
+    .paytm-brand {
+      font-size: 26px;
       font-weight: 800;
       letter-spacing: -0.8px;
       display: flex;
       align-items: center;
+      text-decoration: none;
     }
 
-    .paytm-logo .white { color: #ffffff; }
-    .paytm-logo .cyan { color: var(--paytm-cyan); }
+    .paytm-brand .blue { color: var(--paytm-navy); }
+    .paytm-brand .cyan { color: var(--paytm-cyan); }
 
-    .brand-divider {
+    .brand-pipe {
       width: 1px;
-      height: 22px;
-      background: rgba(255, 255, 255, 0.2);
+      height: 24px;
+      background: var(--border-color);
     }
 
-    .teammate-badge {
-      background: rgba(0, 186, 242, 0.12);
-      border: 1px solid rgba(0, 186, 242, 0.35);
-      color: var(--paytm-cyan);
-      font-weight: 700;
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .teammate-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 6px #10b981;
-    }
-
-    .teammate-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #ffffff;
+    .product-badge {
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .teammate-sub {
+    .product-tag {
+      background: var(--paytm-navy);
+      color: #ffffff;
       font-size: 11px;
-      color: #94a3b8;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
     }
 
-    /* Executive KPI Strip */
-    .kpi-strip {
+    .product-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .product-subtitle {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    /* Key Business Metrics Strip */
+    .metrics-bar {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 24px;
       flex-wrap: wrap;
     }
 
-    .kpi-cell {
+    .metric-item {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
     }
 
-    .kpi-val {
-      font-size: 13px;
-      font-weight: 700;
+    .metric-value {
+      font-size: 15px;
+      font-weight: 800;
       font-family: 'JetBrains Mono', monospace;
+      color: var(--text-main);
     }
 
-    .kpi-lbl {
-      font-size: 9px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #94a3b8;
-    }
-
-    .kpi-sep {
-      width: 1px;
-      height: 20px;
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .status-pill {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      padding: 4px 10px;
-      border-radius: 20px;
+    .metric-label {
       font-size: 11px;
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+
+    .metric-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border-color);
+    }
+
+    .live-status-chip {
+      background: var(--paytm-green-light);
+      border: 1px solid var(--paytm-green-border);
+      color: #047857;
+      font-size: 12px;
       font-weight: 700;
-      color: #34d399;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    /* Mission Control Bar */
-    .mission-bar {
+    /* Quick Scenarios Strip (Simplified Dictionary) */
+    .scenarios-nav {
       background: #ffffff;
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 12px 32px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 32px;
     }
 
-    .mission-bar-inner {
-      max-width: 1480px;
+    .scenarios-inner {
+      max-width: 1440px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .mission-bar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .mission-bar-title {
-      font-size: 11px;
+    .scenarios-title {
+      font-size: 12px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      color: var(--paytm-navy);
+      color: var(--text-soft);
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .mission-segmented-grid {
+    .scenarios-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
+      gap: 12px;
     }
 
     .mission-tab {
-      background: #f8fafc;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 9px 12px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
       text-align: left;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .mission-tab:hover {
       background: #ffffff;
+      border-color: var(--paytm-cyan);
+      box-shadow: var(--shadow-subtle);
       transform: translateY(-1px);
-      box-shadow: var(--shadow-sm);
     }
 
     .mission-tab.active {
       background: #ffffff;
       border-color: var(--paytm-cyan);
-      box-shadow: 0 0 0 1px var(--paytm-cyan), var(--shadow-sm);
+      box-shadow: 0 0 0 2px var(--paytm-cyan), var(--shadow-subtle);
     }
 
-    .mission-tag {
+    .tab-badge {
       font-size: 11px;
       font-weight: 800;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
-    .mission-name {
-      font-size: 11px;
+    .tab-title {
+      font-size: 13px;
       font-weight: 700;
-      color: var(--text-primary);
-      margin: 2px 0;
+      color: var(--text-main);
     }
 
-    .mission-desc {
-      font-size: 10px;
-      color: var(--text-muted);
-      line-height: 1.3;
+    .tab-desc {
+      font-size: 11px;
+      color: var(--text-soft);
+      line-height: 1.35;
     }
 
-    /* Main 2-Column Workspace (Clean & Chic) */
-    .workspace {
-      max-width: 1480px;
-      margin: 20px auto 40px auto;
+    /* Main Balanced 2-Column Workspace */
+    .workspace-container {
+      max-width: 1440px;
+      margin: 24px auto 48px auto;
       padding: 0 32px;
       width: 100%;
       flex: 1;
       display: grid;
-      grid-template-columns: 460px 1fr;
-      gap: 24px;
+      grid-template-columns: 480px 1fr;
+      gap: 28px;
       align-items: start;
     }
 
-    @media (max-width: 1150px) {
-      .workspace {
+    @media (max-width: 1180px) {
+      .workspace-container {
         grid-template-columns: 1fr;
       }
-      .mission-segmented-grid {
+      .scenarios-grid {
         grid-template-columns: repeat(2, 1fr);
       }
     }
 
-    /* Clean Card Container */
-    .chic-card {
-      background: var(--bg-surface);
+    /* Minimalist Cards */
+    .clean-card {
+      background: var(--bg-card);
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-card);
+      margin-bottom: 24px;
       overflow: hidden;
-      margin-bottom: 20px;
-      transition: box-shadow 0.2s;
+      transition: box-shadow 0.2s ease;
     }
 
-    .chic-card:hover {
-      box-shadow: var(--shadow-md);
+    .clean-card:hover {
+      box-shadow: var(--shadow-hover);
     }
 
-    .card-head {
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border-subtle);
-      background: #fafbfc;
+    .card-header {
+      padding: 16px 22px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .card-head h3 {
-      font-size: 13px;
+    .card-title {
+      font-size: 15px;
       font-weight: 700;
-      color: var(--text-primary);
+      color: var(--text-main);
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .card-head .pill {
-      font-size: 10px;
+    .card-pill {
+      font-size: 11px;
       font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 9999px;
-      background: #f1f5f9;
-      color: var(--text-secondary);
-      border: 1px solid #e2e8f0;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
     }
 
-    .card-body {
-      padding: 18px 20px;
+    .card-content {
+      padding: 22px;
     }
 
-    /* Soundbox Hardware Terminal (High-End OLED Style) */
-    .soundbox-oled-terminal {
-      background: #090f1d;
-      border: 1px solid #1e293b;
+    /* Clean Paytm Soundbox Physical Counter Display */
+    .soundbox-widget {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
       border-radius: var(--radius-md);
-      padding: 16px;
-      color: #ffffff;
-      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 23, 56, 0.1);
-      margin-bottom: 16px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
-    .oled-top {
+    .soundbox-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #1e293b;
-      padding-bottom: 10px;
-      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 14px;
     }
 
-    .oled-brand {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      color: #94a3b8;
-    }
-
-    .oled-brand span {
-      color: var(--paytm-cyan);
-    }
-
-    .oled-meta {
+    .soundbox-brand {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 10px;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--paytm-navy);
+      letter-spacing: -0.3px;
+    }
+
+    .soundbox-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
       font-family: 'JetBrains Mono', monospace;
-      color: #38bdf8;
+      color: var(--text-soft);
     }
 
-    .led-dot {
-      width: 8px;
-      height: 8px;
+    .led-circle {
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
-      transition: all 0.2s;
+      background: var(--paytm-green);
+      box-shadow: 0 0 8px var(--paytm-green);
     }
 
-    .led-dot.ready { background: #10b981; box-shadow: 0 0 8px #10b981; }
-    .led-dot.alert { background: #ef4444; box-shadow: 0 0 8px #ef4444; animation: blink 1s infinite alternate; }
+    .led-circle.alert {
+      background: var(--paytm-red);
+      box-shadow: 0 0 8px var(--paytm-red);
+      animation: pulse-red 1s infinite alternate;
+    }
 
-    @keyframes blink {
-      from { opacity: 0.4; }
+    @keyframes pulse-red {
+      from { opacity: 0.5; }
       to { opacity: 1; }
     }
 
-    .oled-screen {
-      background: #020617;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
-      padding: 14px 16px;
+    .soundbox-screen {
+      background: #0f172a;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
       text-align: center;
+      color: #ffffff;
+      margin-bottom: 14px;
     }
 
-    .oled-sub {
-      font-size: 10px;
+    .soundbox-screen-label {
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #64748b;
+      letter-spacing: 0.8px;
+      color: #94a3b8;
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
-    .oled-amt {
-      font-size: 26px;
+    .soundbox-amount {
+      font-size: 32px;
       font-weight: 800;
       font-family: 'JetBrains Mono', monospace;
       color: #38bdf8;
       letter-spacing: -0.5px;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
-    .oled-msg {
-      font-size: 11px;
-      color: #94a3b8;
+    .soundbox-status-msg {
+      font-size: 12px;
+      color: #cbd5e1;
       font-weight: 600;
     }
 
-    .oled-controls {
+    .soundbox-actions {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 12px;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .btn-oled-net {
-      background: #1e293b;
-      border: 1px solid #334155;
-      color: #e2e8f0;
-      border-radius: 6px;
-      padding: 6px 10px;
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.15s;
-    }
-
-    .btn-oled-net:hover {
-      background: #334155;
-    }
-
-    /* Audio Pill */
-    .audio-pill {
-      display: none;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
+    .btn-weak-net {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       padding: 8px 12px;
-      margin-bottom: 14px;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* Counter Bill Controller */
-    .bill-ctrl-box {
-      background: #f8fafc;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      margin-bottom: 16px;
-    }
-
-    .bill-ctrl-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .bill-ctrl-top span {
       font-size: 11px;
       font-weight: 700;
-      color: var(--text-secondary);
-    }
-
-    .bill-chips-row {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .bill-chip {
-      background: #ffffff;
-      border: 1px solid var(--border-subtle);
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-primary);
+      color: var(--text-muted);
       cursor: pointer;
-      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
     }
 
-    .bill-chip:hover, .bill-chip.active {
+    .btn-weak-net:hover {
       border-color: var(--paytm-cyan);
       background: var(--paytm-cyan-light);
       color: var(--paytm-navy);
     }
 
-    .bill-input-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .bill-input {
-      flex: 1;
-      background: #ffffff;
-      border: 1px solid var(--border-subtle);
-      border-radius: 6px;
-      padding: 7px 10px;
-      font-size: 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      color: var(--text-primary);
-      outline: none;
-    }
-
-    .bill-input:focus {
-      border-color: var(--paytm-cyan);
-    }
-
-    .btn-qr-trigger {
-      background: var(--paytm-navy);
-      color: #ffffff;
-      border: none;
-      border-radius: 6px;
-      padding: 7px 12px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.15s;
-    }
-
-    .btn-qr-trigger:hover {
-      background: #001f4d;
-    }
-
-    /* Common Quick Scenarios */
-    .scenarios-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .scenario-card {
-      background: #ffffff;
-      border: 1px solid var(--border-subtle);
+    /* Soundbox Voice Chime Audio Player Bar */
+    .audio-player-strip {
+      display: none;
+      background: var(--paytm-green-light);
+      border: 1px solid var(--paytm-green-border);
       border-radius: var(--radius-sm);
-      padding: 8px 10px;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.15s;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      align-items: center;
+      gap: 12px;
     }
 
-    .scenario-card:hover {
-      border-color: var(--paytm-cyan);
-      box-shadow: var(--shadow-sm);
-      transform: translateY(-1px);
+    /* Clean Bill Amount Controller */
+    .bill-control-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 20px;
     }
 
-    .scenario-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-primary);
+    .bill-control-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    .scenario-desc {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-top: 2px;
-      line-height: 1.3;
-    }
-
-    /* Voice / Text Grievance Section */
-    .lang-row {
-      display: flex;
-      gap: 6px;
       margin-bottom: 10px;
+    }
+
+    .bill-control-header span {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .chips-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .amount-chip {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .amount-chip:hover, .amount-chip.active {
+      border-color: var(--paytm-cyan);
+      background: var(--paytm-cyan-light);
+      color: var(--paytm-navy);
+    }
+
+    .input-action-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .amount-input-box {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .amount-input-box:focus {
+      border-color: var(--paytm-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 186, 242, 0.15);
+    }
+
+    .btn-qr-scan {
+      background: var(--paytm-navy);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background 0.15s ease;
+    }
+
+    .btn-qr-scan:hover {
+      background: var(--paytm-navy-hover);
+    }
+
+    /* Common Quick Situations (Simplified) */
+    .quick-scenarios-section {
+      margin-bottom: 20px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .preset-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .preset-card:hover {
+      border-color: var(--paytm-cyan);
+      box-shadow: var(--shadow-subtle);
+      transform: translateY(-1px);
+    }
+
+    .preset-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .preset-desc {
+      font-size: 11px;
+      color: var(--text-soft);
+      line-height: 1.35;
+    }
+
+    /* Voice & Language Grievance */
+    .language-pill-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
     .lang-btn {
       background: #ffffff;
-      border: 1px solid var(--border-subtle);
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 11px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      padding: 5px 12px;
+      font-size: 12px;
       font-weight: 600;
-      color: var(--text-secondary);
+      color: var(--text-muted);
       cursor: pointer;
+      transition: all 0.15s ease;
     }
 
     .lang-btn.active {
@@ -613,385 +635,388 @@
       color: #ffffff;
     }
 
-    .mic-actions-row {
+    .mic-buttons-row {
       display: flex;
-      gap: 6px;
-      margin-bottom: 10px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
-    .btn-mic {
+    .btn-record-large {
       flex: 1.3;
       background: #ffffff;
-      border: 1.5px solid #0284c7;
-      color: #0284c7;
-      border-radius: 6px;
-      padding: 8px 12px;
-      font-size: 11px;
+      border: 1.5px solid var(--paytm-cyan);
+      color: var(--paytm-navy);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: all 0.15s;
+      gap: 8px;
+      transition: all 0.15s ease;
     }
 
-    .btn-mic:hover {
-      background: #f0f9ff;
+    .btn-record-large:hover {
+      background: var(--paytm-cyan-light);
     }
 
-    .btn-sample {
+    .btn-sample-light {
       flex: 1;
       background: #ffffff;
-      border: 1px solid var(--border-subtle);
-      border-radius: 6px;
-      padding: 8px 10px;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      cursor: pointer;
-    }
-
-    .btn-sample:hover {
-      background: #f8fafc;
-    }
-
-    .query-textarea {
-      width: 100%;
-      height: 64px;
-      background: #ffffff;
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 8px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
       font-size: 12px;
-      font-family: inherit;
-      color: var(--text-primary);
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-sample-light:hover {
+      background: var(--bg-subtle);
+    }
+
+    .voice-textarea {
+      width: 100%;
+      height: 72px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--text-main);
       resize: none;
       outline: none;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      line-height: 1.45;
     }
 
-    .query-textarea:focus {
+    .voice-textarea:focus {
       border-color: var(--paytm-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 186, 242, 0.15);
     }
 
-    .btn-execute-primary {
+    .btn-solve-primary {
       width: 100%;
       background: var(--paytm-navy);
       color: #ffffff;
       border: none;
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 12px;
-      font-weight: 700;
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 800;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 2px 8px rgba(0, 41, 112, 0.2);
-      transition: background 0.15s;
+      transition: background 0.15s ease;
+      box-shadow: 0 2px 6px rgba(0, 41, 112, 0.15);
     }
 
-    .btn-execute-primary:hover {
-      background: #001f4d;
+    .btn-solve-primary:hover {
+      background: var(--paytm-navy-hover);
     }
 
-    /* RIGHT COLUMN: Autonomous Decision Engine & Pipeline */
-    .story-banner {
-      background: #f0f9ff;
-      border: 1px solid #bae6fd;
+    /* RIGHT COLUMN: Solution Steps & Live Management */
+    .story-card-minimal {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--paytm-cyan);
       border-radius: var(--radius-md);
-      padding: 12px 16px;
-      margin-bottom: 16px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
     }
 
-    .story-banner-head {
-      font-size: 10px;
+    .story-card-title {
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      color: #0369a1;
+      color: var(--paytm-navy);
       margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .story-banner-body {
-      font-size: 12px;
-      color: #0c4a6e;
+    .story-card-body {
+      font-size: 13px;
+      color: var(--text-main);
       line-height: 1.45;
     }
 
-    /* Deterministic Stepper */
-    .stepper-list {
+    /* Simplified 6-Step Solution Checklist */
+    .solution-steps-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 20px;
+      gap: 10px;
+      margin-bottom: 24px;
     }
 
     .pipeline-step {
       background: #ffffff;
-      border: 1.5px solid var(--border-subtle);
+      border: 1.5px solid var(--border-color);
       border-radius: var(--radius-sm);
-      padding: 10px 14px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
     }
 
     .pipeline-step.active {
       border-color: var(--paytm-cyan);
-      background: #f0f9ff;
+      background: var(--paytm-cyan-light);
       box-shadow: 0 0 0 1px var(--paytm-cyan);
     }
 
     .pipeline-step.completed {
-      border-color: #10b981;
-      background: #f0fdf4;
+      border-color: var(--paytm-green);
+      background: var(--paytm-green-light);
     }
 
     .pipeline-step.halted {
-      border-color: #f59e0b;
-      background: #fffbeb;
-      animation: alert-pulse 1s infinite alternate;
+      border-color: var(--paytm-amber);
+      background: var(--paytm-amber-light);
     }
 
     .pipeline-step.fraud-alert {
-      border-color: #ea2934 !important;
-      background: #fef2f2 !important;
-      box-shadow: 0 0 12px rgba(234, 41, 52, 0.3) !important;
-      animation: fraud-pulse 1s infinite alternate;
+      border-color: var(--paytm-red) !important;
+      background: var(--paytm-red-light) !important;
+      animation: alert-border-blink 1s infinite alternate;
     }
 
-    @keyframes fraud-pulse {
+    @keyframes alert-border-blink {
       from { box-shadow: 0 0 4px rgba(234, 41, 52, 0.2); }
-      to { box-shadow: 0 0 16px rgba(234, 41, 52, 0.5); }
+      to { box-shadow: 0 0 14px rgba(234, 41, 52, 0.4); }
     }
 
-    @keyframes alert-pulse {
-      from { box-shadow: 0 0 4px rgba(245, 158, 11, 0.2); }
-      to { box-shadow: 0 0 14px rgba(245, 158, 11, 0.45); }
-    }
-
-    .step-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .step-num {
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
-      background: #f1f5f9;
-      color: var(--text-secondary);
-      font-size: 11px;
+    .step-icon-num {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      font-size: 12px;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'JetBrains Mono', monospace;
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--border-color);
+      flex-shrink: 0;
     }
 
-    .pipeline-step.completed .step-num {
-      background: #10b981;
+    .pipeline-step.completed .step-icon-num {
+      background: var(--paytm-green);
       color: #ffffff;
-      border-color: #059669;
+      border-color: var(--paytm-green);
     }
 
-    .pipeline-step.fraud-alert .step-num {
-      background: #ea2934;
+    .pipeline-step.fraud-alert .step-icon-num {
+      background: var(--paytm-red);
       color: #ffffff;
-      border-color: #b91c1c;
+      border-color: var(--paytm-red);
     }
 
-    .step-name {
-      font-size: 12px;
+    .step-info-col {
+      margin-left: 14px;
+      flex: 1;
+    }
+
+    .step-main-title {
+      font-size: 13px;
       font-weight: 700;
-      color: var(--text-primary);
+      color: var(--text-main);
     }
 
-    .step-desc {
+    .step-detail-text {
+      font-size: 12px;
+      color: var(--text-soft);
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    .step-time-badge {
       font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.3;
-    }
-
-    .step-lat {
-      font-size: 10px;
       font-family: 'JetBrains Mono', monospace;
-      color: #94a3b8;
-      font-weight: 600;
+      color: var(--text-soft);
+      font-weight: 700;
+      background: var(--bg-subtle);
+      padding: 3px 8px;
+      border-radius: 4px;
     }
 
-    /* Supervisor Guardrail Desk (Chic Glass Elevated Card) */
+    /* Supervisor / Manager Review Card (Clean & Focused) */
     .supervisor-desk-container {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
-    .guardrail-card {
+    .manager-review-box {
       background: #ffffff;
-      border: 1px solid #fed7aa;
-      border-left: 4px solid #f59e0b;
+      border: 1.5px solid var(--paytm-amber-border);
+      border-left: 5px solid var(--paytm-amber);
       border-radius: var(--radius-md);
-      padding: 16px;
-      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.12);
+      padding: 18px;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.08);
     }
 
-    .guardrail-header {
+    .manager-review-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
-    .guardrail-title {
-      font-size: 13px;
+    .manager-review-title {
+      font-size: 14px;
       font-weight: 800;
-      color: #9a3412;
+      color: #92400e;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .guardrail-badge {
-      font-size: 10px;
-      font-weight: 700;
-      background: #ffedd5;
-      color: #c2410c;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      border: 1px solid #fed7aa;
-    }
-
-    .guardrail-reason {
+    .manager-review-pill {
       font-size: 11px;
-      color: #475569;
-      background: #fafaf9;
-      border: 1px solid #e7e5e4;
-      border-radius: 6px;
-      padding: 8px 10px;
-      margin-bottom: 12px;
-      line-height: 1.4;
+      font-weight: 800;
+      background: #fef3c7;
+      color: #b45309;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      border: 1px solid #fde68a;
     }
 
-    .dossier-grid {
+    .manager-reason-box {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #78350f;
+      margin-bottom: 14px;
+      line-height: 1.45;
+    }
+
+    .dossier-4col-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      padding: 8px 10px;
-      margin-bottom: 14px;
-    }
-
-    .dossier-col .key {
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: #64748b;
-    }
-
-    .dossier-col .val {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-primary);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .guardrail-actions {
-      display: flex;
       gap: 10px;
-    }
-
-    .btn-approve {
-      flex: 1.2;
-      background: #10b981;
-      color: #ffffff;
-      border: none;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
-      transition: background 0.15s;
-    }
-
-    .btn-approve:hover {
-      background: #059669;
-    }
-
-    .btn-reject {
-      flex: 1;
-      background: #fff1f2;
-      color: #be123c;
-      border: 1.5px solid #fca5a5;
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.15s;
-    }
-
-    .btn-reject:hover {
-      background: #fee2e2;
-      border-color: #f87171;
-    }
-
-    /* WhatsApp Live Simulator */
-    .wa-card {
-      background: #ffffff;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      overflow: hidden;
+      padding: 10px 12px;
       margin-bottom: 16px;
     }
 
-    .wa-top {
+    .dossier-cell .label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+
+    .dossier-cell .value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+
+    .review-action-btns {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-approve-clean {
+      flex: 1.2;
+      background: var(--paytm-green);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.15s ease;
+      box-shadow: 0 2px 6px rgba(0, 179, 134, 0.2);
+    }
+
+    .btn-approve-clean:hover {
+      background: #009a73;
+    }
+
+    .btn-reject-clean {
+      flex: 1;
+      background: #ffffff;
+      color: var(--paytm-red);
+      border: 1.5px solid var(--paytm-red-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-reject-clean:hover {
+      background: var(--paytm-red-light);
+    }
+
+    /* Minimalist WhatsApp Messenger */
+    .whatsapp-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .whatsapp-top {
       background: #075e54;
       color: #ffffff;
-      padding: 10px 14px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .wa-top-left {
+    .whatsapp-profile {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .wa-avatar {
-      width: 24px;
-      height: 24px;
+    .whatsapp-avatar {
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       background: #25d366;
       color: #ffffff;
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .wa-chat-area {
-      height: 140px;
+    .whatsapp-feed {
+      height: 150px;
       overflow-y: auto;
-      padding: 10px 12px;
+      padding: 12px 14px;
       background: #efeae2;
       display: flex;
       flex-direction: column;
@@ -1000,11 +1025,10 @@
 
     .wa-bubble {
       max-width: 85%;
-      padding: 8px 10px;
+      padding: 9px 12px;
       border-radius: 8px;
-      font-size: 11px;
-      line-height: 1.4;
-      position: relative;
+      font-size: 12px;
+      line-height: 1.45;
     }
 
     .wa-user {
@@ -1019,37 +1043,37 @@
       background: #ffffff;
       color: #111827;
       border-bottom-left-radius: 2px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
     }
 
     .wa-ts {
-      font-size: 9px;
+      font-size: 10px;
       color: #6b7280;
       text-align: right;
-      margin-top: 3px;
+      margin-top: 4px;
     }
 
-    .wa-input-row {
+    .whatsapp-input-row {
       display: flex;
-      padding: 8px 10px;
+      padding: 10px 12px;
       background: #f0f2f5;
-      gap: 6px;
+      gap: 8px;
       border-top: 1px solid #e5e7eb;
     }
 
-    .wa-input-box {
+    .whatsapp-input {
       flex: 1;
       background: #ffffff;
       border: 1px solid #d1d5db;
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 11px;
+      border-radius: var(--radius-full);
+      padding: 8px 16px;
+      font-size: 12px;
       outline: none;
     }
 
-    .wa-send-btn {
-      width: 28px;
-      height: 28px;
+    .whatsapp-send {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       background: #075e54;
       color: #ffffff;
@@ -1058,45 +1082,66 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 13px;
     }
 
-    /* Live Multi-Store Ledgers Footer Strip */
-    .ledger-strip {
+    /* Store Settlement Balances Bar */
+    .store-balances-bar {
       display: flex;
-      gap: 12px;
-      background: #f8fafc;
-      border: 1px solid var(--border-subtle);
+      gap: 14px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      margin-bottom: 14px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
     }
 
-    .ledger-cell {
+    .balance-box {
       flex: 1;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .ledger-store {
-      font-size: 11px;
+    .balance-store-name {
+      font-size: 12px;
       font-weight: 700;
-      color: var(--text-secondary);
+      color: var(--text-muted);
     }
 
-    .ledger-val {
-      font-size: 12px;
+    .balance-amount {
+      font-size: 14px;
       font-weight: 800;
       font-family: 'JetBrains Mono', monospace;
       color: var(--paytm-navy);
     }
 
-    /* Modal Styling */
+    /* Minimalist Technical Activity Log */
+    .system-log-terminal {
+      background: #0f172a;
+      color: #94a3b8;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      height: 80px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .log-item {
+      display: flex;
+      gap: 8px;
+    }
+
+    .log-item .time { color: #64748b; }
+    .log-item .actor { color: #38bdf8; font-weight: 700; }
+
+    /* Modal Overlay */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 15, 38, 0.7);
+      background: rgba(7, 21, 45, 0.6);
       backdrop-filter: blur(4px);
       display: none;
       align-items: center;
@@ -1104,418 +1149,397 @@
       z-index: 1000;
     }
 
-    .qr-modal {
+    .clean-modal {
       background: #ffffff;
       border-radius: var(--radius-lg);
       width: 90%;
-      max-width: 640px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-      border: 1px solid var(--border-subtle);
+      max-width: 580px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
       overflow: hidden;
     }
 
-    .modal-header {
-      padding: 14px 20px;
-      background: #f8fafc;
-      border-bottom: 1px solid var(--border-subtle);
+    .modal-head {
+      padding: 16px 22px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .modal-header h3 {
-      font-size: 13px;
+    .modal-title {
+      font-size: 15px;
       font-weight: 700;
+      color: var(--text-main);
     }
 
-    .modal-close-btn {
+    .modal-close {
       background: none;
       border: none;
-      font-size: 16px;
+      font-size: 18px;
       cursor: pointer;
-      color: var(--text-muted);
+      color: var(--text-soft);
     }
 
-    .modal-body {
-      padding: 20px;
+    .modal-content {
+      padding: 22px;
     }
-
-    /* Live Log Box */
-    .log-box {
-      background: #090f1d;
-      color: #94a3b8;
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      height: 90px;
-      overflow-y: auto;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      line-height: 1.5;
-    }
-
-    .log-box .log-item {
-      display: flex;
-      gap: 6px;
-    }
-
-    .log-box .time { color: #64748b; }
-    .log-box .actor { color: var(--paytm-cyan); font-weight: 700; }
   </style>
 </head>
 <body>
 
   <!-- Top Executive Header -->
-  <header class="top-header">
-    <div class="top-header-inner">
+  <header class="site-header">
+    <div class="header-inner">
       
-      <!-- Brand & Teammate Identity -->
-      <div class="brand-section">
-        <div class="paytm-logo">
-          <span class="white">Pay</span><span class="cyan">tm</span>
-        </div>
-        <div class="brand-divider"></div>
-        <div class="teammate-badge">
-          <span class="teammate-dot"></span>
-          SETU-AGT-01
-        </div>
-        <div>
-          <div class="teammate-title">Autonomous Operations &amp; Growth Teammate</div>
-          <div class="teammate-sub">Multi-Domain Agentic Resolution &bull; Bank Switch Audit &bull; Hardware IoT &bull; CBS Ledger Write (&le;₹5,000)</div>
+      <!-- Brand & Product Identity -->
+      <div class="brand-group">
+        <a href="/" class="paytm-brand">
+          <span class="blue">Pay</span><span class="cyan">tm</span>
+        </a>
+        <div class="brand-pipe"></div>
+        <div class="product-badge">
+          <span class="product-tag">SETU</span>
+          <div>
+            <div class="product-title">Autonomous Store Teammate</div>
+            <div class="product-subtitle">Instant dispute fixes • Silent Soundbox recovery • Fake pay defense</div>
+          </div>
         </div>
       </div>
 
-      <!-- Real-Time Outcome Metrics -->
-      <div class="kpi-strip">
-        <div class="kpi-cell">
-          <div class="kpi-val" style="color: #34d399;" id="top-auto-rate">86.4%</div>
-          <div class="kpi-lbl">Zero-Touch Settle</div>
+      <!-- Key Business Outcomes Strip -->
+      <div class="metrics-bar">
+        <div class="metric-item">
+          <div class="metric-value" style="color: var(--paytm-green);" id="top-auto-rate">86.4%</div>
+          <div class="metric-label">Auto-Resolved</div>
         </div>
-        <div class="kpi-sep"></div>
-        <div class="kpi-cell">
-          <div class="kpi-val" style="color: #38bdf8;">&lt; 45s</div>
-          <div class="kpi-lbl">Average TAT (vs 36h)</div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <div class="metric-value" style="color: var(--paytm-cyan);">&lt; 45s</div>
+          <div class="metric-label">Fix Time (vs 36h)</div>
         </div>
-        <div class="kpi-sep"></div>
-        <div class="kpi-cell">
-          <div class="kpi-val" style="color: #f87171;">14 Blocked</div>
-          <div class="kpi-lbl">Fake Pay Shield</div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <div class="metric-value" style="color: var(--paytm-red);">14 Blocked</div>
+          <div class="metric-label">Fake Payments Stopped</div>
         </div>
-        <div class="kpi-sep"></div>
-        <div class="kpi-cell">
-          <div class="kpi-val" style="color: #c084fc;">23 Leads</div>
-          <div class="kpi-lbl">Soundbox 4G Pro</div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <div class="metric-value" style="color: #7c3aed;">23 Upgrades</div>
+          <div class="metric-label">Soundbox 4G Pro</div>
         </div>
-        <div class="kpi-sep"></div>
-        <div class="status-pill" id="ws-indicator">
-          ● Stream Connected
+        <div class="metric-divider"></div>
+        <div class="live-status-chip" id="ws-indicator">
+          ● Live Connected
         </div>
       </div>
 
     </div>
   </header>
 
-  <!-- Mission Control Switcher -->
-  <section class="mission-bar">
-    <div class="mission-bar-inner">
-      <div class="mission-bar-header">
-        <div class="mission-bar-title">
-          <span>🎯</span> Interactive Teammate Missions (Click Any to Run Live):
-        </div>
-        <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Autonomous execution across Service, Fraud, Sales &amp; Co-Piloting</span>
+  <!-- Quick Scenarios Strip (Simplified Words) -->
+  <nav class="scenarios-nav">
+    <div class="scenarios-inner">
+      <div class="scenarios-title">
+        <span>⚡</span> Quick Test Scenarios (Click Any to Run Live):
       </div>
 
-      <div class="mission-segmented-grid">
+      <div class="scenarios-grid">
         
         <button class="mission-tab active" id="tab-mission1" onclick="triggerTeammateMission('SERVICE_DISPUTE')">
-          <div class="mission-tag" style="color: #059669;">🟢 1. Service Dispute</div>
-          <div class="mission-name" id="mission1-amt-card">Soundbox 4G Drop (₹400.00)</div>
-          <div class="mission-desc">Instant reconciliation &amp; Hindi audio chime</div>
+          <div class="tab-badge" style="color: var(--paytm-green);">🟢 1. Silent Soundbox</div>
+          <div class="tab-title" id="mission1-amt-card">Weak Internet Drop (₹400)</div>
+          <div class="tab-desc">Bank debited, speaker missed alert. Re-plays chime in &lt;1s.</div>
         </button>
 
         <button class="mission-tab" id="tab-mission2" onclick="triggerTeammateMission('FRAUD_SPOOF')">
-          <div class="mission-tag" style="color: #dc2626;">🚨 2. Fraud Shield</div>
-          <div class="mission-name" id="mission2-amt-card">Paytm Spoof Fake Pay (₹400.00)</div>
-          <div class="mission-desc">Intercept fake screenshot, halt credit, sound alarm</div>
+          <div class="tab-badge" style="color: var(--paytm-red);">🚨 2. Fake Payment App</div>
+          <div class="tab-title" id="mission2-amt-card">Counterfeit Screen (₹400)</div>
+          <div class="tab-desc">Customer shows fake screenshot. Stops money, sounds alarm.</div>
         </button>
 
         <button class="mission-tab" id="tab-mission3" onclick="triggerTeammateMission('SALES_UPGRADE')">
-          <div class="mission-tag" style="color: #7c3aed;">📈 3. Sales Engine</div>
-          <div class="mission-name">Soundbox 4G Pro Pitch</div>
-          <div class="mission-desc">Hardware wear triage → ₹199 upgrade lead</div>
+          <div class="tab-badge" style="color: #7c3aed;">📈 3. Device Upgrade</div>
+          <div class="tab-title">Soundbox 4G Pro Pitch</div>
+          <div class="tab-desc">Detects old 2G signal drops. Offers 1-click ₹199 upgrade.</div>
         </button>
 
         <button class="mission-tab" id="tab-mission4" onclick="triggerTeammateMission('HITL_SUPERVISOR')">
-          <div class="mission-tag" style="color: #d97706;">🛡️ 4. Human Co-Pilot</div>
-          <div class="mission-name">₹15,000 High-Value Order</div>
-          <div class="mission-desc">Circuit Breaker → 1-Click Approve / Reject</div>
+          <div class="tab-badge" style="color: var(--paytm-amber);">🛡️ 4. Big Payment Review</div>
+          <div class="tab-title">Large ₹15,000 Order</div>
+          <div class="tab-desc">Pauses safely for 1-click human manager review.</div>
         </button>
 
         <button class="mission-tab" id="tab-mission5" onclick="triggerTeammateMission('PROACTIVE_FLEET')">
-          <div class="mission-tag" style="color: #0284c7;">📡 5. Fleet Guardian</div>
-          <div class="mission-name">Switch Latency Surge</div>
-          <div class="mission-desc">SBI switch slowdown → 1-sentence Hindi advisory</div>
+          <div class="tab-badge" style="color: var(--paytm-cyan);">📡 5. Bank Slowdown Alert</div>
+          <div class="tab-title">SBI Switch Lag Notice</div>
+          <div class="tab-desc">SBI server slow. Speaks 1-line voice warning to shops.</div>
         </button>
 
       </div>
     </div>
-  </section>
+  </nav>
 
   <!-- 2-Column Balanced Workspace -->
-  <main class="workspace">
+  <main class="workspace-container">
 
-    <!-- LEFT COLUMN: Counter, Virtual Soundbox & Grievance Intake -->
-    <div class="left-panel">
+    <!-- LEFT COLUMN: Shop Counter & Merchant Voice/Text Intake -->
+    <div class="left-col">
       
-      <!-- Virtual Soundbox Terminal -->
-      <div class="chic-card">
-        <div class="card-head">
-          <h3>🏪 Store Terminal &amp; Hardware Telemetry</h3>
-          <span class="pill" id="store-pill">Gupta Tea Stall (Delhi)</span>
+      <!-- Store Counter & Soundbox Widget -->
+      <div class="clean-card">
+        <div class="card-header">
+          <h2 class="card-title">🏪 Shop Counter &amp; Soundbox</h2>
+          <span class="card-pill" id="store-pill">Gupta Tea Stall (Delhi)</span>
         </div>
-        <div class="card-body">
+        <div class="card-content">
           
-          <div class="soundbox-oled-terminal">
-            <div class="oled-top">
-              <div class="oled-brand">PAY<span>TM</span> SOUNDBOX 4G</div>
-              <div class="oled-meta">
+          <!-- Realistic Minimalist Soundbox -->
+          <div class="soundbox-widget">
+            <div class="soundbox-top">
+              <div class="soundbox-brand">
+                <span>🔊</span> PAYTM SOUNDBOX 4G
+              </div>
+              <div class="soundbox-meta">
                 <span id="sb-net-text">4G CELLULAR</span>
                 <span id="sb-rssi">-88 dBm</span>
-                <div class="led-dot ready" id="sb-led"></div>
+                <div class="led-circle" id="sb-led"></div>
               </div>
             </div>
 
-            <div class="oled-screen">
-              <div class="oled-sub">Real-Time Payment LCD</div>
-              <div class="oled-amt" id="sb-amount">₹400.00</div>
-              <div class="oled-msg" id="sb-status">Status: Ready for Customer UPI Payment</div>
+            <div class="soundbox-screen">
+              <div class="soundbox-screen-label">Display Screen</div>
+              <div class="soundbox-amount" id="sb-amount">₹400.00</div>
+              <div class="soundbox-status-msg" id="sb-status">Ready for customer payment</div>
             </div>
 
-            <div class="oled-controls">
-              <button class="btn-oled-net" onclick="toggleSoundboxNetwork()">
-                <span>⚡ Simulate Cellular Drop / Restore</span>
-                <span id="sb-toggle-badge" style="color:#f59e0b;">[PACKET DROPPED]</span>
+            <div class="soundbox-actions">
+              <button class="btn-weak-net" onclick="toggleSoundboxNetwork()">
+                <span>⚡ Simulate Weak Internet</span>
+                <span id="sb-toggle-badge" style="color: var(--paytm-amber);">[PACKET DROPPED]</span>
               </button>
-              <span style="font-size:10px; color:#64748b; font-family:'JetBrains Mono';">Device: SB_DELHI_0841</span>
+              <span style="font-size: 11px; color: var(--text-soft); font-family: 'JetBrains Mono', monospace;">ID: SB_DELHI_0841</span>
             </div>
           </div>
 
-          <!-- Audio Announcement Player -->
-          <div class="audio-pill" id="audio-pill">
-            <span style="font-size:11px; font-weight:700; color:#15803d;">🔊 Soundbox Chime (Bulbul TTS):</span>
-            <audio id="audio-player" controls autoplay style="height: 28px; flex: 1;"></audio>
+          <!-- Soundbox Voice Chime Player -->
+          <div class="audio-player-strip" id="audio-pill">
+            <span style="font-size: 12px; font-weight: 800; color: #047857;">🔊 Soundbox Spoke:</span>
+            <audio id="audio-player" controls autoplay style="height: 30px; flex: 1;"></audio>
           </div>
 
-          <!-- Interactive Bill Amount Controller -->
-          <div class="bill-ctrl-box">
-            <div class="bill-ctrl-top">
-              <span>Order / Counter Bill Amount (₹)</span>
-              <span style="font-size:10px; color:#64748b;">Sets dynamic amount across all tests</span>
+          <!-- Bill Amount Controller -->
+          <div class="bill-control-card">
+            <div class="bill-control-header">
+              <span>Order / Bill Amount (₹)</span>
+              <span style="font-size: 11px; color: var(--text-soft);">Sets amount across all tests</span>
             </div>
-            <div class="bill-chips-row">
-              <button type="button" class="bill-chip" id="chip-100" onclick="setBillAmount(100)">₹100</button>
-              <button type="button" class="bill-chip active" id="chip-400" onclick="setBillAmount(400)">₹400</button>
-              <button type="button" class="bill-chip" id="chip-1000" onclick="setBillAmount(1000)">₹1,000</button>
-              <button type="button" class="bill-chip" id="chip-15000" onclick="setBillAmount(15000)">₹15,000</button>
+            <div class="chips-row">
+              <button type="button" class="amount-chip" id="chip-100" onclick="setBillAmount(100)">₹100</button>
+              <button type="button" class="amount-chip active" id="chip-400" onclick="setBillAmount(400)">₹400</button>
+              <button type="button" class="amount-chip" id="chip-1000" onclick="setBillAmount(1000)">₹1,000</button>
+              <button type="button" class="amount-chip" id="chip-15000" onclick="setBillAmount(15000)">₹15,000</button>
             </div>
-            <div class="bill-input-row">
-              <input type="number" class="bill-input" id="qr-bill-amount" value="400" min="1" max="50000" step="10" oninput="onBillAmountChange(this.value)">
-              <button type="button" class="btn-qr-trigger" onclick="openQrModal()">
-                📲 Simulate Customer QR Scan
+            <div class="input-action-row">
+              <input type="number" class="amount-input-box" id="qr-bill-amount" value="400" min="1" max="50000" step="10" oninput="onBillAmountChange(this.value)">
+              <button type="button" class="btn-qr-scan" onclick="openQrModal()">
+                📲 Customer QR Scan
               </button>
             </div>
           </div>
 
-          <!-- Quick 1-Click Operational Ground Scenarios -->
-          <div style="font-size:11px; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">
-            📌 Quick Shopkeeper Situations (1-Click Test)
-          </div>
-          <div class="scenarios-grid">
-            <button class="scenario-card" onclick="runPreset('350_drop')">
-              <div class="scenario-title">
-                <span>🟢 4G Packet Drop</span>
-                <span style="font-family:'JetBrains Mono';">₹400.00</span>
-              </div>
-              <div class="scenario-desc">Bank debited, Soundbox lagged. Auto-sweep &amp; replay chime in &lt;1s.</div>
-            </button>
+          <!-- 1-Click Quick Tests -->
+          <div class="quick-scenarios-section">
+            <span class="section-label">1-Click Tests</span>
+            <div class="preset-grid">
+              <button class="preset-card" onclick="runPreset('350_drop')">
+                <div class="preset-top">
+                  <span>🟢 Silent Soundbox</span>
+                  <span style="font-family: 'JetBrains Mono';">₹400.00</span>
+                </div>
+                <div class="preset-desc">Payment cleared, speaker quiet. Fixes &amp; rings in 1 second.</div>
+              </button>
 
-            <button class="scenario-card" onclick="runPreset('spoof_scam')" style="border-color:#fca5a5; background:#fffbfb;">
-              <div class="scenario-title" style="color:var(--paytm-red);">
-                <span>🚨 Fake Paytm Spoof</span>
-                <span id="preset-spoof-amt" style="font-family:'JetBrains Mono';">₹400.00</span>
-              </div>
-              <div class="scenario-desc">Scam APK screen. Switch shows zero debit. Credit halted, alarm sounds.</div>
-            </button>
+              <button class="preset-card" onclick="runPreset('spoof_scam')" style="border-color: var(--paytm-red-border); background: #fffcfc;">
+                <div class="preset-top" style="color: var(--paytm-red);">
+                  <span>🚨 Fake Screen App</span>
+                  <span id="preset-spoof-amt" style="font-family: 'JetBrains Mono';">₹400.00</span>
+                </div>
+                <div class="preset-desc">Customer shows fake app. Stops money &amp; warns shopkeeper.</div>
+              </button>
 
-            <button class="scenario-card" onclick="runPreset('420_reversal')">
-              <div class="scenario-title">
-                <span>🔄 Gateway Timeout</span>
-                <span style="font-family:'JetBrains Mono';">₹420.00</span>
-              </div>
-              <div class="scenario-desc">Auto-reversal in flight at switch. Posts provisional credit + WhatsApp.</div>
-            </button>
+              <button class="preset-card" onclick="runPreset('420_reversal')">
+                <div class="preset-top">
+                  <span>🔄 Auto-Refund Delay</span>
+                  <span style="font-family: 'JetBrains Mono';">₹420.00</span>
+                </div>
+                <div class="preset-desc">Bank taking time. Adds temporary balance + WhatsApp alert.</div>
+              </button>
 
-            <button class="scenario-card" onclick="runPreset('15000_hitl')">
-              <div class="scenario-title">
-                <span>🛡️ High-Value Order</span>
-                <span style="font-family:'JetBrains Mono';">₹15,000.00</span>
-              </div>
-              <div class="scenario-desc">Exceeds ₹5,000 safety threshold. Compiles dossier for 1-click review.</div>
-            </button>
-          </div>
-
-          <!-- Indic Vernacular Voice / Text Intake -->
-          <div style="font-size:11px; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">
-            🎙️ Indic Vernacular Voice &amp; Text Grievance (Sarvam AI)
+              <button class="preset-card" onclick="runPreset('15000_hitl')">
+                <div class="preset-top">
+                  <span>🛡️ Large ₹15,000 Bill</span>
+                  <span style="font-family: 'JetBrains Mono';">₹15,000.00</span>
+                </div>
+                <div class="preset-desc">Above ₹5,000 safety limit. Sends to manager for 1-click review.</div>
+              </button>
+            </div>
           </div>
 
-          <div class="lang-row">
-            <button type="button" class="lang-btn active" id="lang-hi" onclick="selectVoiceLang('hi-IN', 'Bhaiya humari dukan pe 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192', this)">Hindi</button>
-            <button type="button" class="lang-btn" id="lang-hinglish" onclick="selectVoiceLang('hi-IN', 'Customer ka 400 rupees debit ho gaya but Soundbox sound nahi aaya. RRN 410294820192', this)">Hinglish</button>
-            <button type="button" class="lang-btn" id="lang-ta" onclick="selectVoiceLang('ta-IN', 'Paytm 400 roobai debited aachu aana Soundbox pesa villai. RRN 410294820192', this)">Tamil</button>
-            <button type="button" class="lang-btn" id="lang-te" onclick="selectVoiceLang('te-IN', 'Paytm 400 roopayalu cut ayyindi kani Soundbox sound raledu. RRN 410294820192', this)">Telugu</button>
-          </div>
+          <!-- Merchant Voice & Text Grievance Intake -->
+          <div class="quick-scenarios-section" style="margin-bottom: 0;">
+            <span class="section-label">Shopkeeper Voice &amp; Chat in Your Language</span>
+            
+            <div class="language-pill-row">
+              <button type="button" class="lang-btn active" id="lang-hi" onclick="selectVoiceLang('hi-IN', 'Bhaiya humari dukan pe 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192', this)">Hindi</button>
+              <button type="button" class="lang-btn" id="lang-hinglish" onclick="selectVoiceLang('hi-IN', 'Customer ka 400 rupees debit ho gaya but Soundbox sound nahi aaya. RRN 410294820192', this)">Hinglish</button>
+              <button type="button" class="lang-btn" id="lang-ta" onclick="selectVoiceLang('ta-IN', 'Paytm 400 roobai debited aachu aana Soundbox pesa villai. RRN 410294820192', this)">Tamil</button>
+              <button type="button" class="lang-btn" id="lang-te" onclick="selectVoiceLang('te-IN', 'Paytm 400 roopayalu cut ayyindi kani Soundbox sound raledu. RRN 410294820192', this)">Telugu</button>
+            </div>
 
-          <div class="mic-actions-row">
-            <button type="button" class="btn-mic" id="btn-record-mic" onclick="toggleMicRecording()">
-              <span id="mic-icon">🎙️</span>
-              <span id="mic-text">Speak via Live Mic</span>
+            <div class="mic-buttons-row">
+              <button type="button" class="btn-record-large" id="btn-record-mic" onclick="toggleMicRecording()">
+                <span id="mic-icon">🎙️</span>
+                <span id="mic-text">Speak via Live Mic</span>
+              </button>
+              <button type="button" class="btn-sample-light" onclick="useSampleSpeech()">
+                ⚡ Sample Voice
+              </button>
+              <button type="button" class="btn-sample-light" onclick="useSampleFakeSpeech()" style="color: var(--paytm-red); border-color: var(--paytm-red-border);">
+                🚨 Fake Pay Sample
+              </button>
+            </div>
+
+            <div id="recording-bar" style="display:none; background:#fef2f2; border:1px solid #fecdd3; border-radius:6px; padding:8px 12px; margin-bottom:10px; justify-content:space-between; align-items:center;">
+              <span style="font-size:12px; color:#b91c1c; font-weight:700;" id="rec-status-text">Recording voice... Speak now</span>
+              <span style="font-size:12px; font-family:'JetBrains Mono'; font-weight:700;" id="rec-timer">00:00</span>
+            </div>
+
+            <textarea id="query-input" class="voice-textarea" placeholder="Speak via mic or type in simple words, e.g.:&#10;Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></textarea>
+
+            <button class="btn-solve-primary" onclick="submitCustomQuery()">
+              <span>🚀 Fix Payment Dispute Now</span>
             </button>
-            <button type="button" class="btn-sample" onclick="useSampleSpeech()" title="Inserts sample Hindi payment drop text">
-              ⚡ Drop Sample
-            </button>
-            <button type="button" class="btn-sample" onclick="useSampleFakeSpeech()" style="border-color:#fca5a5; color:#be123c;" title="Inserts sample Paytm Spoof fake pay query">
-              🚨 Fake Pay Sample
-            </button>
           </div>
-
-          <div id="recording-bar" style="display:none; background:#fef2f2; border:1px solid #fecdd3; border-radius:6px; padding:6px 10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:11px; color:#b91c1c; font-weight:700;" id="rec-status-text">Recording voice... Speak now</span>
-            <span style="font-size:11px; font-family:'JetBrains Mono'; font-weight:700;" id="rec-timer">00:00</span>
-          </div>
-
-          <textarea id="query-input" class="query-textarea" placeholder="Speak via mic or type Hindi grievance, e.g.:&#10;Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></textarea>
-
-          <button class="btn-execute-primary" onclick="submitCustomQuery()">
-            <span>🚀 Run Autonomous Resolution Engine</span>
-          </button>
 
         </div>
       </div>
 
     </div>
 
-    <!-- RIGHT COLUMN: Autonomous Decision Engine & Operations Desk -->
-    <div class="right-panel">
+    <!-- RIGHT COLUMN: Solution Steps & Live Operations Desk -->
+    <div class="right-col">
       
-      <!-- Live Agent Narrative Banner -->
-      <div class="story-banner">
-        <div class="story-banner-head">💡 Real-Time Teammate Adjudication Trace</div>
-        <div class="story-banner-body" id="story-text">
-          SETU is active. Ready to ingest Indic merchant queries, verify NPCI banking switch &amp; MQTT telemetry, evaluate fraud guardrails, and execute sub-second resolution.
+      <!-- Live Status Narrative -->
+      <div class="story-card-minimal">
+        <div class="story-card-title">💡 What SETU is Doing Right Now</div>
+        <div class="story-card-body" id="story-text">
+          SETU is ready. Waiting for shopkeeper query. Will check bank, check Soundbox, verify fraud safety, and fix the issue in under 1 second.
         </div>
       </div>
 
-      <!-- Execution Pipeline Card -->
-      <div class="chic-card">
-        <div class="card-head">
-          <h3>🧠 Deterministic LangGraph Execution Engine</h3>
-          <span class="pill" id="engine-status">Zero-Touch Nominal</span>
+      <!-- Solution Steps Card (Simplified Dictionary) -->
+      <div class="clean-card">
+        <div class="card-header">
+          <h2 class="card-title">⚙️ How SETU Resolves It (Step-by-Step)</h2>
+          <span class="card-pill" id="engine-status">All Systems Healthy</span>
         </div>
-        <div class="card-body">
+        <div class="card-content">
           
-          <div class="stepper-list">
+          <div class="solution-steps-list">
             
             <div class="pipeline-step" id="node-ingest">
-              <div class="step-left">
-                <div class="step-num">1</div>
-                <div>
-                  <div class="step-name">Speech Understanding &amp; Entity Extraction</div>
-                  <div class="step-desc" id="desc-ingest">Sarvam Indic NLU extracts 12-digit RRN &amp; transaction amount.</div>
+              <div style="display: flex; align-items: center; flex: 1;">
+                <div class="step-icon-num">1</div>
+                <div class="step-info-col">
+                  <div class="step-main-title">Understand Shopkeeper Query</div>
+                  <div class="step-detail-text" id="desc-ingest">Understands speech in Hindi &amp; regional languages. Finds payment reference number.</div>
                 </div>
               </div>
-              <div class="step-lat" id="lat-node_ingest">--</div>
+              <div class="step-time-badge" id="lat-node_ingest">--</div>
             </div>
 
             <div class="pipeline-step" id="node-diagnose_bank">
-              <div class="step-left">
-                <div class="step-num">2</div>
-                <div>
-                  <div class="step-name">Banking Switch Audit (NPCI Clearing Switch)</div>
-                  <div class="step-desc" id="desc-bank">Direct query to verify customer account debit &amp; gateway codes.</div>
+              <div style="display: flex; align-items: center; flex: 1;">
+                <div class="step-icon-num">2</div>
+                <div class="step-info-col">
+                  <div class="step-main-title">Check with Bank (NPCI Switch)</div>
+                  <div class="step-detail-text" id="desc-bank">Verifies if customer bank account was really debited.</div>
                 </div>
               </div>
-              <div class="step-lat" id="lat-node_diagnose_bank">--</div>
+              <div class="step-time-badge" id="lat-node_diagnose_bank">--</div>
             </div>
 
             <div class="pipeline-step" id="node-diagnose_iot">
-              <div class="step-left">
-                <div class="step-num">3</div>
-                <div>
-                  <div class="step-name">Soundbox Telemetry &amp; MQTT Broker Health</div>
-                  <div class="step-desc" id="desc-iot">Checks cellular RSSI, battery percentage &amp; missed audio packets.</div>
+              <div style="display: flex; align-items: center; flex: 1;">
+                <div class="step-icon-num">3</div>
+                <div class="step-info-col">
+                  <div class="step-main-title">Check Soundbox Signal</div>
+                  <div class="step-detail-text" id="desc-iot">Checks cellular signal &amp; battery to see if voice alert was missed.</div>
                 </div>
               </div>
-              <div class="step-lat" id="lat-node_diagnose_iot">--</div>
+              <div class="step-time-badge" id="lat-node_diagnose_iot">--</div>
             </div>
 
             <div class="pipeline-step" id="node-diagnose_ledger">
-              <div class="step-left">
-                <div class="step-num">4</div>
-                <div>
-                  <div class="step-name">Core Settlement Ledger Audit</div>
-                  <div class="step-desc" id="desc-ledger">Verifies uncredited balances &amp; enforces double-credit locks.</div>
+              <div style="display: flex; align-items: center; flex: 1;">
+                <div class="step-icon-num">4</div>
+                <div class="step-info-col">
+                  <div class="step-main-title">Check Shopkeeper Account</div>
+                  <div class="step-detail-text" id="desc-ledger">Checks pending balances &amp; prevents double payments.</div>
                 </div>
               </div>
-              <div class="step-lat" id="lat-node_diagnose_ledger">--</div>
+              <div class="step-time-badge" id="lat-node_diagnose_ledger">--</div>
             </div>
 
             <div class="pipeline-step" id="node-evaluate_risk">
-              <div class="step-left">
-                <div class="step-num">5</div>
-                <div>
-                  <div class="step-name">Paytm Risk &amp; Safety Circuit Breakers</div>
-                  <div class="step-desc" id="desc-risk">Evaluates 95% cross-system confidence &amp; ₹5,000 threshold.</div>
+              <div style="display: flex; align-items: center; flex: 1;">
+                <div class="step-icon-num">5</div>
+                <div class="step-info-col">
+                  <div class="step-main-title">Safety &amp; Fraud Check</div>
+                  <div class="step-detail-text" id="desc-risk">Ensures 95%+ confidence. Stops amounts above ₹5,000 for manager review.</div>
                 </div>
               </div>
-              <div class="step-lat" id="lat-node_evaluate_risk">--</div>
+              <div class="step-time-badge" id="lat-node_evaluate_risk">--</div>
             </div>
 
             <div class="pipeline-step" id="node-autonomous_settle">
-              <div class="step-left">
-                <div class="step-num">6</div>
-                <div>
-                  <div class="step-name">Autonomous Resolution &amp; Notification Push</div>
-                  <div class="step-desc" id="desc-settle">Credits merchant ledger, plays Soundbox chime &amp; alerts WhatsApp.</div>
+              <div style="display: flex; align-items: center; flex: 1;">
+                <div class="step-icon-num">6</div>
+                <div class="step-info-col">
+                  <div class="step-main-title">Settle Money &amp; Ring Soundbox</div>
+                  <div class="step-detail-text" id="desc-settle">Credits shopkeeper balance, plays audio on speaker, and sends WhatsApp receipt.</div>
                 </div>
               </div>
-              <div class="step-lat" id="lat-node_autonomous_settle">--</div>
+              <div class="step-time-badge" id="lat-node_autonomous_settle">--</div>
             </div>
 
           </div>
 
-          <!-- Supervisor 1-Click Action Queue (Elevated Card) -->
+          <!-- Manager 1-Click Review Desk -->
           <div class="supervisor-desk-container" id="hitl-container">
-            <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:var(--radius-md); padding:16px; text-align:center; color:var(--text-muted); font-size:12px;">
-              🛡️ <strong>Supervisor Authorization Desk:</strong> System nominal. No disputes currently halted for human review.
+            <div style="background: var(--bg-subtle); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 16px; text-align: center; color: var(--text-soft); font-size: 13px;">
+              🛡️ <strong>Manager Review Desk:</strong> All clear. No payments currently need human sign-off.
             </div>
           </div>
 
-          <!-- WhatsApp Business AI Teammate Simulator -->
-          <div class="wa-card">
-            <div class="wa-top">
-              <div class="wa-top-left">
-                <div class="wa-avatar">P</div>
+          <!-- Official WhatsApp Messenger Simulator -->
+          <div class="whatsapp-card">
+            <div class="whatsapp-top">
+              <div class="whatsapp-profile">
+                <div class="whatsapp-avatar">P</div>
                 <div>
-                  <div style="font-size:12px; font-weight:700;">Paytm Business Care</div>
-                  <div style="font-size:9px; color:#d1fae5;">● Online Automated Teammate</div>
+                  <div style="font-size: 13px; font-weight: 700;">Paytm Business Care</div>
+                  <div style="font-size: 10px; color: #d1fae5;">● Online Official Teammate</div>
                 </div>
               </div>
-              <span style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.2); padding:2px 6px; border-radius:4px;">Official BOT</span>
+              <span style="font-size: 10px; font-weight: 800; background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 4px;">Verified Bot</span>
             </div>
 
-            <div class="wa-chat-area" id="wa-messages-area">
+            <div class="whatsapp-feed" id="wa-messages-area">
               <div class="wa-bubble wa-bot">
-                <div>Namaste Gupta ji! Main Paytm ka AI Teammate SETU hoon. Kisi bhi bhugtan ya Soundbox samasya ke liye yahan likhein ya bolein.</div>
+                <div>Namaste Gupta ji! Main Paytm ka AI Teammate SETU hoon. Kisi bhi payment ya Soundbox samasya ke liye yahan likhein ya voice note bhejein.</div>
                 <div class="wa-ts">09:00 AM</div>
               </div>
               <div class="wa-bubble wa-user">
@@ -1523,36 +1547,36 @@
                 <div class="wa-ts">09:15 AM ✓✓</div>
               </div>
               <div class="wa-bubble wa-bot">
-                <div>✅ <strong>Settlement Reconciled:</strong> ₹400.00 credit ho gaya hai aur Soundbox chime re-push kar di gayi hai.</div>
+                <div>✅ <strong>Payment Solved:</strong> ₹400.00 credit ho gaya hai aur Soundbox chime re-push kar di gayi hai.</div>
                 <div class="wa-ts" id="wa-time">09:15 AM</div>
               </div>
             </div>
 
-            <div class="wa-input-row">
-              <input type="text" class="wa-input-box" id="wa-user-input" placeholder="Type WhatsApp merchant message..." onkeydown="if(event.key==='Enter') sendWhatsAppMessage()">
-              <button type="button" class="wa-send-btn" onclick="sendWhatsAppMessage()">➤</button>
+            <div class="whatsapp-input-row">
+              <input type="text" class="whatsapp-input" id="wa-user-input" placeholder="Type WhatsApp message..." onkeydown="if(event.key==='Enter') sendWhatsAppMessage()">
+              <button type="button" class="whatsapp-send" onclick="sendWhatsAppMessage()">➤</button>
             </div>
           </div>
 
-          <!-- Merchant Settlement CBS Balances -->
-          <div class="ledger-strip">
-            <div class="ledger-cell">
-              <span class="ledger-store">Gupta Tea Stall (Delhi)</span>
-              <span class="ledger-val" id="bal-gupta">₹4,820.50</span>
+          <!-- Shopkeeper Account Balances -->
+          <div class="store-balances-bar">
+            <div class="balance-box">
+              <span class="balance-store-name">Gupta Tea Stall (Delhi)</span>
+              <span class="balance-amount" id="bal-gupta">₹4,820.50</span>
             </div>
-            <div style="width:1px; height:18px; background:#cbd5e1;"></div>
-            <div class="ledger-cell">
-              <span class="ledger-store">Sharma Kirana (Mumbai)</span>
-              <span class="ledger-val" id="bal-sharma">₹12,450.00</span>
+            <div style="width: 1px; height: 20px; background: var(--border-color);"></div>
+            <div class="balance-box">
+              <span class="balance-store-name">Sharma Kirana (Mumbai)</span>
+              <span class="balance-amount" id="bal-sharma">₹12,450.00</span>
             </div>
           </div>
 
-          <!-- Live Audit Log Stream -->
-          <div class="log-box" id="op-log">
+          <!-- Minimalist Activity Log -->
+          <div class="system-log-terminal" id="op-log">
             <div class="log-item">
               <span class="time">[System]</span>
-              <span class="actor">SETU Core Engine:</span>
-              <span>Initialized and listening for merchant grievances...</span>
+              <span class="actor">SETU Teammate:</span>
+              <span>Ready and listening for shopkeeper issues...</span>
             </div>
           </div>
 
@@ -1563,41 +1587,41 @@
 
   </main>
 
-  <!-- Checkpoint 1: QR Payment & Customer Simulator Modal -->
+  <!-- Customer UPI QR Scan & Fake Pay Modal -->
   <div id="qr-modal-overlay" class="modal-overlay" onclick="if(event.target===this) closeQrModal()">
-    <div class="qr-modal">
-      <div class="modal-header">
-        <h3>📲 Customer UPI QR Scan &amp; Cellular Drop Simulator</h3>
-        <button class="modal-close-btn" onclick="closeQrModal()">✕</button>
+    <div class="clean-modal">
+      <div class="modal-head">
+        <h3 class="modal-title">📲 Customer UPI Payment Simulator</h3>
+        <button class="modal-close" onclick="closeQrModal()">✕</button>
       </div>
-      <div class="modal-body">
+      <div class="modal-content">
         
-        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:16px;">
-          <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-            <span style="font-size:11px; color:#64748b;">Merchant Store:</span>
-            <strong style="font-size:12px; color:var(--paytm-navy);">Gupta Tea Stall (guptatea@paytm)</strong>
+        <div style="background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="font-size: 12px; color: var(--text-soft);">Store Name:</span>
+            <strong style="font-size: 13px; color: var(--paytm-navy);">Gupta Tea Stall (guptatea@paytm)</strong>
           </div>
-          <div style="display:flex; justify-content:space-between; border-top:1px dashed #cbd5e1; padding-top:6px;">
-            <span style="font-size:11px; color:#64748b;">Current Bill Amount:</span>
-            <strong id="phone-display-amount" style="font-size:16px; color:#0284c7; font-family:'JetBrains Mono';">₹400.00</strong>
+          <div style="display: flex; justify-content: space-between; border-top: 1px dashed var(--border-color); padding-top: 8px;">
+            <span style="font-size: 12px; color: var(--text-soft);">Bill Amount:</span>
+            <strong id="phone-display-amount" style="font-size: 18px; color: var(--paytm-navy); font-family: 'JetBrains Mono';">₹400.00</strong>
           </div>
         </div>
 
-        <p style="font-size:11px; color:var(--text-muted); line-height:1.45; margin-bottom:14px;">
-          Simulate a customer making a payment via UPI while the merchant's Soundbox drops its 4G connection (causing a dropped audio confirmation), OR simulate a scammer showing a counterfeit Paytm Spoof APK screen.
+        <p style="font-size: 12px; color: var(--text-soft); line-height: 1.5; margin-bottom: 16px;">
+          Choose whether to simulate a genuine customer payment where the Soundbox is temporarily silent due to poor cellular signal, OR simulate a scammer showing a fake payment app screen.
         </p>
 
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <button id="btn-cust-pay" style="background:#00b386; color:#fff; border:none; border-radius:8px; padding:11px 14px; font-weight:800; font-size:12px; cursor:pointer;" onclick="simulateCustomerPay()">
-            ⚡ Pay ₹400.00 via UPI (Simulate 4G Packet Drop)
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button id="btn-cust-pay" style="background: var(--paytm-green); color: #fff; border: none; border-radius: 8px; padding: 12px 16px; font-weight: 800; font-size: 13px; cursor: pointer;" onclick="simulateCustomerPay()">
+            ⚡ Real UPI Payment (Simulate Silent Soundbox)
           </button>
 
-          <button id="btn-fake-pay" style="background:#ea2934; color:#fff; border:none; border-radius:8px; padding:11px 14px; font-weight:800; font-size:12px; cursor:pointer;" onclick="simulateFakePay()">
-            🚨 Simulate Fake Paytm (Spoof App) for ₹400.00
+          <button id="btn-fake-pay" style="background: var(--paytm-red); color: #fff; border: none; border-radius: 8px; padding: 12px 16px; font-weight: 800; font-size: 13px; cursor: pointer;" onclick="simulateFakePay()">
+            🚨 Fake Payment App Screen (Scam Test)
           </button>
         </div>
 
-        <div id="phone-alert" style="display:none; margin-top:12px; padding:10px 12px; border-radius:8px; font-size:11px; line-height:1.4;"></div>
+        <div id="phone-alert" style="display: none; margin-top: 14px; padding: 12px 14px; border-radius: 8px; font-size: 12px; line-height: 1.45;"></div>
 
       </div>
     </div>
@@ -1616,8 +1640,8 @@
       ws.onopen = () => {
         const ind = document.getElementById('ws-indicator');
         if (ind) {
-          ind.textContent = '● Stream Connected';
-          ind.style.color = '#34d399';
+          ind.textContent = '● Live Connected';
+          ind.style.color = '#047857';
         }
       };
 
@@ -1634,7 +1658,7 @@
         const ind = document.getElementById('ws-indicator');
         if (ind) {
           ind.textContent = '○ Reconnecting...';
-          ind.style.color = '#f59e0b';
+          ind.style.color = '#d97706';
         }
         setTimeout(initWS, 2000);
       };
@@ -1650,12 +1674,12 @@
       const audioPill = document.getElementById('audio-pill');
       if (audioPill) audioPill.style.display = 'none';
 
-      document.getElementById('desc-ingest').textContent = 'Sarvam Indic NLU extracts 12-digit RRN & transaction amount.';
-      document.getElementById('desc-bank').textContent = 'Direct query to verify customer account debit & gateway codes.';
-      document.getElementById('desc-iot').textContent = 'Checks cellular RSSI, battery percentage & missed audio packets.';
-      document.getElementById('desc-ledger').textContent = 'Verifies uncredited balances & enforces double-credit locks.';
-      document.getElementById('desc-risk').textContent = 'Evaluates 95% cross-system confidence & ₹5,000 threshold.';
-      document.getElementById('desc-settle').textContent = 'Credits merchant ledger, plays Soundbox chime & alerts WhatsApp.';
+      document.getElementById('desc-ingest').textContent = 'Understands speech in Hindi & regional languages. Finds payment reference number.';
+      document.getElementById('desc-bank').textContent = 'Verifies if customer bank account was really debited.';
+      document.getElementById('desc-iot').textContent = 'Checks cellular signal & battery to see if voice alert was missed.';
+      document.getElementById('desc-ledger').textContent = 'Checks pending balances & prevents double payments.';
+      document.getElementById('desc-risk').textContent = 'Ensures 95%+ confidence. Stops amounts above ₹5,000 for manager review.';
+      document.getElementById('desc-settle').textContent = 'Credits shopkeeper balance, plays audio on speaker, and sends WhatsApp receipt.';
     }
 
     function addLog(actor, text) {
@@ -1672,7 +1696,7 @@
     function handleStream(data) {
       if (data.event === 'NLU_START') {
         resetPipeline();
-        addLog('SARVAM_NLU', `Transcribing speech: "${data.text}"`);
+        addLog('SARVAM_VOICE', `Listening to voice query: "${data.text}"`);
         document.getElementById('node-ingest').classList.add('active');
         document.getElementById('story-text').innerHTML = `🎙️ <strong>Step 1:</strong> Listening to merchant query: <em>"${data.text}"</em>`;
       }
@@ -1680,8 +1704,8 @@
         document.getElementById('node-ingest').classList.remove('active');
         document.getElementById('node-ingest').classList.add('completed');
         currentDisputeIsFraud = (data.entities.intent === 'PAYTM_SPOOF_FRAUD' || (data.entities.rrn && data.entities.rrn.startsWith('FAKE')));
-        addLog('NLU_EXTRACT', `Extracted RRN: ${data.entities.rrn} | Amount: ₹${data.entities.amount} | Intent: ${data.entities.intent}`);
-        document.getElementById('desc-ingest').textContent = `Parsed RRN: ${data.entities.rrn} | Amount: ₹${data.entities.amount}`;
+        addLog('NLU_EXTRACT', `Reference Number: ${data.entities.rrn} | Amount: ₹${data.entities.amount}`);
+        document.getElementById('desc-ingest').textContent = `Understood: Reference No. ${data.entities.rrn} | Amount: ₹${data.entities.amount}`;
       }
       else if (data.event_type === 'NODE_EXECUTED') {
         const nodeName = data.node_name;
@@ -1706,33 +1730,32 @@
         }
         addLog(nodeName.toUpperCase(), data.step_summary);
 
-        // Update plain English narrative for judges
         if (nodeName === 'node_diagnose_bank') {
           if (currentDisputeIsFraud) {
-            document.getElementById('desc-bank').innerHTML = `<span style="color:#ea2934; font-weight:800;">NPCI DECLINED (U30):</span> Zero debit found on switch!`;
-            document.getElementById('story-text').innerHTML = `🏦 <strong>Step 2: Bank Switch:</strong> <span style="color:#ea2934; font-weight:800;">ZERO FUNDS DEBITED</span> on NPCI switch. Customer was never charged!`;
+            document.getElementById('desc-bank').innerHTML = `<span style="color:#ea2934; font-weight:800;">BANK CONFIRMED:</span> Zero money debited from customer!`;
+            document.getElementById('story-text').innerHTML = `🏦 <strong>Step 2: Bank Check:</strong> <span style="color:#ea2934; font-weight:800;">ZERO MONEY DEBITED</span> at bank. This was a fake payment attempt!`;
           } else {
-            document.getElementById('story-text').innerHTML = `🏦 <strong>Step 2: Bank Switch:</strong> Confirms payment debited from customer account successfully.`;
+            document.getElementById('story-text').innerHTML = `🏦 <strong>Step 2: Bank Check:</strong> Bank confirms payment was debited from customer account successfully.`;
           }
         } else if (nodeName === 'node_diagnose_iot') {
           if (currentDisputeIsFraud) {
-            document.getElementById('desc-iot').innerHTML = `<span style="color:#ea2934; font-weight:800;">HARDWARE SILENCE VERIFIED:</span> No MQTT audio packet received.`;
-            document.getElementById('story-text').innerHTML = `📡 <strong>Step 3: IoT Telemetry:</strong> Soundbox silence confirmed — Hardware was silent because no real transaction occurred!`;
+            document.getElementById('desc-iot').innerHTML = `<span style="color:#ea2934; font-weight:800;">SOUNDBOX SILENT:</span> No real transaction ever took place.`;
+            document.getElementById('story-text').innerHTML = `📡 <strong>Step 3: Soundbox Check:</strong> Speaker was silent because no real payment occurred!`;
           } else {
-            document.getElementById('story-text').innerHTML = `📡 <strong>Step 3: IoT Telemetry:</strong> Soundbox 4G telemetry inspected. Packet dropped due to transient cellular lag.`;
+            document.getElementById('story-text').innerHTML = `📡 <strong>Step 3: Soundbox Check:</strong> Soundbox signal was momentarily weak. Packet was dropped in transit.`;
           }
         } else if (nodeName === 'node_evaluate_risk') {
           if (currentDisputeIsFraud) {
-            document.getElementById('desc-risk').innerHTML = `<span style="color:#ea2934; font-weight:800;">PAYTM FRAUD SHIELD:</span> Counterfeit Spoof Screenshot intercepted!`;
-            document.getElementById('story-text').innerHTML = `🚨 <strong>Step 5: Paytm Fraud Shield:</strong> Counterfeit Screenshot / Paytm Spoof detected! Halting ledger credit immediately.`;
+            document.getElementById('desc-risk').innerHTML = `<span style="color:#ea2934; font-weight:800;">FAKE PAY BLOCKED:</span> Counterfeit screenshot detected.`;
+            document.getElementById('story-text').innerHTML = `🚨 <strong>Step 5: Fraud Defense:</strong> Counterfeit screen detected! Halting credit immediately to protect merchant.`;
           } else if (data.step_summary && data.step_summary.includes('HALT')) {
-            document.getElementById('story-text').innerHTML = `⚠️ <strong>Safety Breaker Tripped:</strong> Amount exceeds ₹5,000 threshold. Paused for supervisor 1-click sign-off.`;
+            document.getElementById('story-text').innerHTML = `⚠️ <strong>Safety Limit:</strong> Amount is above ₹5,000. Paused for manager 1-click review.`;
           } else {
-            document.getElementById('story-text').innerHTML = `🛡️ <strong>Step 5: Safety Guardrails:</strong> Risk check passed (98% confidence &amp; value &lt; ₹5,000). Proceeding to auto-settle!`;
+            document.getElementById('story-text').innerHTML = `🛡️ <strong>Step 5: Safety Check:</strong> Payment verified safe (98% confidence). Proceeding to ring Soundbox!`;
           }
         } else if (nodeName === 'node_autonomous_settle') {
           if (currentDisputeIsFraud) {
-            document.getElementById('desc-settle').innerHTML = `<span style="color:#ea2934; font-weight:800;">FRAUD BLOCKED:</span> ₹0.00 released. Security alert broadcasted.`;
+            document.getElementById('desc-settle').innerHTML = `<span style="color:#ea2934; font-weight:800;">BLOCKED:</span> ₹0.00 released. Warning alarm played.`;
           }
         }
       }
@@ -1740,19 +1763,17 @@
         const state = data.final_state;
 
         if (state.fraud_alert_triggered) {
-          // Paytm Spoof Intercepted
           const settleEl = document.getElementById('node-autonomous_settle');
           if (settleEl) {
             settleEl.className = 'pipeline-step fraud-alert';
-            document.getElementById('desc-settle').innerHTML = `<span style="color:#ea2934; font-weight:800;">FRAUD BLOCKED:</span> ₹0.00 released. Security warning chime sounded.`;
+            document.getElementById('desc-settle').innerHTML = `<span style="color:#ea2934; font-weight:800;">FRAUD BLOCKED:</span> ₹0.00 released. Security alert sounded.`;
           }
-          document.getElementById('sb-amount').textContent = '⚠️ SPOOF ALERT';
-          document.getElementById('sb-status').textContent = `🚨 FAKE PAYMENT (₹${state.amount.toFixed(2)} BLOCKED)`;
-          document.getElementById('sb-led').className = 'led-dot alert';
-          document.getElementById('story-text').innerHTML = `🚨 <strong>Counterfeit Payment Intercepted!</strong> Bank switch confirmed ZERO debit for RRN ${state.rrn}. Security warning chime sounded. ₹${state.amount.toFixed(2)} merchant loss prevented!`;
-          addLog('SETU_SHIELD', `🚨 BLOCKED FAKE PAYMENT: Bank switch shows NO debit for RRN ${state.rrn}. Security alarm sounded. ₹${state.amount.toFixed(2)} merchant loss prevented.`);
+          document.getElementById('sb-amount').textContent = '⚠️ FAKE PAY';
+          document.getElementById('sb-status').textContent = `🚨 SCAM BLOCKED (₹${state.amount.toFixed(2)} PREVENTED)`;
+          document.getElementById('sb-led').className = 'led-circle alert';
+          document.getElementById('story-text').innerHTML = `🚨 <strong>Fake Payment Blocked!</strong> Bank confirmed NO money was debited for Ref ${state.rrn}. Security warning sounded. Saved merchant ₹${state.amount.toFixed(2)}!`;
+          addLog('SETU_SHIELD', `🚨 BLOCKED FAKE PAYMENT: Bank shows NO debit for Ref ${state.rrn}. Saved ₹${state.amount.toFixed(2)}.`);
 
-          // Show security alert in WhatsApp chat
           const waArea = document.getElementById('wa-messages-area');
           if (waArea) {
             const div = document.createElement('div');
@@ -1762,7 +1783,7 @@
             div.innerHTML = `
               <div style="color:#b91c1c; font-weight:800; font-size:12px;">🚨 PAYTM FRAUD SHIELD WARNING</div>
               <div style="font-size:11px; margin-top:4px; color:#991b1b; line-height:1.4;">
-                <strong>Nakli Payment Pakda Gaya:</strong> Grahak ne ₹${state.amount.toFixed(2)} ka fake Paytm Spoof screen dikhaya (RRN ${state.rrn}). NPCI Bank switch par koi paisa debit nahi hua. Kripya samaan na dein!
+                <strong>Nakli Payment Pakda Gaya:</strong> Grahak ne ₹${state.amount.toFixed(2)} ka nakli Paytm Spoof screen dikhaya (Ref: ${state.rrn}). Bank par koi paisa debit nahi hua. Kripya samaan na dein!
               </div>
               <div class="wa-ts">${new Date().toLocaleTimeString()}</div>
             `;
@@ -1775,32 +1796,29 @@
           }
           refreshBalances();
         } else if (state.hitl_required && !state.hitl_approved) {
-          // Render Supervisor Card
           renderSupervisorCard(state);
-          document.getElementById('sb-led').className = 'led-dot alert';
-          document.getElementById('sb-status').textContent = '⚠️ Halted: Awaiting Supervisor Approval';
-          document.getElementById('story-text').innerHTML = `⚠️ <strong>Safety Circuit Breaker Active:</strong> ${state.hitl_reason}<br>Please review the Supervisor Desk below and click <strong>⚡ Approve &amp; Settle</strong> or <strong>✕ Reject Claim</strong>!`;
+          document.getElementById('sb-led').className = 'led-circle alert';
+          document.getElementById('sb-status').textContent = '⚠️ Awaiting Manager 1-Click Review';
+          document.getElementById('story-text').innerHTML = `⚠️ <strong>Safety Limit Active:</strong> ${state.hitl_reason}<br>Please review the Manager Desk below and click <strong>Approve &amp; Settle</strong> or <strong>Reject Claim</strong>.`;
         } else {
-          // Autonomous settlement success
           document.getElementById('sb-amount').textContent = `₹${state.amount.toFixed(2)}`;
           document.getElementById('sb-status').textContent = '✅ Payment Verified & Reconciled';
-          document.getElementById('sb-led').className = 'led-dot ready';
+          document.getElementById('sb-led').className = 'led-circle';
 
-          // Update WhatsApp bubble
           const waArea = document.getElementById('wa-messages-area');
           if (waArea) {
             const div = document.createElement('div');
             div.className = 'wa-bubble wa-bot';
             div.innerHTML = `
-              <div>✅ <strong>Payment Reconciled &amp; Credited</strong></div>
-              <div style="font-size:11px; margin-top:2px;">₹${state.amount.toFixed(2)} for RRN ${state.rrn} has been credited to your settlement balance. Soundbox audio confirmed.</div>
+              <div>✅ <strong>Payment Verified &amp; Added to Balance</strong></div>
+              <div style="font-size:11px; margin-top:2px;">₹${state.amount.toFixed(2)} (Ref: ${state.rrn}) has been added to your settlement account. Soundbox confirmed.</div>
               <div class="wa-ts">${new Date().toLocaleTimeString()}</div>
             `;
             waArea.appendChild(div);
             waArea.scrollTop = waArea.scrollHeight;
           }
 
-          document.getElementById('story-text').innerHTML = `🎉 <strong>Settled in &lt; 1 second!</strong> Soundbox audio chime re-broadcasted and merchant ledger credited.`;
+          document.getElementById('story-text').innerHTML = `🎉 <strong>Resolved in &lt; 1 second!</strong> Soundbox audio alert played and shopkeeper account credited.`;
 
           if (data.soundbox_audio && data.soundbox_audio.audio_data_url) {
             playAudio(data.soundbox_audio.audio_data_url);
@@ -1813,18 +1831,18 @@
         const hitlContainer = document.getElementById('hitl-container');
         if (hitlContainer) {
           hitlContainer.innerHTML = `
-            <div style="background:#e6f7f3; border:1px solid #00b386; border-radius:12px; padding:16px; text-align:center; color:#005c45; font-size:12px;">
-              ✅ <strong>Supervisor Sign-Off Completed!</strong><br>
-              Dispute <strong>${state.dispute_id}</strong> (₹${state.amount.toFixed(2)}) approved and credited to merchant ledger.
+            <div style="background:#e6f7f3; border:1px solid #00b386; border-radius:12px; padding:16px; text-align:center; color:#005c45; font-size:13px;">
+              ✅ <strong>Manager Approval Completed!</strong><br>
+              Payment <strong>${state.dispute_id}</strong> (₹${state.amount.toFixed(2)}) approved and credited to merchant account.
             </div>
           `;
         }
         document.getElementById('sb-amount').textContent = `₹${state.amount.toFixed(2)}`;
-        document.getElementById('sb-status').textContent = '✅ Supervisor Approved & Settled';
-        document.getElementById('sb-led').className = 'led-dot ready';
-        document.getElementById('story-text').innerHTML = `✅ <strong>1-Click Approval Complete:</strong> ₹${state.amount.toFixed(2)} credited to merchant ledger with immutable audit trail.`;
+        document.getElementById('sb-status').textContent = '✅ Manager Approved & Settled';
+        document.getElementById('sb-led').className = 'led-circle';
+        document.getElementById('story-text').innerHTML = `✅ <strong>Manager Approved:</strong> ₹${state.amount.toFixed(2)} credited to merchant balance.`;
 
-        addLog('SUPERVISOR', `1-Click Approval executed. ₹${state.amount.toFixed(2)} credited to merchant ledger!`);
+        addLog('SUPERVISOR', `1-Click Approval executed. ₹${state.amount.toFixed(2)} credited to merchant balance.`);
 
         if (data.soundbox_audio && data.soundbox_audio.audio_data_url) {
           playAudio(data.soundbox_audio.audio_data_url);
@@ -1836,19 +1854,18 @@
         const hitlContainer = document.getElementById('hitl-container');
         if (hitlContainer) {
           hitlContainer.innerHTML = `
-            <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:12px; padding:16px; text-align:center; color:#9f1239; font-size:12px;">
-              <div style="font-weight:800; font-size:13px; color:#be123c; margin-bottom:4px;">✕ Dispute Rejected by Supervisor</div>
-              Dispute <strong>${state.dispute_id}</strong> (₹${state.amount.toFixed(2)}) has been denied.<br>
-              <span style="font-size:11px; color:#e11d48; font-weight:600;">Zero funds released to merchant ledger. Recorded in compliance log.</span>
+            <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:12px; padding:16px; text-align:center; color:#9f1239; font-size:13px;">
+              <div style="font-weight:800; font-size:14px; color:#be123c; margin-bottom:4px;">✕ Claim Rejected by Manager</div>
+              Claim for ₹${state.amount.toFixed(2)} denied.<br>
+              <span style="font-size:12px; color:#e11d48; font-weight:600;">Zero funds released. Recorded in compliance log.</span>
             </div>
           `;
         }
         document.getElementById('sb-amount').textContent = `₹${state.amount.toFixed(2)}`;
-        document.getElementById('sb-status').textContent = '❌ CLAIM REJECTED BY SUPERVISOR';
-        document.getElementById('sb-led').className = 'led-dot alert';
-        document.getElementById('story-text').innerHTML = `❌ <strong>Supervisor Rejected Claim:</strong> ₹${state.amount.toFixed(2)} order denied after clearing audit. Zero funds released to merchant ledger.`;
+        document.getElementById('sb-status').textContent = '❌ CLAIM REJECTED BY MANAGER';
+        document.getElementById('sb-led').className = 'led-circle alert';
+        document.getElementById('story-text').innerHTML = `❌ <strong>Manager Rejected Claim:</strong> ₹${state.amount.toFixed(2)} order denied after checking bank records. Zero money released.`;
 
-        // Update WhatsApp bubble
         const waArea = document.getElementById('wa-messages-area');
         if (waArea) {
           const div = document.createElement('div');
@@ -1856,10 +1873,10 @@
           div.style.border = '1px solid #fecdd3';
           div.style.background = '#fff1f2';
           div.innerHTML = `
-            <div style="color:#be123c; font-weight:800; font-size:12px;">❌ PAYTM DISPUTE NOTICE — CLAIM REJECTED</div>
+            <div style="color:#be123c; font-weight:800; font-size:12px;">❌ PAYTM NOTICE — CLAIM REJECTED</div>
             <div style="font-size:11px; margin-top:4px; color:#9f1239;">
-              Dispute for <strong>₹${state.amount.toFixed(2)}</strong> (RRN ${state.rrn}) was audited by Operations Supervisor and <strong>REJECTED</strong>.<br>
-              <em>Note:</em> Zero ledger credit released.
+              Dispute for <strong>₹${state.amount.toFixed(2)}</strong> (Ref ${state.rrn}) was reviewed by Manager and <strong>REJECTED</strong>.<br>
+              <em>Note:</em> Zero balance credited.
             </div>
             <div class="wa-ts">${new Date().toLocaleTimeString()}</div>
           `;
@@ -1867,7 +1884,7 @@
           waArea.scrollTop = waArea.scrollHeight;
         }
 
-        addLog('SUPERVISOR', `Dispute ${state.dispute_id} (₹${state.amount.toFixed(2)}) REJECTED by Supervisor. Zero funds credited.`);
+        addLog('SUPERVISOR', `Claim for ₹${state.amount.toFixed(2)} REJECTED by Manager. Zero funds credited.`);
         refreshBalances();
       }
     }
@@ -1876,25 +1893,25 @@
       const container = document.getElementById('hitl-container');
       if (!container) return;
       container.innerHTML = `
-        <div class="guardrail-card">
-          <div class="guardrail-header">
-            <div class="guardrail-title">🛡️ Supervisor 1-Click Authorization Desk</div>
-            <span class="guardrail-badge">Action Required</span>
+        <div class="manager-review-box">
+          <div class="manager-review-top">
+            <div class="manager-review-title">🛡️ Manager 1-Click Review Desk</div>
+            <span class="manager-review-pill">Review Required</span>
           </div>
-          <div class="guardrail-reason">
+          <div class="manager-reason-box">
             ⚠️ <strong>${state.hitl_reason}</strong>
           </div>
-          <div class="dossier-grid">
-            <div class="dossier-col"><span class="key">RRN Number</span><div class="val">${state.rrn}</div></div>
-            <div class="dossier-col"><span class="key">Order Value</span><div class="val" style="color:var(--paytm-navy);">₹${state.amount.toFixed(2)}</div></div>
-            <div class="dossier-col"><span class="key">Bank Switch</span><div class="val" style="color:#059669;">● ${state.bank_status || 'SUCCESS'}</div></div>
-            <div class="dossier-col"><span class="key">Soundbox RSSI</span><div class="val">${state.soundbox_telemetry ? state.soundbox_telemetry.rssi_dbm : -88} dBm</div></div>
+          <div class="dossier-4col-grid">
+            <div class="dossier-cell"><span class="label">Reference No</span><div class="value">${state.rrn}</div></div>
+            <div class="dossier-cell"><span class="label">Order Amount</span><div class="value" style="color:var(--paytm-navy);">₹${state.amount.toFixed(2)}</div></div>
+            <div class="dossier-cell"><span class="label">Bank Check</span><div class="value" style="color:var(--paytm-green);">● ${state.bank_status || 'SUCCESS'}</div></div>
+            <div class="dossier-cell"><span class="label">Soundbox Signal</span><div class="value">${state.soundbox_telemetry ? state.soundbox_telemetry.rssi_dbm : -88} dBm</div></div>
           </div>
-          <div class="guardrail-actions">
-            <button type="button" class="btn-approve" onclick="approveSupervisor('${state.dispute_id}')">
+          <div class="review-action-btns">
+            <button type="button" class="btn-approve-clean" onclick="approveSupervisor('${state.dispute_id}')">
               ⚡ Approve &amp; Settle (₹${state.amount.toFixed(0)})
             </button>
-            <button type="button" class="btn-reject" onclick="rejectSupervisor('${state.dispute_id}')">
+            <button type="button" class="btn-reject-clean" onclick="rejectSupervisor('${state.dispute_id}')">
               ✕ Reject Claim
             </button>
           </div>
@@ -1903,15 +1920,13 @@
     }
 
     async function approveSupervisor(disputeId) {
-      const notes = 'Approved via Paytm Operations Supervisor Desk after verifying clearing logs.';
+      const notes = 'Approved via Paytm Operations Manager Desk after checking bank clearing records.';
       
-      // 1. Instant optimistic update
       handleStream({
         event: 'HITL_APPROVED_FINAL',
         final_state: { dispute_id: disputeId, amount: 15000.0, rrn: '883920194821', hitl_approved: true, is_completed: true }
       });
 
-      // 2. WebSocket message
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           action: 'APPROVE_HITL',
@@ -1920,7 +1935,6 @@
         }));
       }
 
-      // 3. Guaranteed REST API fallback
       try {
         const res = await fetch('/api/dispute/approve-hitl', {
           method: 'POST',
@@ -1938,15 +1952,13 @@
     }
 
     async function rejectSupervisor(disputeId) {
-      const notes = 'Dispute rejected by Operations Supervisor after switch clearing logs audit. Discrepancy confirmed.';
+      const notes = 'Dispute rejected by Manager after checking bank records.';
       
-      // 1. Instant optimistic update
       handleStream({
         event: 'HITL_REJECTED_FINAL',
         final_state: { dispute_id: disputeId, amount: 15000.0, rrn: '883920194821', hitl_approved: false, is_completed: true }
       });
 
-      // 2. WebSocket message
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           action: 'REJECT_HITL',
@@ -1955,7 +1967,6 @@
         }));
       }
 
-      // 3. Guaranteed REST API fallback
       try {
         await fetch('/api/dispute/reject-hitl', {
           method: 'POST',
@@ -1987,7 +1998,7 @@
 
     function runPreset(type) {
       if (!ws || ws.readyState !== WebSocket.OPEN) {
-        alert('Connecting to real-time server... Please wait a moment.');
+        alert('Connecting to server... Please wait a moment.');
         return;
       }
       let payload;
@@ -2030,7 +2041,7 @@
     function submitCustomQuery() {
       const text = document.getElementById('query-input').value.trim();
       if (!text) {
-        alert('Please enter a Hindi merchant query.');
+        alert('Please enter a shopkeeper query in Hindi or English.');
         return;
       }
       if (!ws || ws.readyState !== WebSocket.OPEN) {
@@ -2051,7 +2062,7 @@
       if (missionId === 'SERVICE_DISPUTE') {
         const tab = document.getElementById('tab-mission1'); if (tab) tab.classList.add('active');
         const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
-        addLog('MISSION_CONTROL', `🟢 Triggering Mission 1: Zero-Touch Service Dispute (₹${amt.toFixed(2)} Drop)...`);
+        addLog('MISSION_CONTROL', `🟢 Running Scenario 1: Silent Soundbox (₹${amt.toFixed(2)} Drop)...`);
         ws.send(JSON.stringify({
           action: 'RUN_DISPUTE',
           query_text: `Bhaiya humari dukan pe ${Math.round(amt)} rupaye kata par Soundbox nahi bola. RRN number hai 410294820192`,
@@ -2063,7 +2074,7 @@
         const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
         const fakeRrn = 'FAKE_' + Math.floor(100000 + Math.random() * 900000);
         currentDisputeIsFraud = true;
-        addLog('MISSION_CONTROL', `🚨 Triggering Mission 2: Paytm Spoof Fake-Payment Defense for ₹${amt.toFixed(2)} (RRN: ${fakeRrn})...`);
+        addLog('MISSION_CONTROL', `🚨 Running Scenario 2: Fake Payment App Intercepted for ₹${amt.toFixed(2)}...`);
         ws.send(JSON.stringify({
           action: 'RUN_DISPUTE',
           query_text: `Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya aur screenshot dikhaya RRN ${fakeRrn}`,
@@ -2072,25 +2083,25 @@
         }));
       } else if (missionId === 'SALES_UPGRADE') {
         const tab = document.getElementById('tab-mission3'); if (tab) tab.classList.add('active');
-        addLog('MISSION_CONTROL', '📈 Triggering Mission 3: Hardware Diagnostics & Soundbox 4G Pro Upgrade Pitch...');
+        addLog('MISSION_CONTROL', '📈 Running Scenario 3: Soundbox Hardware Check & 4G Pro Upgrade Offer...');
         resetPipeline();
         document.getElementById('node-ingest').classList.add('completed');
         document.getElementById('node-diagnose_iot').classList.add('completed');
-        document.getElementById('sb-status').textContent = '📈 Hardware Diagnostic: 2G Obsolescence Detected';
+        document.getElementById('sb-status').textContent = '📈 Hardware Check: Weak 2G Signal Detected';
         document.getElementById('sb-amount').textContent = 'UPGRADE 4G PRO';
-        document.getElementById('story-text').innerHTML = `📈 <strong>Hardware Diagnostic Complete:</strong> Device model is obsolete 2G with signal RSSI -98dBm. Generated 1-Click Upgrade Pitch to Paytm Soundbox 4G Pro at ₹199!`;
-        addLog('SALES_ENGINE', 'Merchant Gupta Tea Stall diagnosed with 2G hardware wear-and-tear. Dispatched Soundbox 4G Pro upgrade pitch at ₹199.');
+        document.getElementById('story-text').innerHTML = `📈 <strong>Device Check Complete:</strong> Soundbox has old 2G cellular signal (-98dBm). Generated 1-Click Upgrade Offer to Paytm Soundbox 4G Pro at ₹199!`;
+        addLog('SALES_ENGINE', 'Merchant Gupta Tea Stall diagnosed with old 2G signal drops. Offered Soundbox 4G Pro upgrade at ₹199.');
 
         const waArea = document.getElementById('wa-messages-area');
         if (waArea) {
           const div = document.createElement('div');
           div.className = 'wa-bubble wa-bot';
           div.innerHTML = `
-            <div style="color:#7c3aed; font-weight:800; font-size:12px;">📈 PAYTM BUSINESS HARDWARE UPGRADE</div>
-            <div style="font-size:11px; margin-top:4px;">Namaste Gupta ji! Aapke Soundbox 2G me cellular signal kamzor hai jisse packets drop ho rahe hain.</div>
+            <div style="color:#7c3aed; font-weight:800; font-size:12px;">📈 PAYTM BUSINESS DEVICE UPGRADE</div>
+            <div style="font-size:11px; margin-top:4px;">Namaste Gupta ji! Aapke Soundbox 2G me mobile signal kamzor hai jisse awaz nahi aati.</div>
             <div style="background:#f5f3ff; border:1px solid #c4b5fd; border-radius:8px; padding:8px; margin-top:6px; font-size:11px;">
-              <strong>Paytm Soundbox 4G Pro (Dual SIM + High Decibel Speaker)</strong><br>
-              <span style="color:#6b21a8; font-weight:700;">Special Upgrade Price: ₹199</span> (Save ₹300)
+              <strong>Paytm Soundbox 4G Pro (Dual SIM + Louder Speaker)</strong><br>
+              <span style="color:#6b21a8; font-weight:700;">Special Price: ₹199</span> (Save ₹300)
             </div>
             <div class="wa-ts">${new Date().toLocaleTimeString()}</div>
           `;
@@ -2099,7 +2110,7 @@
         }
       } else if (missionId === 'HITL_SUPERVISOR') {
         const tab = document.getElementById('tab-mission4'); if (tab) tab.classList.add('active');
-        addLog('MISSION_CONTROL', '🛡️ Triggering Mission 4: High-Value Human Co-Piloting Order (₹15,000)...');
+        addLog('MISSION_CONTROL', '🛡️ Running Scenario 4: Large Order Review (₹15,000)...');
         ws.send(JSON.stringify({
           action: 'RUN_DISPUTE',
           query_text: 'Sharma Kirana Store ka 15,000 rupaye ruka hua hai RRN 883920194821',
@@ -2108,13 +2119,13 @@
         }));
       } else if (missionId === 'PROACTIVE_FLEET') {
         const tab = document.getElementById('tab-mission5'); if (tab) tab.classList.add('active');
-        addLog('MISSION_CONTROL', '📡 Triggering Mission 5: Proactive Fleet Switch Latency Guardian...');
+        addLog('MISSION_CONTROL', '📡 Running Scenario 5: Bank Server Slowdown Alert...');
         resetPipeline();
         document.getElementById('node-diagnose_bank').classList.add('completed');
-        document.getElementById('sb-status').textContent = '📡 FLEET ADVISORY: SBI LATENCY 4,250ms';
-        document.getElementById('sb-led').className = 'led-dot alert';
-        document.getElementById('story-text').innerHTML = `📡 <strong>Proactive Fleet Guardian Active:</strong> Detected State Bank of India UPI switch slowdown (4,250ms). Broadcasted 1-sentence Hindi advisory to 10,482 Soundboxes!`;
-        addLog('FLEET_GUARDIAN', 'SBI UPI clearing switch latency spiked to 4,250ms. Broadcasted 1-sentence Hindi advisory to 10,482 Soundboxes: "Dhyan dein: SBI UPI switch dheema hai..."');
+        document.getElementById('sb-status').textContent = '📡 BANK NOTICE: SBI DELAYS DETECTED';
+        document.getElementById('sb-led').className = 'led-circle alert';
+        document.getElementById('story-text').innerHTML = `📡 <strong>Bank Slowdown Notice:</strong> Detected SBI server delay. Sent 1-line Hindi voice warning to 10,482 Soundboxes!`;
+        addLog('FLEET_GUARDIAN', 'SBI UPI server slow (4,250ms). Spoke 1-line Hindi warning to 10,482 Soundboxes: "Dhyan dein: SBI server dheema hai..."');
         playAudio('/static/audio/chirp_switch_advisory.wav');
       }
     }
@@ -2128,13 +2139,13 @@
       if (isNetDropped) {
         if (badge) { badge.textContent = '[PACKET DROPPED]'; badge.style.color = '#f59e0b'; }
         if (netText) netText.textContent = '4G (WEAK)';
-        if (led) led.className = 'led-dot alert';
-        addLog('HARDWARE_IOT', 'Simulated 4G packet drop on Soundbox SB_DELHI_0841.');
+        if (led) led.className = 'led-circle alert';
+        addLog('HARDWARE', 'Simulated weak internet on Soundbox SB_DELHI_0841.');
       } else {
         if (badge) { badge.textContent = '[ONLINE]'; badge.style.color = '#10b981'; }
         if (netText) netText.textContent = '4G (STRONG)';
-        if (led) led.className = 'led-dot ready';
-        addLog('HARDWARE_IOT', 'Restored 4G MQTT cellular connection on Soundbox SB_DELHI_0841.');
+        if (led) led.className = 'led-circle';
+        addLog('HARDWARE', 'Internet signal restored on Soundbox SB_DELHI_0841.');
       }
     }
 
@@ -2181,21 +2192,21 @@
       }
 
       const payBtn = document.getElementById('btn-cust-pay');
-      if (payBtn) payBtn.innerHTML = `⚡ Pay ${formatted} via UPI (Simulate 4G Drop)`;
+      if (payBtn) payBtn.innerHTML = `⚡ Pay ${formatted} via UPI (Simulate Weak Internet)`;
 
       const fakeBtn = document.getElementById('btn-fake-pay');
-      if (fakeBtn) fakeBtn.innerHTML = `🚨 Simulate Fake Paytm (Spoof App) for ${formatted}`;
+      if (fakeBtn) fakeBtn.innerHTML = `🚨 Fake Payment Screen (${formatted})`;
 
       const m1Card = document.getElementById('mission1-amt-card');
-      if (m1Card) m1Card.textContent = `Soundbox 4G Drop (${formatted})`;
+      if (m1Card) m1Card.textContent = `Weak Internet Drop (${formatted})`;
 
       const m2Card = document.getElementById('mission2-amt-card');
-      if (m2Card) m2Card.textContent = `Paytm Spoof Fake Pay (${formatted})`;
+      if (m2Card) m2Card.textContent = `Counterfeit Screen (${formatted})`;
 
       const presetSpoof = document.getElementById('preset-spoof-amt');
       if (presetSpoof) presetSpoof.textContent = formatted;
 
-      document.querySelectorAll('.bill-chip').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.amount-chip').forEach(c => c.classList.remove('active'));
       const activeChip = document.getElementById(`chip-${Math.round(amt)}`);
       if (activeChip) activeChip.classList.add('active');
     }
@@ -2207,11 +2218,11 @@
       const btn = document.getElementById('btn-cust-pay');
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = `⚡ Pay ₹${currentBillAmount.toFixed(2)} via UPI (Simulate 4G Drop)`;
+        btn.innerHTML = `⚡ Pay ₹${currentBillAmount.toFixed(2)} via UPI (Simulate Weak Internet)`;
       }
       const fakeBtn = document.getElementById('btn-fake-pay');
       if (fakeBtn) {
-        fakeBtn.innerHTML = `🚨 Simulate Fake Paytm (Spoof App) for ₹${currentBillAmount.toFixed(2)}`;
+        fakeBtn.innerHTML = `🚨 Fake Payment Screen (₹${currentBillAmount.toFixed(2)})`;
       }
     }
 
@@ -2223,7 +2234,7 @@
       const btn = document.getElementById('btn-cust-pay');
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '⏳ Processing UPI Clearing...';
+        btn.innerHTML = '⏳ Processing UPI Payment...';
       }
       const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
 
@@ -2242,14 +2253,14 @@
           alertBox.style.background = '#f0fdf4';
           alertBox.style.border = '1px solid #bbf7d0';
           alertBox.innerHTML = `
-            <div style="font-weight:800; font-size:12px; color:#15803d;">✅ ₹${data.amount.toFixed(2)} Debited Successfully</div>
-            <div><strong>UPI RRN:</strong> <span style="font-family:'JetBrains Mono';">${data.rrn}</span></div>
-            <div><strong>Payer Bank:</strong> ${data.payer_bank} (Customer account debited)</div>
-            <div style="margin-top:6px; color:#b91c1c; font-weight:700;">
-              ⚠️ Soundbox Alert: 4G cellular packet dropped! Soundbox remained silent.
+            <div style="font-weight:800; font-size:13px; color:#15803d;">✅ ₹${data.amount.toFixed(2)} Debited Successfully</div>
+            <div style="font-size:12px; margin-top:3px;"><strong>Reference No:</strong> <span style="font-family:'JetBrains Mono';">${data.rrn}</span></div>
+            <div style="font-size:12px;"><strong>Bank:</strong> ${data.payer_bank} (Customer account debited)</div>
+            <div style="margin-top:6px; color:#b91c1c; font-weight:700; font-size:12px;">
+              ⚠️ Soundbox Alert: Weak internet drop! Soundbox remained silent.
             </div>
-            <button onclick="applySimulatedGrievance('${data.suggested_query}', '${data.rrn}', ${data.amount})" style="margin-top:8px; background:var(--paytm-navy); color:#fff; border:none; border-radius:6px; padding:8px 10px; font-weight:800; font-size:11px; cursor:pointer;">
-              🎙️ Raise Merchant Grievance for ₹${data.amount.toFixed(0)}
+            <button onclick="applySimulatedGrievance('${data.suggested_query}', '${data.rrn}', ${data.amount})" style="margin-top:8px; background:var(--paytm-navy); color:#fff; border:none; border-radius:6px; padding:8px 12px; font-weight:800; font-size:12px; cursor:pointer;">
+              🎙️ Raise Shopkeeper Grievance for ₹${data.amount.toFixed(0)}
             </button>
           `;
         }
@@ -2258,16 +2269,16 @@
         document.getElementById('sb-toggle-badge').textContent = '[PACKET DROPPED]';
         document.getElementById('sb-toggle-badge').style.color = '#f59e0b';
         document.getElementById('sb-net-text').textContent = '4G (WEAK)';
-        document.getElementById('sb-led').className = 'led-dot alert';
-        document.getElementById('sb-status').textContent = '⚠️ Packet Dropped (Missed RRN ' + data.rrn.slice(-4) + ')';
+        document.getElementById('sb-led').className = 'led-circle alert';
+        document.getElementById('sb-status').textContent = '⚠️ Weak Signal (Missed Alert ' + data.rrn.slice(-4) + ')';
         
-        addLog('SIMULATOR', `Customer Rahul Sharma debited ₹${data.amount.toFixed(2)} (RRN: ${data.rrn}). Soundbox 4G drop simulated.`);
+        addLog('SIMULATOR', `Customer Rahul Sharma debited ₹${data.amount.toFixed(2)} (Ref: ${data.rrn}). Weak internet simulated.`);
       } catch (err) {
         alert('Simulation error: ' + err);
       } finally {
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `⚡ Pay ₹${amt.toFixed(2)} via UPI (Simulate 4G Drop)`;
+          btn.innerHTML = `⚡ Pay ₹${amt.toFixed(2)} via UPI (Simulate Weak Internet)`;
         }
       }
     }
@@ -2284,16 +2295,16 @@
         alertBox.style.background = '#fef2f2';
         alertBox.style.border = '1.5px solid #ef4444';
         alertBox.innerHTML = `
-          <div style="font-weight:800; font-size:12px; color:#b91c1c;">⚠️ COUNTERFEIT PAYTM SPOOF SCREEN DETECTED</div>
-          <div><strong>Fake RRN Claimed:</strong> <span style="font-family:'JetBrains Mono'; color:#991b1b;">${fakeRrn}</span></div>
-          <div><strong>Amount Claimed:</strong> ₹${amt.toFixed(2)} (Counterfeit App Screen)</div>
-          <div style="margin-top:4px; font-size:11px; color:#7f1d1d; font-weight:600;">Bank Switch Status: NO FUNDS DEBITED. Intercepting scam...</div>
+          <div style="font-weight:800; font-size:13px; color:#b91c1c;">⚠️ COUNTERFEIT PAYMENT SCREEN DETECTED</div>
+          <div style="font-size:12px; margin-top:3px;"><strong>Fake Ref No:</strong> <span style="font-family:'JetBrains Mono'; color:#991b1b;">${fakeRrn}</span></div>
+          <div style="font-size:12px;"><strong>Amount Claimed:</strong> ₹${amt.toFixed(2)} (Fake App Screen)</div>
+          <div style="margin-top:4px; font-size:12px; color:#7f1d1d; font-weight:600;">Bank Check: ZERO MONEY DEBITED. Stopping scam...</div>
         `;
       }
 
       setTimeout(() => {
         closeQrModal();
-        addLog('FRAUD_SIMULATOR', `🚨 Customer presented counterfeit Paytm Spoof screen for ₹${amt.toFixed(2)} (Fake RRN: ${fakeRrn}). SETU intercepting...`);
+        addLog('FRAUD_SIMULATOR', `🚨 Customer showed fake payment screen for ₹${amt.toFixed(2)} (Ref: ${fakeRrn}). SETU stopping scam...`);
         ws.send(JSON.stringify({
           action: 'RUN_DISPUTE',
           query_text: `Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya nakli screenshot dikhaya RRN ${fakeRrn}`,
@@ -2310,20 +2321,20 @@
       inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       inputEl.style.boxShadow = '0 0 0 3px #00baf2';
       setTimeout(() => { inputEl.style.boxShadow = ''; }, 1500);
-      addLog('MERCHANT', `Merchant dispute ready for ₹${amount} (RRN ${rrn}). Merchant can speak or click 'Run Autonomous Resolution'.`);
+      addLog('MERCHANT', `Issue ready for ₹${amount} (Ref ${rrn}). Click 'Fix Payment Dispute Now'.`);
     }
 
     function useSampleSpeech() {
       const amt = currentBillAmount || 400;
       document.getElementById('query-input').value = `Bhaiya humari dukan pe ${Math.round(amt)} rupaye kata par Soundbox nahi bola. RRN number hai 410294820192`;
-      addLog('SAMPLE', `Inserted sample Hindi voice transcript for ₹${Math.round(amt)}: "Bhaiya humari dukan pe ${Math.round(amt)} rupaye kata..."`);
+      addLog('SAMPLE', `Inserted sample voice message for ₹${Math.round(amt)}: "Bhaiya humari dukan pe ${Math.round(amt)} rupaye kata..."`);
     }
 
     function useSampleFakeSpeech() {
       const amt = currentBillAmount || 400;
       const fakeRrn = 'FAKE_' + Math.floor(100000 + Math.random() * 900000);
       document.getElementById('query-input').value = `Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya aur nakli screen dikhaya RRN ${fakeRrn}`;
-      addLog('SAMPLE', `Inserted sample Paytm Spoof grievance for ₹${Math.round(amt)}: "Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya aur nakli screen dikhaya..."`);
+      addLog('SAMPLE', `Inserted sample fake payment query for ₹${Math.round(amt)}: "Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya..."`);
     }
 
     let currentVoiceLang = 'hi-IN';
@@ -2334,7 +2345,7 @@
       if (sampleText) {
         document.getElementById('query-input').value = sampleText;
       }
-      addLog('LANGUAGE', `Switched language to ${langCode}. Sarvam STT & Bulbul TTS chime set to ${langCode}.`);
+      addLog('LANGUAGE', `Switched language to ${langCode}. Voice recognition and speaker alert set to ${langCode}.`);
     }
 
     /* Live Web Audio Microphone Recording */
@@ -2385,9 +2396,9 @@
           document.getElementById('rec-timer').textContent = `${m}:${s}`;
         }, 1000);
 
-        addLog('SARVAM_STT', 'Microphone active (16kHz Mono). Listening to Indic speech...');
+        addLog('SARVAM_VOICE', 'Microphone active. Listening to speech in your language...');
       } catch (err) {
-        alert('Microphone access denied or error: ' + err.message);
+        alert('Microphone access denied: ' + err.message);
       }
     }
 
@@ -2414,7 +2425,7 @@
       let wavBuffer = encodeWAV(merged, 16000);
       let audioBlob = new Blob([wavBuffer], { type: 'audio/wav' });
 
-      addLog('SARVAM_STT', `Recorded ${(totalLen / 16000).toFixed(1)}s speech. Transcribing via Sarvam Saaras model...`);
+      addLog('SARVAM_VOICE', `Recorded ${(totalLen / 16000).toFixed(1)}s speech. Transcribing with Sarvam AI...`);
 
       let formData = new FormData();
       formData.append('audio_file', audioBlob, 'grievance.wav');
@@ -2428,13 +2439,13 @@
         const data = await res.json();
         if (data.transcript) {
           document.getElementById('query-input').value = data.transcript;
-          addLog('SARVAM_STT', `Transcribed Hindi: "${data.transcript}" (Amount: ₹${data.extracted_entities.amount})`);
+          addLog('SARVAM_VOICE', `Understood: "${data.transcript}" (Amount: ₹${data.extracted_entities.amount})`);
           if (data.agent_state) {
             handleStream({ event: 'RESOLUTION_FINALIZED', final_state: data.agent_state, soundbox_audio: data.soundbox_audio });
           }
         }
       } catch (err) {
-        addLog('SARVAM_STT', 'STT transcription error: ' + err.message);
+        addLog('SARVAM_VOICE', 'Voice error: ' + err.message);
       }
     }
 
@@ -2502,37 +2513,37 @@
           botDiv.style.background = '#fef2f2';
           botDiv.innerHTML = `
             <div style="color:#b91c1c; font-weight:800; font-size:12px;">🚨 PAYTM FRAUD SHIELD WARNING</div>
-            <div style="font-size:11px; margin-top:4px; color:#991b1b; line-height:1.4;">
-              <strong>Nakli Payment Pakda Gaya:</strong> Grahak ne ₹${data.amount.toFixed(2)} ka counterfeit Paytm Spoof screen dikhaya (RRN <code>${data.rrn}</code>).<br>
-              • <strong>NPCI Switch Audit:</strong> <span style="font-weight:800; color:#dc2626;">ZERO DEBIT FOUND (U30)</span><br>
-              • <strong>Ledger Impact:</strong> ₹0.00 Released (Credit Halted)<br>
-              • <strong>Soundbox Alert:</strong> Security Warning Chime Broadcasted<br>
+            <div style="font-size:11px; margin-top:4px; color:#991b1b; line-height:1.45;">
+              <strong>Nakli Payment Pakda Gaya:</strong> Grahak ne ₹${data.amount.toFixed(2)} ka nakli Paytm screen dikhaya (Ref: <code>${data.rrn}</code>).<br>
+              • <strong>Bank Check:</strong> <span style="font-weight:800; color:#dc2626;">ZERO MONEY DEBITED</span><br>
+              • <strong>Account Impact:</strong> ₹0.00 Released (No money given)<br>
+              • <strong>Soundbox Alert:</strong> Security Warning Chime Played<br>
               <div style="margin-top:6px; background:#fee2e2; border:1px solid #fca5a5; padding:6px 8px; border-radius:6px; color:#7f1d1d; font-weight:700;">
-                ⚠️ Warning: Do NOT deliver goods against this screenshot!
+                ⚠️ Warning: Samaan na dein! This was a fake payment attempt.
               </div>
             </div>
             <div class="wa-ts">${timeStr}</div>
           `;
-          document.getElementById('sb-amount').textContent = '⚠️ SPOOF ALERT';
-          document.getElementById('sb-status').textContent = `🚨 FAKE PAYMENT (₹${data.amount.toFixed(2)} BLOCKED)`;
-          document.getElementById('sb-led').className = 'led-dot alert';
+          document.getElementById('sb-amount').textContent = '⚠️ FAKE PAY';
+          document.getElementById('sb-status').textContent = `🚨 SCAM BLOCKED (₹${data.amount.toFixed(2)})`;
+          document.getElementById('sb-led').className = 'led-circle alert';
           if (data.soundbox_audio && data.soundbox_audio.audio_data_url) {
             playAudio(data.soundbox_audio.audio_data_url);
           }
-          addLog('WHATSAPP', `🚨 Fraud Shield Intercepted fake payment of ₹${data.amount.toFixed(2)} (RRN ${data.rrn}) via WhatsApp! Zero funds credited.`);
+          addLog('WHATSAPP', `🚨 Fraud Shield Intercepted fake payment of ₹${data.amount.toFixed(2)}!`);
         } else if (data.is_settled && !data.hitl_tripped) {
           const shortHash = data.digital_receipt && data.digital_receipt.sha256_audit_seal
             ? data.digital_receipt.sha256_audit_seal.slice(0, 14) + '...'
             : 'SHA256-VERIFIED';
 
           botDiv.innerHTML = `
-            <div>✅ <strong>Payment Reconciled &amp; Credited</strong></div>
-            <div style="font-size:11px; margin-top:2px; color:#374151;">Dispute resolved in &lt;45s without human touch.</div>
-            <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-top:6px; font-size:10px;">
+            <div>✅ <strong>Payment Verified &amp; Added to Balance</strong></div>
+            <div style="font-size:11px; margin-top:2px; color:#374151;">Fixed in under 45 seconds automatically.</div>
+            <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-top:6px; font-size:11px;">
               <div><strong>Amount:</strong> ₹${data.amount.toFixed(2)}</div>
-              <div><strong>RRN:</strong> ${data.rrn}</div>
-              <div><strong>Status:</strong> Credited to Merchant Settlement Balance</div>
-              <div><strong>Audit Seal:</strong> <code>${shortHash}</code></div>
+              <div><strong>Reference No:</strong> ${data.rrn}</div>
+              <div><strong>Status:</strong> Added to Merchant Settlement Account</div>
+              <div><strong>Digital Seal:</strong> <code>${shortHash}</code></div>
             </div>
             <div class="wa-ts">${timeStr}</div>
           `;
@@ -2542,17 +2553,17 @@
           }
           document.getElementById('sb-amount').textContent = `₹${data.amount.toFixed(2)}`;
           document.getElementById('sb-status').textContent = '✅ WhatsApp Grievance Reconciled';
-          document.getElementById('sb-led').className = 'led-dot ready';
+          document.getElementById('sb-led').className = 'led-circle';
           refreshBalances();
-          addLog('WHATSAPP', `Dispute ${data.dispute_id} autonomously settled via WhatsApp for ₹${data.amount.toFixed(2)}!`);
+          addLog('WHATSAPP', `Dispute settled via WhatsApp for ₹${data.amount.toFixed(2)}!`);
         } else {
           botDiv.innerHTML = `
-            <div style="color:#b45309; font-weight:700;">🛡️ High-Value Safety Circuit Breaker</div>
-            <div style="font-size:11px; margin-top:4px;">Dispute for <strong>₹${data.amount.toFixed(2)}</strong> (RRN: ${data.rrn}) exceeds the ₹5,000 threshold.</div>
-            <div style="font-size:11px; margin-top:4px; color:#4b5563;">An Operations Supervisor has received the incident dossier on the desk for 1-click review.</div>
+            <div style="color:#b45309; font-weight:700;">🛡️ Large Amount Manager Review</div>
+            <div style="font-size:11px; margin-top:4px;">Dispute for <strong>₹${data.amount.toFixed(2)}</strong> (Ref: ${data.rrn}) is above the ₹5,000 safety limit.</div>
+            <div style="font-size:11px; margin-top:4px; color:#4b5563;">An Operations Manager has received this on their desk for 1-click review.</div>
             <div class="wa-ts">${timeStr}</div>
           `;
-          addLog('WHATSAPP_HITL', `High-value grievance of ₹${data.amount.toFixed(2)} paused for supervisor sign-off.`);
+          addLog('WHATSAPP_HITL', `Large amount grievance of ₹${data.amount.toFixed(2)} paused for manager review.`);
         }
 
         messagesArea.appendChild(botDiv);
@@ -2560,7 +2571,7 @@
       } catch (err) {
         const botDiv = document.createElement('div');
         botDiv.className = 'wa-bubble wa-bot';
-        botDiv.innerHTML = `<span style="color:red;">Error processing grievance: ${err.message}</span>`;
+        botDiv.innerHTML = `<span style="color:red;">Error processing query: ${err.message}</span>`;
         messagesArea.appendChild(botDiv);
       }
     }
