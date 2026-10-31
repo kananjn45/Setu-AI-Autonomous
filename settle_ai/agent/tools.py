@@ -88,6 +88,20 @@ class BankSwitchTool:
                 raw_message=record["raw_message"],
             )
 
+        # Fraud & Spoof Detection: Intercept unverified/fake RRNs on switch
+        if rrn.startswith("FAKE") or rrn.startswith("SPOOF") or rrn.startswith("UNVERIFIED"):
+            amt = amount_hint if amount_hint is not None else 0.0
+            return BankSwitchResponse(
+                rrn=rrn,
+                amount=amt,
+                status=BankStatus.NOT_FOUND,
+                customer_vpa="unknown.spoof@vpa",
+                payer_bank="Unknown Switch",
+                clearing_timestamp=datetime.now(timezone.utc).isoformat(),
+                gateway_response_code="U30",
+                raw_message="DECLINED: RRN not found on NPCI clearing switch. Zero funds debited.",
+            )
+
         # Dynamic fallback for arbitrary RRNs
         amt = amount_hint if amount_hint is not None else 250.0
         return BankSwitchResponse(

@@ -181,7 +181,7 @@ def execute_teammate_mission(req: MissionRequest):
             device_id=req.device_id,
             rrn=spoof_rrn,
             amount=req.amount,
-            voice_transcript="Customer keh raha hai usne ₹500 pay kar diya screenshot dikhaya par soundbox nahi bola",
+            voice_transcript=f"Customer keh raha hai usne ₹{req.amount} pay kar diya screenshot dikhaya par soundbox nahi bola",
             channel=DisputeChannel.INDIC_VOICE,
             merchant_name=req.merchant_name,
         )

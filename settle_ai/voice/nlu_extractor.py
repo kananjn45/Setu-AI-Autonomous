@@ -80,7 +80,9 @@ class MerchantGrievanceExtractor:
 
         # 5. Intent detection
         lower_text = norm_text.lower()
-        if "soundbox" in lower_text and ("nahi bola" in lower_text or "aawaz nahi" in lower_text or "silent" in lower_text):
+        if any(w in lower_text for w in ["fake", "spoof", "screenshot", "screen dikha", "nakli", "dhokha", "farzi", "scam", "chor"]):
+            intent = "PAYTM_SPOOF_FRAUD"
+        elif "soundbox" in lower_text and ("nahi bola" in lower_text or "aawaz nahi" in lower_text or "silent" in lower_text):
             intent = "SOUNDBOX_SILENT"
         elif "do baar" in lower_text or "double" in lower_text:
             intent = "DOUBLE_DEBIT"
@@ -103,8 +105,11 @@ class MerchantGrievanceExtractor:
         # If amount is cleanly found by regex, return immediately (sub-millisecond latency)
         if regex_amt is not None:
             import time
-            eff_rrn = regex_rrn or f"4102{int(time.time()*1000) % 100000000:08d}"
-            logger.info(f"[IndicNLU] Fast regex matched: RRN={eff_rrn}, Amount=₹{regex_amt}")
+            if regex_intent == "PAYTM_SPOOF_FRAUD":
+                eff_rrn = regex_rrn or f"FAKE_{int(time.time()*1000) % 1000000:06d}"
+            else:
+                eff_rrn = regex_rrn or f"4102{int(time.time()*1000) % 100000000:08d}"
+            logger.info(f"[IndicNLU] Fast regex matched: RRN={eff_rrn}, Amount=₹{regex_amt}, Intent={regex_intent}")
             return {
                 "rrn": eff_rrn,
                 "amount": regex_amt,
