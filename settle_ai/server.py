@@ -677,7 +677,7 @@ class CounterQueryRequest(BaseModel):
 
 
 @app.post("/api/counter/verify")
-async def verify_counter_dispute(req: CounterQueryRequest):
+def verify_counter_dispute(req: CounterQueryRequest):
     """Counter-side 45-second instant adjudication ('Setu, 500 aaya kya?')."""
     result = CounterAdjudicator.adjudicate_counter_query(
         merchant_id=req.merchant_id,
@@ -714,7 +714,7 @@ class ScreenshotVerifyRequest(BaseModel):
 
 
 @app.post("/api/screenshot/verify")
-async def verify_customer_screenshot(req: ScreenshotVerifyRequest):
+def verify_customer_screenshot(req: ScreenshotVerifyRequest):
     """Extracts and cross-correlates customer 'payment successful' screen with ledger."""
     result = ScreenshotVerifier.verify_screenshot(
         merchant_id=req.merchant_id,
@@ -744,7 +744,7 @@ class SoundboxReconnectRequest(BaseModel):
 
 
 @app.post("/api/soundbox/reconnect")
-async def trigger_soundbox_reconnect(req: SoundboxReconnectRequest):
+def trigger_soundbox_reconnect(req: SoundboxReconnectRequest):
     """Proactively catches up on unannounced credits when Soundbox reconnects after outage."""
     summary = OfflineCatchupEngine.handle_device_reconnect(
         device_id=req.device_id,
@@ -771,7 +771,7 @@ class FleetIncidentRequest(BaseModel):
 
 
 @app.post("/api/fleet/incidents")
-async def evaluate_fleet_incidents(req: FleetIncidentRequest):
+def evaluate_fleet_incidents(req: FleetIncidentRequest):
     """Clusters systemic bank switch delays or cellular drops into a single incident ticket."""
     if req.pincode:
         incident = FleetIncidentDetector.evaluate_pincode_cluster_telemetry(pincode=req.pincode)
@@ -809,7 +809,7 @@ class RBIComplianceClockRequest(BaseModel):
 
 
 @app.post("/api/compliance/rbi-clock")
-async def evaluate_rbi_tat_compliance(req: RBIComplianceClockRequest):
+def evaluate_rbi_tat_compliance(req: RBIComplianceClockRequest):
     """Tracks regulatory auto-reversal clock against RBI Harmonised TAT circular."""
     status = RBIComplianceClock.evaluate_compliance(
         rrn=req.rrn,
@@ -838,7 +838,7 @@ class RedTeamTestRequest(BaseModel):
 
 
 @app.post("/api/voice/red-team")
-async def evaluate_red_team_adversarial_attempt(req: RedTeamTestRequest):
+def evaluate_red_team_adversarial_attempt(req: RedTeamTestRequest):
     """Live adversarial test: proves SETU refuses social engineering overrides."""
     result = RedTeamAdversarialGuard.evaluate_adversarial_input(
         merchant_id=req.merchant_id,
