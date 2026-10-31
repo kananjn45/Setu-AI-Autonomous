@@ -125,8 +125,8 @@
                 <span>🔊</span> PAYTM SOUNDBOX 4G
               </div>
               <div class="soundbox-meta">
-                <span id="sb-net-text">4G CELLULAR</span>
-                <span id="sb-rssi" class="tabular-num">-88 dBm</span>
+                <span id="sb-net-text">4G Signal</span>
+                <span id="sb-rssi">Strong</span>
                 <div class="led-circle" id="sb-led"></div>
               </div>
             </div>
@@ -140,9 +140,9 @@
             <div class="soundbox-actions">
               <button class="btn-weak-net" onclick="toggleSoundboxNetwork()">
                 <span>⚡ Simulate Weak Internet</span>
-                <span id="sb-toggle-badge" class="tabular-num" style="color: var(--paytm-amber);">[PACKET DROPPED]</span>
+                <span id="sb-toggle-badge" style="color: var(--paytm-amber); font-weight: 700;">Signal Weak</span>
               </button>
-              <span class="tabular-num" style="font-size: 11px; color: var(--text-soft);">ID: SB_DELHI_0841</span>
+
             </div>
           </div>
 
@@ -273,7 +273,7 @@
             
             <div class="pipeline-step" id="node-ingest">
               <div style="display: flex; align-items: center; flex: 1;">
-                <div class="step-icon-num tabular-num">1</div>
+                <div class="step-icon-num">1</div>
                 <div class="step-info-col">
                   <div class="step-main-title">Understand Shopkeeper Query</div>
                   <div class="step-detail-text" id="desc-ingest">Understands speech in Hindi &amp; regional languages. Finds payment reference number.</div>
@@ -284,9 +284,9 @@
 
             <div class="pipeline-step" id="node-diagnose_bank">
               <div style="display: flex; align-items: center; flex: 1;">
-                <div class="step-icon-num tabular-num">2</div>
+                <div class="step-icon-num">2</div>
                 <div class="step-info-col">
-                  <div class="step-main-title">Check with Bank (NPCI Switch)</div>
+                  <div class="step-main-title">Check with Bank</div>
                   <div class="step-detail-text" id="desc-bank">Verifies if customer bank account was really debited.</div>
                 </div>
               </div>
@@ -295,7 +295,7 @@
 
             <div class="pipeline-step" id="node-diagnose_iot">
               <div style="display: flex; align-items: center; flex: 1;">
-                <div class="step-icon-num tabular-num">3</div>
+                <div class="step-icon-num">3</div>
                 <div class="step-info-col">
                   <div class="step-main-title">Check Soundbox Signal</div>
                   <div class="step-detail-text" id="desc-iot">Checks cellular signal &amp; battery to see if voice alert was missed.</div>
@@ -306,7 +306,7 @@
 
             <div class="pipeline-step" id="node-diagnose_ledger">
               <div style="display: flex; align-items: center; flex: 1;">
-                <div class="step-icon-num tabular-num">4</div>
+                <div class="step-icon-num">4</div>
                 <div class="step-info-col">
                   <div class="step-main-title">Check Shopkeeper Account</div>
                   <div class="step-detail-text" id="desc-ledger">Checks pending balances &amp; prevents double payments.</div>
@@ -317,7 +317,7 @@
 
             <div class="pipeline-step" id="node-evaluate_risk">
               <div style="display: flex; align-items: center; flex: 1;">
-                <div class="step-icon-num tabular-num">5</div>
+                <div class="step-icon-num">5</div>
                 <div class="step-info-col">
                   <div class="step-main-title">Safety &amp; Fraud Check</div>
                   <div class="step-detail-text" id="desc-risk">Ensures 95%+ confidence. Stops amounts above ₹5,000 for manager review.</div>
@@ -328,7 +328,7 @@
 
             <div class="pipeline-step" id="node-autonomous_settle">
               <div style="display: flex; align-items: center; flex: 1;">
-                <div class="step-icon-num tabular-num">6</div>
+                <div class="step-icon-num">6</div>
                 <div class="step-info-col">
                   <div class="step-main-title">Settle Money &amp; Ring Soundbox</div>
                   <div class="step-detail-text" id="desc-settle">Credits shopkeeper balance, plays audio on speaker, and sends WhatsApp receipt.</div>
@@ -362,15 +362,15 @@
             <div class="whatsapp-feed" id="wa-messages-area">
               <div class="wa-bubble wa-bot">
                 <div>Namaste Gupta ji! Main Paytm ka AI Teammate SETU hoon. Kisi bhi payment ya Soundbox samasya ke liye yahan likhein ya voice note bhejein.</div>
-                <div class="wa-ts tabular-num">09:00 AM</div>
+                <div class="wa-ts">09:00 AM</div>
               </div>
               <div class="wa-bubble wa-user">
                 <div>Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN 410294820192</div>
-                <div class="wa-ts tabular-num">09:15 AM ✓✓</div>
+                <div class="wa-ts">09:15 AM ✓✓</div>
               </div>
               <div class="wa-bubble wa-bot">
                 <div>✅ <strong>Payment Solved:</strong> ₹400.00 credit ho gaya hai aur Soundbox chime re-push kar di gayi hai.</div>
-                <div class="wa-ts tabular-num" id="wa-time">09:15 AM</div>
+                <div class="wa-ts" id="wa-time">09:15 AM</div>
               </div>
             </div>
 
@@ -394,11 +394,12 @@
           </div>
 
           <!-- Activity Log -->
+          <div style="margin-bottom: 6px;"><span class="section-label" style="margin-bottom: 0;">📋 Recent Activity</span></div>
           <div class="system-log-terminal" id="op-log">
             <div class="log-item">
-              <span class="time">[System]</span>
-              <span class="actor">SETU Teammate:</span>
-              <span>Ready and listening for shopkeeper issues...</span>
+              <span class="time">Now</span>
+              <span class="actor">SETU:</span>
+              <span>Ready — waiting for store payments or voice query.</span>
             </div>
           </div>
 

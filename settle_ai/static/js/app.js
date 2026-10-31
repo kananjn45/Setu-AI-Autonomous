@@ -63,10 +63,10 @@ function resetPipeline() {
 function addLog(actor, text) {
   const box = document.getElementById('op-log');
   if (!box) return;
-  const time = new Date().toLocaleTimeString();
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const div = document.createElement('div');
   div.className = 'log-item';
-  div.innerHTML = `<span class="time">[${time}]</span> <span class="actor">${actor}:</span> <span>${text}</span>`;
+  div.innerHTML = `<span class="time">${time}</span> <span class="actor">${actor}:</span> <span>${text}</span>`;
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
 }
@@ -77,7 +77,7 @@ function addLog(actor, text) {
 function handleStream(data) {
   if (data.event === 'NLU_START') {
     resetPipeline();
-    addLog('SARVAM_VOICE', `Listening to voice query: "${data.text}"`);
+    addLog('Voice AI', `Listening to query: "${data.text}"`);
     document.getElementById('node-ingest').classList.add('active');
     document.getElementById('story-text').innerHTML = `🎙️ <strong>Step 1:</strong> Listening to merchant query: <em>"${data.text}"</em>`;
   }
@@ -85,7 +85,7 @@ function handleStream(data) {
     document.getElementById('node-ingest').classList.remove('active');
     document.getElementById('node-ingest').classList.add('completed');
     currentDisputeIsFraud = (data.entities.intent === 'PAYTM_SPOOF_FRAUD' || (data.entities.rrn && data.entities.rrn.startsWith('FAKE')));
-    addLog('NLU_EXTRACT', `Ref No: ${data.entities.rrn} | Amount: ₹${data.entities.amount}`);
+    addLog('SETU', `Ref: ${data.entities.rrn} | Amount: ₹${data.entities.amount}`);
     document.getElementById('desc-ingest').textContent = `Understood: Ref ${data.entities.rrn} | Amount: ₹${data.entities.amount}`;
   }
   else if (data.event_type === 'NODE_EXECUTED') {
@@ -109,7 +109,16 @@ function handleStream(data) {
       const lat = document.getElementById(`lat-${nodeName}`);
       if (lat) lat.textContent = `${data.latency_ms.toFixed(1)}ms`;
     }
-    addLog(nodeName.toUpperCase(), data.step_summary);
+    const friendlyNodeActors = {
+      'node_ingest': 'Voice AI',
+      'node_diagnose_bank': 'Bank Check',
+      'node_diagnose_iot': 'Soundbox',
+      'node_diagnose_ledger': 'Account Check',
+      'node_evaluate_risk': 'Security',
+      'node_autonomous_settle': 'Settlement'
+    };
+    const actorLabel = friendlyNodeActors[nodeName] || 'SETU';
+    addLog(actorLabel, data.step_summary);
 
     if (nodeName === 'node_diagnose_bank') {
       if (currentDisputeIsFraud) {
@@ -153,7 +162,7 @@ function handleStream(data) {
       document.getElementById('sb-status').textContent = `🚨 SCAM BLOCKED (₹${state.amount.toFixed(2)} PREVENTED)`;
       document.getElementById('sb-led').className = 'led-circle alert';
       document.getElementById('story-text').innerHTML = `🚨 <strong>Fake Payment Blocked!</strong> Bank confirmed NO money was debited for Ref ${state.rrn}. Security warning sounded. Saved merchant ₹${state.amount.toFixed(2)}!`;
-      addLog('SETU_SHIELD', `🚨 BLOCKED FAKE PAYMENT: Bank shows NO debit for Ref ${state.rrn}. Saved ₹${state.amount.toFixed(2)}.`);
+      addLog('Fraud Defense', `🚨 BLOCKED FAKE PAYMENT: Bank shows NO debit for Ref ${state.rrn}. Saved ₹${state.amount.toFixed(2)}.`);
 
       const waArea = document.getElementById('wa-messages-area');
       if (waArea) {
@@ -223,7 +232,7 @@ function handleStream(data) {
     document.getElementById('sb-led').className = 'led-circle';
     document.getElementById('story-text').innerHTML = `✅ <strong>Manager Approved:</strong> ₹${state.amount.toFixed(2)} credited to merchant balance.`;
 
-    addLog('SUPERVISOR', `1-Click Approval executed. ₹${state.amount.toFixed(2)} credited to merchant balance.`);
+    addLog('Manager', `1-Click Approval executed. ₹${state.amount.toFixed(2)} credited to merchant balance.`);
 
     if (data.soundbox_audio && data.soundbox_audio.audio_data_url) {
       playAudio(data.soundbox_audio.audio_data_url);
@@ -265,7 +274,7 @@ function handleStream(data) {
       waArea.scrollTop = waArea.scrollHeight;
     }
 
-    addLog('SUPERVISOR', `Claim for ₹${state.amount.toFixed(2)} REJECTED by Manager. Zero funds credited.`);
+    addLog('Manager', `Claim for ₹${state.amount.toFixed(2)} REJECTED by Manager. Zero funds credited.`);
     refreshBalances();
   }
 }
@@ -377,7 +386,7 @@ function playAudio(dataUrl) {
     if (p !== undefined) {
       p.catch(e => {
         console.log('Autoplay deferred:', e);
-        addLog('SOUNDBOX_AUDIO', 'Audio chime generated. Autoplay paused by browser policy.');
+        addLog('Soundbox', 'Audio chime generated. Autoplay paused by browser policy.');
       });
     }
   }
@@ -445,14 +454,14 @@ async function triggerTeammateMission(missionId) {
   document.querySelectorAll('.mission-tab').forEach(t => t.classList.remove('active'));
 
   if (!ws || ws.readyState !== WebSocket.OPEN) {
-    addLog('MISSION_CONTROL', 'Connecting to real-time WebSocket... please wait 1 second.');
+    addLog('SETU', 'Connecting to real-time service... please wait a moment.');
     return;
   }
 
   if (missionId === 'SERVICE_DISPUTE') {
     const tab = document.getElementById('tab-mission1'); if (tab) tab.classList.add('active');
     const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
-    addLog('MISSION_CONTROL', `🟢 Running Scenario 1: Silent Soundbox (₹${amt.toFixed(2)} Drop)...`);
+    addLog('SETU', `🟢 Scenario 1: Silent Soundbox (₹${amt.toFixed(2)} Drop)...`);
     ws.send(JSON.stringify({
       action: 'RUN_DISPUTE',
       query_text: `Bhaiya humari dukan pe ${Math.round(amt)} rupaye kata par Soundbox nahi bola. RRN number hai 410294820192`,
@@ -464,7 +473,7 @@ async function triggerTeammateMission(missionId) {
     const amt = currentBillAmount > 0 ? currentBillAmount : 400.0;
     const fakeRrn = 'FAKE_' + Math.floor(100000 + Math.random() * 900000);
     currentDisputeIsFraud = true;
-    addLog('MISSION_CONTROL', `🚨 Running Scenario 2: Fake Payment App Intercepted for ₹${amt.toFixed(2)}...`);
+    addLog('SETU', `🚨 Scenario 2: Fake Payment App Intercepted for ₹${amt.toFixed(2)}...`);
     ws.send(JSON.stringify({
       action: 'RUN_DISPUTE',
       query_text: `Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya aur screenshot dikhaya RRN ${fakeRrn}`,
@@ -473,14 +482,14 @@ async function triggerTeammateMission(missionId) {
     }));
   } else if (missionId === 'SALES_UPGRADE') {
     const tab = document.getElementById('tab-mission3'); if (tab) tab.classList.add('active');
-    addLog('MISSION_CONTROL', '📈 Running Scenario 3: Soundbox Hardware Check & 4G Pro Upgrade Offer...');
+    addLog('SETU', '📈 Scenario 3: Soundbox Hardware Check & 4G Pro Upgrade Offer...');
     resetPipeline();
     document.getElementById('node-ingest').classList.add('completed');
     document.getElementById('node-diagnose_iot').classList.add('completed');
     document.getElementById('sb-status').textContent = '📈 Hardware Check: Weak 2G Signal Detected';
     document.getElementById('sb-amount').textContent = 'UPGRADE 4G PRO';
     document.getElementById('story-text').innerHTML = `📈 <strong>Device Check Complete:</strong> Soundbox has old 2G cellular signal (-98dBm). Generated 1-Click Upgrade Offer to Paytm Soundbox 4G Pro at ₹199!`;
-    addLog('SALES_ENGINE', 'Merchant Gupta Tea Stall diagnosed with old 2G signal drops. Offered Soundbox 4G Pro upgrade at ₹199.');
+    addLog('Store Growth', 'Merchant Gupta Tea Stall diagnosed with old 2G signal drops. Offered Soundbox 4G Pro upgrade at ₹199.');
 
     const waArea = document.getElementById('wa-messages-area');
     if (waArea) {
@@ -500,7 +509,7 @@ async function triggerTeammateMission(missionId) {
     }
   } else if (missionId === 'HITL_SUPERVISOR') {
     const tab = document.getElementById('tab-mission4'); if (tab) tab.classList.add('active');
-    addLog('MISSION_CONTROL', '🛡️ Running Scenario 4: Large Order Review (₹15,000)...');
+    addLog('SETU', '🛡️ Scenario 4: Large Order Review (₹15,000)...');
     ws.send(JSON.stringify({
       action: 'RUN_DISPUTE',
       query_text: 'Sharma Kirana Store ka 15,000 rupaye ruka hua hai RRN 883920194821',
@@ -509,13 +518,13 @@ async function triggerTeammateMission(missionId) {
     }));
   } else if (missionId === 'PROACTIVE_FLEET') {
     const tab = document.getElementById('tab-mission5'); if (tab) tab.classList.add('active');
-    addLog('MISSION_CONTROL', '📡 Running Scenario 5: Bank Server Slowdown Alert...');
+    addLog('SETU', '📡 Scenario 5: Bank Server Delay Notice...');
     resetPipeline();
     document.getElementById('node-diagnose_bank').classList.add('completed');
     document.getElementById('sb-status').textContent = '📡 BANK NOTICE: SBI DELAYS DETECTED';
     document.getElementById('sb-led').className = 'led-circle alert';
     document.getElementById('story-text').innerHTML = `📡 <strong>Bank Slowdown Notice:</strong> Detected SBI server delay. Sent 1-line Hindi voice warning to 10,482 Soundboxes!`;
-    addLog('FLEET_GUARDIAN', 'SBI UPI server slow (4,250ms). Spoke 1-line Hindi warning to 10,482 Soundboxes: "Dhyan dein: SBI server dheema hai..."');
+    addLog('Fleet Monitor', 'SBI UPI server slow (4,250ms). Spoke 1-line Hindi warning to 10,482 Soundboxes: "Dhyan dein: SBI server dheema hai..."');
     playAudio('/static/audio/chirp_switch_advisory.wav');
   }
 }
@@ -530,15 +539,15 @@ function toggleSoundboxNetwork() {
   const led = document.getElementById('sb-led');
 
   if (isNetDropped) {
-    if (badge) { badge.textContent = '[PACKET DROPPED]'; badge.style.color = '#f59e0b'; }
-    if (netText) netText.textContent = '4G (WEAK)';
+    if (badge) { badge.textContent = 'Signal Weak'; badge.style.color = '#f59e0b'; }
+    if (netText) netText.textContent = '4G (Weak)';
     if (led) led.className = 'led-circle alert';
-    addLog('HARDWARE', 'Simulated weak internet on Soundbox SB_DELHI_0841.');
+    addLog('Soundbox', 'Simulated weak internet on Soundbox.');
   } else {
-    if (badge) { badge.textContent = '[ONLINE]'; badge.style.color = '#10b981'; }
-    if (netText) netText.textContent = '4G (STRONG)';
+    if (badge) { badge.textContent = 'Strong Signal'; badge.style.color = '#10b981'; }
+    if (netText) netText.textContent = '4G Signal';
     if (led) led.className = 'led-circle';
-    addLog('HARDWARE', 'Internet signal restored on Soundbox SB_DELHI_0841.');
+    addLog('Soundbox', 'Internet signal restored.');
   }
 }
 
@@ -665,13 +674,13 @@ async function simulateCustomerPay() {
     }
 
     isNetDropped = true;
-    document.getElementById('sb-toggle-badge').textContent = '[PACKET DROPPED]';
+    document.getElementById('sb-toggle-badge').textContent = 'Signal Weak';
     document.getElementById('sb-toggle-badge').style.color = '#f59e0b';
-    document.getElementById('sb-net-text').textContent = '4G (WEAK)';
+    document.getElementById('sb-net-text').textContent = '4G (Weak)';
     document.getElementById('sb-led').className = 'led-circle alert';
     document.getElementById('sb-status').textContent = '⚠️ Weak Signal (Missed Alert ' + data.rrn.slice(-4) + ')';
     
-    addLog('SIMULATOR', `Customer Rahul Sharma debited ₹${data.amount.toFixed(2)} (Ref: ${data.rrn}). Weak internet simulated.`);
+    addLog('Simulator', `Customer debited ₹${data.amount.toFixed(2)} (Ref: ...${data.rrn.slice(-4)}). Weak internet simulated.`);
   } catch (err) {
     alert('Simulation error: ' + err);
   } finally {
@@ -703,7 +712,7 @@ function simulateFakePay() {
 
   setTimeout(() => {
     closeQrModal();
-    addLog('FRAUD_SIMULATOR', `🚨 Customer showed fake payment screen for ₹${amt.toFixed(2)} (Ref: ${fakeRrn}). SETU stopping scam...`);
+    addLog('Simulator', `🚨 Customer showed fake payment screen for ₹${amt.toFixed(2)} (Ref: ...${fakeRrn.slice(-4)}). SETU stopping scam...`);
     ws.send(JSON.stringify({
       action: 'RUN_DISPUTE',
       query_text: `Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya nakli screenshot dikhaya RRN ${fakeRrn}`,
@@ -720,20 +729,20 @@ function applySimulatedGrievance(query, rrn, amount) {
   inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
   inputEl.style.boxShadow = '0 0 0 3px #00baf2';
   setTimeout(() => { inputEl.style.boxShadow = ''; }, 1500);
-  addLog('MERCHANT', `Issue ready for ₹${amount} (Ref ${rrn}). Click 'Fix Payment Dispute Now'.`);
+  addLog('Store', `Issue ready for ₹${amount} (Ref ...${rrn.slice(-4)}). Click 'Fix Payment Dispute Now'.`);
 }
 
 function useSampleSpeech() {
   const amt = currentBillAmount || 400;
   document.getElementById('query-input').value = `Bhaiya humari dukan pe ${Math.round(amt)} rupaye kata par Soundbox nahi bola. RRN number hai 410294820192`;
-  addLog('SAMPLE', `Inserted sample voice message for ₹${Math.round(amt)}: "Bhaiya humari dukan pe ${Math.round(amt)} rupaye kata..."`);
+  addLog('Sample Voice', `Sample query ready for ₹${Math.round(amt)}: "Bhaiya 400 rupaye kata par Soundbox nahi bola..."`);
 }
 
 function useSampleFakeSpeech() {
   const amt = currentBillAmount || 400;
   const fakeRrn = 'FAKE_' + Math.floor(100000 + Math.random() * 900000);
   document.getElementById('query-input').value = `Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya aur nakli screen dikhaya RRN ${fakeRrn}`;
-  addLog('SAMPLE', `Inserted sample fake payment query for ₹${Math.round(amt)}: "Customer bol raha hai usne ₹${Math.round(amt)} pay kar diya..."`);
+  addLog('Sample Voice', `Sample fake payment query ready for ₹${Math.round(amt)}.`);
 }
 
 let currentVoiceLang = 'hi-IN';
@@ -744,7 +753,7 @@ function selectVoiceLang(langCode, sampleText, btnEl) {
   if (sampleText) {
     document.getElementById('query-input').value = sampleText;
   }
-  addLog('LANGUAGE', `Switched language to ${langCode}. Voice recognition and speaker alert set to ${langCode}.`);
+  addLog('Language', `Switched language to ${langCode}. Voice recognition and speaker alert ready.`);
 }
 
 // --------------------------------------------------------------------------
@@ -797,7 +806,7 @@ async function startMicRecording() {
       document.getElementById('rec-timer').textContent = `${m}:${s}`;
     }, 1000);
 
-    addLog('SARVAM_VOICE', 'Microphone active. Listening to speech in your language...');
+    addLog('Voice AI', 'Microphone active. Listening to your query...');
   } catch (err) {
     alert('Microphone access denied: ' + err.message);
   }
@@ -826,7 +835,7 @@ async function stopMicRecording() {
   let wavBuffer = encodeWAV(merged, 16000);
   let audioBlob = new Blob([wavBuffer], { type: 'audio/wav' });
 
-  addLog('SARVAM_VOICE', `Recorded ${(totalLen / 16000).toFixed(1)}s speech. Transcribing with Sarvam AI...`);
+  addLog('Voice AI', `Recorded ${(totalLen / 16000).toFixed(1)}s audio. Understanding query...`);
 
   let formData = new FormData();
   formData.append('audio_file', audioBlob, 'grievance.wav');
@@ -840,13 +849,13 @@ async function stopMicRecording() {
     const data = await res.json();
     if (data.transcript) {
       document.getElementById('query-input').value = data.transcript;
-      addLog('SARVAM_VOICE', `Understood: "${data.transcript}" (Amount: ₹${data.extracted_entities.amount})`);
+      addLog('Voice AI', `Understood: "${data.transcript}" (Amount: ₹${data.extracted_entities.amount})`);
       if (data.agent_state) {
         handleStream({ event: 'RESOLUTION_FINALIZED', final_state: data.agent_state, soundbox_audio: data.soundbox_audio });
       }
     }
   } catch (err) {
-    addLog('SARVAM_VOICE', 'Voice error: ' + err.message);
+    addLog('Voice AI', 'Voice error: ' + err.message);
   }
 }
 
@@ -934,7 +943,7 @@ async function sendWhatsAppMessage(overrideText, amountHint, rrnHint) {
       if (data.soundbox_audio && data.soundbox_audio.audio_data_url) {
         playAudio(data.soundbox_audio.audio_data_url);
       }
-      addLog('WHATSAPP', `🚨 Fraud Shield Intercepted fake payment of ₹${data.amount.toFixed(2)}!`);
+      addLog('WhatsApp', `🚨 Fraud Shield Intercepted fake payment of ₹${data.amount.toFixed(2)}!`);
     } else if (data.is_settled && !data.hitl_tripped) {
       const shortHash = data.digital_receipt && data.digital_receipt.sha256_audit_seal
         ? data.digital_receipt.sha256_audit_seal.slice(0, 14) + '...'
@@ -959,7 +968,7 @@ async function sendWhatsAppMessage(overrideText, amountHint, rrnHint) {
       document.getElementById('sb-status').textContent = '✅ WhatsApp Grievance Reconciled';
       document.getElementById('sb-led').className = 'led-circle';
       refreshBalances();
-      addLog('WHATSAPP', `Dispute settled via WhatsApp for ₹${data.amount.toFixed(2)}!`);
+      addLog('WhatsApp', `Dispute settled via WhatsApp for ₹${data.amount.toFixed(2)}!`);
     } else {
       botDiv.innerHTML = `
         <div style="color:#b45309; font-weight:700;">🛡️ Large Amount Manager Review</div>
@@ -967,7 +976,7 @@ async function sendWhatsAppMessage(overrideText, amountHint, rrnHint) {
         <div style="font-size:11px; margin-top:4px; color:#4b5563;">An Operations Manager has received this on their desk for 1-click review.</div>
         <div class="wa-ts">${timeStr}</div>
       `;
-      addLog('WHATSAPP_HITL', `Large amount grievance of ₹${data.amount.toFixed(2)} paused for manager review.`);
+      addLog('Manager Review', `Large amount grievance of ₹${data.amount.toFixed(2)} paused for manager review.`);
     }
 
     messagesArea.appendChild(botDiv);
@@ -992,3 +1001,4 @@ window.onload = () => {
   refreshBalances();
   updateBillAmountDisplay(currentBillAmount);
 };
+

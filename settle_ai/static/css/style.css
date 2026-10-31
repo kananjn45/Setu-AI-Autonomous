@@ -368,7 +368,7 @@ body {
   align-items: center;
   gap: 10px;
   font-size: 11px;
-  font-family: var(--font-numbers);
+  font-family: var(--font-words);
   color: var(--text-soft);
 }
 
@@ -392,7 +392,7 @@ body {
 }
 
 .soundbox-screen {
-  background: #0f172a;
+  background: var(--paytm-navy);
   border-radius: var(--radius-md);
   padding: 16px 18px;
   text-align: center;
@@ -404,7 +404,7 @@ body {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: #94a3b8;
+  color: rgba(255,255,255,0.55);
   font-weight: 700;
   margin-bottom: 4px;
 }
@@ -413,14 +413,14 @@ body {
   font-size: 30px;
   font-weight: 800;
   font-family: var(--font-numbers);
-  color: #38bdf8;
+  color: #ffffff;
   letter-spacing: -0.5px;
   margin-bottom: 4px;
 }
 
 .soundbox-status-msg {
   font-size: 11px;
-  color: #cbd5e1;
+  color: rgba(255,255,255,0.7);
   font-weight: 600;
 }
 
@@ -797,16 +797,16 @@ body {
 .step-icon-num {
   width: 26px;
   height: 26px;
-  border-radius: var(--radius-sm);
+  border-radius: 50%;
   background: var(--bg-subtle);
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-numbers);
-  border: 1px solid var(--border-color);
+  font-family: var(--font-words);
+  border: 1.5px solid var(--border-color);
   flex-shrink: 0;
 }
 
@@ -1115,26 +1115,35 @@ body {
   color: var(--paytm-navy);
 }
 
-/* Minimalist Activity Log */
+/* Recent Activity Feed (clean light-background) */
 .system-log-terminal {
-  background: #0f172a;
-  color: #94a3b8;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
-  height: 75px;
+  height: 90px;
   overflow-y: auto;
-  font-family: var(--font-numbers);
-  font-size: 10px;
-  line-height: 1.5;
+  font-family: var(--font-words);
+  font-size: 11px;
+  line-height: 1.55;
 }
 
 .log-item {
   display: flex;
   gap: 6px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.log-item .time { color: #64748b; }
-.log-item .actor { color: #38bdf8; font-weight: 700; }
+.log-item:last-child { border-bottom: none; }
+
+.log-item .time {
+  color: var(--text-soft);
+  font-family: var(--font-numbers);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.log-item .actor { color: var(--paytm-navy); font-weight: 700; flex-shrink: 0; }
 
 /* Modal Overlay */
 .modal-overlay {
@@ -1184,3 +1193,4 @@ body {
 .modal-content {
   padding: 20px;
 }
+
