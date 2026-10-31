@@ -6,3 +6,4 @@ __pycache__
 *.log
 firebase-debug.log
 .env.local
+

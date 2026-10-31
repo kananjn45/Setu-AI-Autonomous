@@ -25,3 +25,4 @@ EXPOSE 8080
 
 # Run FastAPI app with Uvicorn (WebSockets supported)
 CMD ["sh", "-c", "uvicorn settle_ai.server:app --host 0.0.0.0 --port ${PORT}"]
+
