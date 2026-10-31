@@ -131,3 +131,36 @@ def test_whatsapp_fake_payment_intercepted():
     assert res["agent_state"]["ledger_credited"] is False
     assert "Fake Payment Intercepted" in res["reply_text"]
     assert res["digital_receipt"]["status"] == "BLOCKED_FRAUD_INTERCEPTED"
+    # Audio alarm checks: MUST be security alarm, NEVER 'prapt hue'
+    assert res["soundbox_audio"] is not None
+    assert res["soundbox_audio"].get("is_fraud_alarm") is True
+    assert "prapt hue" not in res["soundbox_audio"]["text"]
+    assert res["soundbox_audio"]["byte_size"] > 10000
+
+
+def test_whatsapp_user_10000_query_escalated_and_rejected():
+    """Verifies that an arbitrary amount > 5000 (e.g. 10000) from Hindi text dynamically scales and rejects."""
+    from settle_ai.server import handle_whatsapp_message, WhatsAppMessageRequest, reject_hitl_api, HitlRejectRequest
+
+    req = WhatsAppMessageRequest(
+        message_text="user ne 10000 daale per aaye nhi",
+        merchant_name="Gupta Tea Stall",
+        merchant_id="MERCH_GUPTA_TEA",
+    )
+    res = handle_whatsapp_message(req)
+
+    assert res["amount"] == 10000.0
+    assert res["hitl_tripped"] is True
+    assert res["is_settled"] is False
+
+    # Operations supervisor rejects the claim
+    rej_res = reject_hitl_api(HitlRejectRequest(
+        dispute_id=res["dispute_id"],
+        supervisor_notes="Discrepancy confirmed: zero debit at issuing bank.",
+    ))
+
+    assert rej_res["status"] == "REJECTED_BY_SUPERVISOR"
+    assert rej_res["agent_state"]["amount"] == 10000.0  # Dynamic amount preserved!
+    assert rej_res["agent_state"]["hitl_approved"] is False
+    assert rej_res["agent_state"]["ledger_credited"] is False
+

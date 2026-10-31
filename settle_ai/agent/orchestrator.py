@@ -133,20 +133,34 @@ class SettleOrchestrator:
 
         # Fetch paused checkpoint
         snapshot = self.graph.get_state(config)
-        if not snapshot.values:
+        current_state = None
+        if snapshot and snapshot.values:
+            current_state = AgentState(**snapshot.values)
+        elif dispute_id in self.active_disputes:
+            current_state = self.active_disputes[dispute_id]
+        else:
+            for d in self.active_disputes.values():
+                if d.hitl_required and not d.hitl_approved and not d.is_completed:
+                    current_state = d
+                    config = {"configurable": {"thread_id": d.dispute_id}}
+                    break
+
+        if not current_state:
             raise ValueError(f"No checkpoint found for dispute_id: {dispute_id}")
 
-        current_state = AgentState(**snapshot.values)
         current_state.hitl_approved = True
         current_state.hitl_supervisor_notes = supervisor_notes
 
         # Resume execution through the resume node
         resume_graph = build_settle_agent_graph(checkpointer=self.checkpointer)
         # Update checkpoint state
-        self.graph.update_state(config, {
-            "hitl_approved": True,
-            "hitl_supervisor_notes": supervisor_notes,
-        }, as_node="node_escalate_hitl")
+        try:
+            self.graph.update_state(config, {
+                "hitl_approved": True,
+                "hitl_supervisor_notes": supervisor_notes,
+            }, as_node="node_escalate_hitl")
+        except Exception as e:
+            logger.warning(f"[Orchestrator] Note updating checkpoint: {e}")
 
         # Run remaining path starting from node_resume_hitl
         result = resume_graph.invoke(current_state, config=config)
@@ -167,7 +181,13 @@ class SettleOrchestrator:
             if snapshot and snapshot.values:
                 current_state = AgentState(**snapshot.values)
             else:
-                raise ValueError(f"No checkpoint found for dispute_id: {dispute_id}")
+                for d in self.active_disputes.values():
+                    if d.hitl_required and not d.hitl_approved and not d.is_completed:
+                        current_state = d
+                        break
+
+        if not current_state:
+            raise ValueError(f"No checkpoint found for dispute_id: {dispute_id}")
 
         current_state.hitl_approved = False
         current_state.hitl_supervisor_notes = supervisor_notes

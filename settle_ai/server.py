@@ -194,9 +194,7 @@ def execute_teammate_mission(req: MissionRequest):
         
         # Audio warning
         warning_audio_file = os.path.join(audio_dir, "chirp_security_warning.wav")
-        warning_audio = tts_synthesizer.synthesize_chirp(amount=req.amount, output_file_path=warning_audio_file)
-        # Override text for clarity
-        warning_audio["text"] = "Chetavani: Yeh bhugtan Paytm par prapt nahi hua hai"
+        warning_audio = tts_synthesizer.synthesize_security_alarm(amount=req.amount, output_file_path=warning_audio_file)
         
         return {
             "mission": "FRAUD_SPOOF",
@@ -425,8 +423,7 @@ def handle_whatsapp_message(req: WhatsAppMessageRequest):
         soundbox_audio = None
         if final_state.fraud_alert_triggered:
             audio_file = os.path.join(audio_dir, "chirp_security_warning.wav")
-            soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
-            soundbox_audio["text"] = "Chetavani: Yeh bhugtan Paytm par prapt nahi hua hai"
+            soundbox_audio = tts_synthesizer.synthesize_security_alarm(amount=amount, output_file_path=audio_file)
         elif final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
             audio_file = os.path.join(audio_dir, f"chirp_{rrn}.wav")
             soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
@@ -715,8 +712,7 @@ async def websocket_dispute_stream(websocket: WebSocket):
                 if final_state:
                     if final_state.fraud_alert_triggered:
                         audio_file = os.path.join(audio_dir, "chirp_security_warning.wav")
-                        soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
-                        soundbox_audio["text"] = "Chetavani: Yeh bhugtan Paytm par prapt nahi hua hai"
+                        soundbox_audio = tts_synthesizer.synthesize_security_alarm(amount=amount, output_file_path=audio_file)
                     elif final_state.soundbox_pushed or (final_state.is_completed and not final_state.hitl_required):
                         audio_file = os.path.join(audio_dir, f"chirp_{rrn}.wav")
                         soundbox_audio = tts_synthesizer.synthesize_chirp(amount=amount, output_file_path=audio_file)
