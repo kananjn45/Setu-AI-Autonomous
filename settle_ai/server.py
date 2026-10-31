@@ -68,6 +68,11 @@ class HitlApprovalRequest(BaseModel):
     supervisor_notes: str = "Approved by Operations Lead after reviewing banking switch logs."
 
 
+class HitlRejectRequest(BaseModel):
+    dispute_id: str
+    supervisor_notes: str = "Dispute rejected by Operations Supervisor after clearing logs audit."
+
+
 class BankStatusOverrideRequest(BaseModel):
     rrn: str
     status: str  # SUCCESS, REVERSAL_INITIATED, FAILED
@@ -345,6 +350,23 @@ async def approve_hitl_api(req: HitlApprovalRequest):
             "agent_state": resumed_state.model_dump(),
             "soundbox_audio": chirp,
             "message": resumed_state.final_resolution_message,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/dispute/reject-hitl")
+def reject_hitl_api(req: HitlRejectRequest):
+    """Rejects an escalated dispute with supervisor explanation."""
+    try:
+        rejected_state = orchestrator.reject_hitl(
+            dispute_id=req.dispute_id,
+            supervisor_notes=req.supervisor_notes,
+        )
+        return {
+            "status": "REJECTED_BY_SUPERVISOR",
+            "agent_state": rejected_state.model_dump(),
+            "message": rejected_state.final_resolution_message,
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -711,6 +733,16 @@ async def websocket_dispute_stream(websocket: WebSocket):
                     "dispute_id": dispute_id,
                     "final_state": resumed.model_dump(),
                     "soundbox_audio": chirp,
+                })
+
+            elif action == "REJECT_HITL":
+                dispute_id = data.get("dispute_id")
+                notes = data.get("supervisor_notes", "Dispute rejected by Operations Supervisor after switch audit.")
+                rejected = orchestrator.reject_hitl(dispute_id=dispute_id, supervisor_notes=notes)
+                await websocket.send_json({
+                    "event": "HITL_REJECTED_FINAL",
+                    "dispute_id": dispute_id,
+                    "final_state": rejected.model_dump(),
                 })
 
     except WebSocketDisconnect:

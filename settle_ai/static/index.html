@@ -1095,70 +1095,114 @@
     }
 
     .guardrail-card {
-      background: #fffbeb;
-      border: 1.5px solid #fcd34d;
-      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-top: 3px solid #f59e0b;
+      border-radius: 14px;
       padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+      box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.08);
+      transition: all 0.25s ease;
     }
 
     .guardrail-card .badge {
       font-size: 10px;
       font-weight: 800;
-      background: var(--paytm-amber);
-      color: #000;
-      padding: 2px 8px;
-      border-radius: 4px;
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      padding: 3px 10px;
+      border-radius: 9999px;
       align-self: flex-start;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .guardrail-card .title {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 800;
-      color: #92400e;
+      color: #0f172a;
+      letter-spacing: -0.2px;
     }
 
     .dossier-grid {
-      background: #ffffff;
-      border: 1px solid #fde68a;
-      border-radius: 8px;
-      padding: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 10px;
       font-size: 11px;
     }
 
     .dossier-grid .row {
       display: flex;
       flex-direction: column;
+      gap: 2px;
     }
 
-    .dossier-grid .key { font-size: 10px; color: #78350f; font-weight: 600; text-transform: uppercase; }
-    .dossier-grid .val { font-size: 12px; font-weight: 700; color: #1e293b; }
+    .dossier-grid .key { 
+      font-size: 9px; 
+      color: #64748b; 
+      font-weight: 700; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px;
+    }
+    .dossier-grid .val { 
+      font-size: 13px; 
+      font-weight: 800; 
+      color: #0f172a; 
+      font-family: 'JetBrains Mono', monospace;
+    }
 
     .btn-approve-settle {
-      background: var(--paytm-green);
+      background: #00b386;
       color: #ffffff;
       font-weight: 800;
       font-size: 12px;
       border: none;
       border-radius: 8px;
-      padding: 10px;
+      padding: 10px 14px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: all 0.2s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 6px rgba(0, 179, 134, 0.25);
     }
 
     .btn-approve-settle:hover {
       background: #009973;
-      box-shadow: 0 4px 12px rgba(0, 179, 134, 0.3);
+      box-shadow: 0 4px 14px rgba(0, 179, 134, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-reject-dispute {
+      background: #fff1f2;
+      color: #be123c;
+      border: 1.5px solid #fecdd3;
+      font-weight: 800;
+      font-size: 12px;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-reject-dispute:hover {
+      background: #be123c;
+      color: #ffffff;
+      border-color: #be123c;
+      box-shadow: 0 4px 14px rgba(190, 18, 60, 0.25);
+      transform: translateY(-1px);
     }
 
     /* Ledger Balance Card */
@@ -1455,164 +1499,113 @@
 </head>
 <body>
 
-  <!-- Paytm Top Navbar -->
-  <nav class="paytm-navbar">
-    <div class="nav-brand">
-      <div class="paytm-logo-text">
-        <span class="logo-pay">Pay</span><span class="logo-tm">tm</span>
-      </div>
-      <div class="nav-tagline">
-        <span>🏪</span> Paytm for Business | SETU (Team: 0 and 1)
-      </div>
-    </div>
-
-    <div class="nav-stats">
-      <div class="stat-badge">
-        <div class="val" id="top-auto-rate">70%</div>
-        <div class="lbl">Zero-Touch Deflection</div>
-      </div>
-      <div class="stat-badge">
-        <div class="val">&lt; 45s</div>
-        <div class="lbl">Turnaround Time</div>
-      </div>
-      <div class="stat-badge">
-        <div class="val" style="color:var(--paytm-green);">₹2.10</div>
-        <div class="lbl">Cost/Dispute (vs ₹42)</div>
-      </div>
-      <div class="stat-badge">
-        <div class="val" id="ws-indicator" style="color:var(--paytm-green);">● Active</div>
-        <div class="lbl">Live WebSocket</div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Paytm Blue Hero Banner -->
-  <section class="hero-banner">
-    <div class="hero-content">
-      <div class="hero-title">
-        <h2>SETU: Autonomous Operations Teammate <span class="chip">Track 3: AI Teammates</span> <span class="chip" style="background:rgba(0,186,242,0.2); border:1px solid #00baf2;">Team: 0 and 1</span></h2>
-        <p>
-          Zero-touch dispute adjudication, Soundbox triage, and multi-system ledger resolution in <strong>under 45 seconds</strong> end-to-end without manual support silos.
-        </p>
-      </div>
-      <div class="hero-pill-group">
-        <div class="metric-chip">
-          <div class="num">70%</div>
-          <div class="txt">Zero-Touch Deflection</div>
-        </div>
-        <div class="metric-chip">
-          <div class="num">₹40 Cr</div>
-          <div class="txt">Annual OpEx Saved</div>
-        </div>
-        <div class="metric-chip">
-          <div class="num">95%</div>
-          <div class="txt">Cost Arbitrage (₹42→₹2.10)</div>
-        </div>
-        <div class="metric-chip">
-          <div class="num">₹125/mo</div>
-          <div class="txt">Rental Moat Protected</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- AI TEAMMATE COCKPIT & MISSION CONTROL -->
-  <section style="background: #ffffff; border-bottom: 2px solid #e2e8f0; padding: 18px 32px; box-shadow: 0 4px 14px rgba(0,46,110,0.06);">
-    <div style="max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;">
+  <!-- Chic Fintech Top Navbar & Teammate Status Bar -->
+  <header style="background: linear-gradient(135deg, #001738 0%, #000f26 100%); color: #ffffff; padding: 14px 28px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0, 15, 38, 0.25); border-bottom: 1px solid rgba(255,255,255,0.08);">
+    <div style="max-width: 1560px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
       
-      <!-- Teammate Profile & Real-Time Business Outcomes -->
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; background: #f8fafc; padding: 12px 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
-        <div style="display: flex; align-items: center; gap: 14px;">
-          <div style="background: var(--paytm-navy); color: var(--paytm-cyan); font-weight: 800; font-size: 13px; padding: 6px 14px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center; gap: 8px;">
-            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--paytm-green); box-shadow: 0 0 10px var(--paytm-green);"></span>
+      <!-- Left: Paytm Brand + Teammate Identity -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="font-size: 26px; font-weight: 800; letter-spacing: -1px; display: flex; align-items: center;">
+          <span style="color: #ffffff;">Pay</span><span style="color: #00baf2;">tm</span>
+        </div>
+        <div style="width: 1px; height: 26px; background: rgba(255,255,255,0.2);"></div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="background: rgba(0, 186, 242, 0.15); border: 1px solid rgba(0, 186, 242, 0.4); color: #00baf2; font-weight: 800; font-size: 12px; padding: 4px 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center; gap: 6px;">
+            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00b386; box-shadow: 0 0 8px #00b386;"></span>
             SETU-AGT-01
           </div>
           <div>
-            <div style="font-size: 15px; font-weight: 800; color: var(--paytm-navy); display: flex; align-items: center; gap: 8px;">
-              SETU: Autonomous Operations & Sales Teammate
-              <span style="background: var(--paytm-cyan-light); color: var(--paytm-navy); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">ACTIVE SQUAD</span>
+            <div style="font-size: 14px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+              Autonomous Operations &amp; Sales Teammate
+              <span style="background: rgba(255,255,255,0.12); color: #93c5fd; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;">Track 3: AI Teammates</span>
             </div>
-            <div style="font-size: 12px; color: var(--text-muted);">
-              <strong>Context:</strong> 10,482 Soundboxes Monitored • <strong>Authority:</strong> Multi-System Ledger Write (≤₹5,000) • IoT Soundbox Audio • Fraud Shield
+            <div style="font-size: 11px; color: #94a3b8;">
+              Team: 0 and 1 &bull; 10,482 Active Soundboxes &bull; Multi-System Ledger Write (&le;₹5,000)
             </div>
-          </div>
-        </div>
-
-        <!-- Measurable Outcomes Bar -->
-        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-          <div style="text-align: right;">
-            <div style="font-size: 14px; font-weight: 800; color: var(--paytm-green); font-family: 'JetBrains Mono', monospace;">86.4%</div>
-            <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Zero-Touch Rate</div>
-          </div>
-          <div style="width: 1px; height: 28px; background: #cbd5e1;"></div>
-          <div style="text-align: right;">
-            <div style="font-size: 14px; font-weight: 800; color: var(--paytm-navy); font-family: 'JetBrains Mono', monospace;">31.8s</div>
-            <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Avg TAT (vs 36h)</div>
-          </div>
-          <div style="width: 1px; height: 28px; background: #cbd5e1;"></div>
-          <div style="text-align: right;">
-            <div style="font-size: 14px; font-weight: 800; color: var(--paytm-navy); font-family: 'JetBrains Mono', monospace;">₹61,404</div>
-            <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">OpEx Saved</div>
-          </div>
-          <div style="width: 1px; height: 28px; background: #cbd5e1;"></div>
-          <div style="text-align: right;">
-            <div style="font-size: 14px; font-weight: 800; color: var(--paytm-red); font-family: 'JetBrains Mono', monospace;">14 Spoofs</div>
-            <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Fake Pay Blocked</div>
-          </div>
-          <div style="width: 1px; height: 28px; background: #cbd5e1;"></div>
-          <div style="text-align: right;">
-            <div style="font-size: 14px; font-weight: 800; color: #8b5cf6; font-family: 'JetBrains Mono', monospace;">23 Upgrades</div>
-            <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Sales Leads Closed</div>
           </div>
         </div>
       </div>
 
-      <!-- Teammate Interactive Mission Bar -->
-      <div>
-        <div style="font-size: 12px; font-weight: 800; color: var(--paytm-navy); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
-          🎯 Judge Interactive Teammate Playground (Click Any Mission to Execute Live):
+      <!-- Right: Real-Time Business Outcomes & WebSocket Pill -->
+      <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <div style="text-align: right;">
+          <div style="font-size: 14px; font-weight: 800; color: #34d399; font-family: 'JetBrains Mono', monospace;" id="top-auto-rate">86.4%</div>
+          <div style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Zero-Touch Rate</div>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
-          <button onclick="triggerTeammateMission('SERVICE_DISPUTE')" style="background: #ffffff; border: 2px solid #00b386; border-radius: 10px; padding: 10px; text-align: left; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#e6f7f3'" onmouseout="this.style.background='#ffffff'">
-            <div style="font-size: 12px; font-weight: 800; color: #00875a; display: flex; align-items: center; gap: 6px;">
-              🟢 Mission 1: Service
-            </div>
-            <div id="mission1-amt-card" style="font-size: 11px; font-weight: 700; color: var(--paytm-navy); margin: 3px 0;">Soundbox 4G Drop (₹400)</div>
-            <div style="font-size: 10px; color: var(--text-muted);">Autonomous Sweep & Hindi Voice Chime</div>
-          </button>
-
-          <button onclick="triggerTeammateMission('FRAUD_SPOOF')" style="background: #ffffff; border: 2px solid var(--paytm-red); border-radius: 10px; padding: 10px; text-align: left; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fdedee'" onmouseout="this.style.background='#ffffff'">
-            <div style="font-size: 12px; font-weight: 800; color: var(--paytm-red); display: flex; align-items: center; gap: 6px;">
-              🚨 Mission 2: Fraud Shield
-            </div>
-            <div id="mission2-amt-card" style="font-size: 11px; font-weight: 700; color: var(--paytm-navy); margin: 3px 0;">Paytm Spoof Fake Pay (₹400)</div>
-            <div style="font-size: 10px; color: var(--text-muted);">Intercept Fake Screenshot & Trigger Alarm</div>
-          </button>
-
-          <button onclick="triggerTeammateMission('SALES_UPGRADE')" style="background: #ffffff; border: 2px solid #8b5cf6; border-radius: 10px; padding: 10px; text-align: left; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#f5f3ff'" onmouseout="this.style.background='#ffffff'">
-            <div style="font-size: 12px; font-weight: 800; color: #7c3aed; display: flex; align-items: center; gap: 6px;">
-              📈 Mission 3: Sales Engine
-            </div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--paytm-navy); margin: 3px 0;">Soundbox 4G Pro Pitch</div>
-            <div style="font-size: 10px; color: var(--text-muted);">Hardware Wear Triage → ₹199 Upgrade</div>
-          </button>
-
-          <button onclick="triggerTeammateMission('HITL_SUPERVISOR')" style="background: #ffffff; border: 2px solid var(--paytm-amber); border-radius: 10px; padding: 10px; text-align: left; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fff8eb'" onmouseout="this.style.background='#ffffff'">
-            <div style="font-size: 12px; font-weight: 800; color: #b45309; display: flex; align-items: center; gap: 6px;">
-              🛡️ Mission 4: Human Co-Pilot
-            </div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--paytm-navy); margin: 3px 0;">₹15,000 High-Value Order</div>
-            <div style="font-size: 10px; color: var(--text-muted);">Circuit Breaker → Supervisor Dossier</div>
-          </button>
-
-          <button onclick="triggerTeammateMission('PROACTIVE_FLEET')" style="background: #ffffff; border: 2px solid var(--paytm-cyan); border-radius: 10px; padding: 10px; text-align: left; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--paytm-cyan-light)'" onmouseout="this.style.background='#ffffff'">
-            <div style="font-size: 12px; font-weight: 800; color: var(--paytm-navy); display: flex; align-items: center; gap: 6px;">
-              📡 Mission 5: Fleet Guardian
-            </div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--paytm-navy); margin: 3px 0;">Switch Latency Surge</div>
-            <div style="font-size: 10px; color: var(--text-muted);">SBI UPI Slowdown → Voice Advisory</div>
-          </button>
+        <div style="width: 1px; height: 22px; background: rgba(255,255,255,0.15);"></div>
+        <div style="text-align: right;">
+          <div style="font-size: 14px; font-weight: 800; color: #38bdf8; font-family: 'JetBrains Mono', monospace;">&lt; 45s</div>
+          <div style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Avg TAT (vs 36h)</div>
         </div>
+        <div style="width: 1px; height: 22px; background: rgba(255,255,255,0.15);"></div>
+        <div style="text-align: right;">
+          <div style="font-size: 14px; font-weight: 800; color: #f87171; font-family: 'JetBrains Mono', monospace;">14 Blocked</div>
+          <div style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Fake Pay Shield</div>
+        </div>
+        <div style="width: 1px; height: 22px; background: rgba(255,255,255,0.15);"></div>
+        <div style="text-align: right;">
+          <div style="font-size: 14px; font-weight: 800; color: #c084fc; font-family: 'JetBrains Mono', monospace;">23 Upgrades</div>
+          <div style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Soundbox 4G Pro</div>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 11px; font-weight: 700; color: #34d399;" id="ws-indicator">● Active Stream</span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Interactive Mission Command Playground -->
+  <section style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 14px 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+    <div style="max-width: 1560px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 11px; font-weight: 800; color: #002e6e; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+          <span>🎯</span> Live Teammate Playground (Click to Execute Mission):
+        </div>
+        <span style="font-size: 11px; color: #64748b; font-weight: 600;">Autonomous multi-domain actions across Service, Fraud, Sales, &amp; Co-Piloting</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
+        <button onclick="triggerTeammateMission('SERVICE_DISPUTE')" style="background: #f8fafc; border: 1px solid #cbd5e1; border-top: 3px solid #00b386; border-radius: 10px; padding: 10px 12px; text-align: left; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ffffff'; this.style.boxShadow='0 4px 12px rgba(0,179,134,0.15)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#f8fafc'; this.style.boxShadow='none'; this.style.transform='none';">
+          <div style="font-size: 12px; font-weight: 800; color: #00875a; display: flex; align-items: center; gap: 6px;">
+            🟢 Mission 1: Service
+          </div>
+          <div id="mission1-amt-card" style="font-size: 11px; font-weight: 700; color: #002e6e; margin: 3px 0;">Soundbox 4G Drop (₹400.00)</div>
+          <div style="font-size: 10px; color: #64748b;">Autonomous Sweep &amp; Hindi Voice Chime</div>
+        </button>
+
+        <button onclick="triggerTeammateMission('FRAUD_SPOOF')" style="background: #f8fafc; border: 1px solid #cbd5e1; border-top: 3px solid #ea2934; border-radius: 10px; padding: 10px 12px; text-align: left; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ffffff'; this.style.boxShadow='0 4px 12px rgba(234,41,52,0.15)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#f8fafc'; this.style.boxShadow='none'; this.style.transform='none';">
+          <div style="font-size: 12px; font-weight: 800; color: #ea2934; display: flex; align-items: center; gap: 6px;">
+            🚨 Mission 2: Fraud Shield
+          </div>
+          <div id="mission2-amt-card" style="font-size: 11px; font-weight: 700; color: #002e6e; margin: 3px 0;">Paytm Spoof Fake Pay (₹400.00)</div>
+          <div style="font-size: 10px; color: #64748b;">Intercept Fake Screenshot &amp; Trigger Alarm</div>
+        </button>
+
+        <button onclick="triggerTeammateMission('SALES_UPGRADE')" style="background: #f8fafc; border: 1px solid #cbd5e1; border-top: 3px solid #8b5cf6; border-radius: 10px; padding: 10px 12px; text-align: left; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ffffff'; this.style.boxShadow='0 4px 12px rgba(139,92,246,0.15)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#f8fafc'; this.style.boxShadow='none'; this.style.transform='none';">
+          <div style="font-size: 12px; font-weight: 800; color: #7c3aed; display: flex; align-items: center; gap: 6px;">
+            📈 Mission 3: Sales Engine
+          </div>
+          <div style="font-size: 11px; font-weight: 700; color: #002e6e; margin: 3px 0;">Soundbox 4G Pro Pitch</div>
+          <div style="font-size: 10px; color: #64748b;">Hardware Wear Triage → ₹199 Upgrade</div>
+        </button>
+
+        <button onclick="triggerTeammateMission('HITL_SUPERVISOR')" style="background: #f8fafc; border: 1px solid #cbd5e1; border-top: 3px solid #f59e0b; border-radius: 10px; padding: 10px 12px; text-align: left; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ffffff'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.15)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#f8fafc'; this.style.boxShadow='none'; this.style.transform='none';">
+          <div style="font-size: 12px; font-weight: 800; color: #b45309; display: flex; align-items: center; gap: 6px;">
+            🛡️ Mission 4: Human Co-Pilot
+          </div>
+          <div style="font-size: 11px; font-weight: 700; color: #002e6e; margin: 3px 0;">₹15,000 High-Value Order</div>
+          <div style="font-size: 10px; color: #64748b;">Circuit Breaker → Supervisor Dossier</div>
+        </button>
+
+        <button onclick="triggerTeammateMission('PROACTIVE_FLEET')" style="background: #f8fafc; border: 1px solid #cbd5e1; border-top: 3px solid #00baf2; border-radius: 10px; padding: 10px 12px; text-align: left; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ffffff'; this.style.boxShadow='0 4px 12px rgba(0,186,242,0.15)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#f8fafc'; this.style.boxShadow='none'; this.style.transform='none';">
+          <div style="font-size: 12px; font-weight: 800; color: #002e6e; display: flex; align-items: center; gap: 6px;">
+            📡 Mission 5: Fleet Guardian
+          </div>
+          <div style="font-size: 11px; font-weight: 700; color: #002e6e; margin: 3px 0;">Switch Latency Surge</div>
+          <div style="font-size: 10px; color: #64748b;">SBI UPI Slowdown → Voice Advisory</div>
+        </button>
       </div>
 
     </div>
@@ -2159,26 +2152,70 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
         }
         refreshBalances();
       }
+      else if (data.event === 'HITL_REJECTED_FINAL') {
+        const state = data.final_state;
+        document.getElementById('hitl-container').innerHTML = `
+          <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:12px; padding:16px; text-align:center; color:#9f1239; font-size:12px;">
+            <div style="font-weight:800; font-size:13px; color:#be123c; margin-bottom:4px;">✕ Dispute Rejected by Supervisor</div>
+            Dispute <strong>${state.dispute_id}</strong> (₹${state.amount.toFixed(2)}) has been denied.<br>
+            <span style="font-size:11px; color:#e11d48;">Zero funds released to merchant ledger. Recorded in compliance log.</span>
+          </div>
+        `;
+        document.getElementById('sb-amount').textContent = `₹${state.amount.toFixed(2)}`;
+        document.getElementById('sb-status').textContent = '❌ CLAIM REJECTED BY SUPERVISOR';
+        document.getElementById('sb-led').className = 'sb-led alert';
+        document.getElementById('story-text').innerHTML = `❌ <strong>Supervisor Rejected Claim:</strong> ₹${state.amount.toFixed(2)} order denied after clearing audit. Zero funds released to merchant ledger.`;
+
+        // Update WhatsApp bubble
+        const waArea = document.getElementById('wa-messages-area');
+        if (waArea) {
+          const div = document.createElement('div');
+          div.className = 'wa-bubble wa-bot';
+          div.style.border = '1px solid #fecdd3';
+          div.style.background = '#fff1f2';
+          div.innerHTML = `
+            <div style="color:#be123c; font-weight:800; font-size:12px;">❌ PAYTM DISPUTE NOTICE — CLAIM REJECTED</div>
+            <div style="font-size:11px; margin-top:4px; color:#9f1239;">
+              Dispute for <strong>₹${state.amount.toFixed(2)}</strong> (RRN ${state.rrn}) was audited by Paytm Operations Supervisor and <strong>REJECTED</strong>.<br>
+              <em>Note:</em> Zero ledger credit released.
+            </div>
+            <div class="wa-ts">${new Date().toLocaleTimeString()}</div>
+          `;
+          waArea.appendChild(div);
+          waArea.scrollTop = waArea.scrollHeight;
+        }
+
+        addLog('SUPERVISOR', `Dispute ${state.dispute_id} (₹${state.amount.toFixed(2)}) REJECTED by Supervisor. Zero funds credited.`);
+        refreshBalances();
+      }
     }
 
     function renderSupervisorCard(state) {
       const container = document.getElementById('hitl-container');
       container.innerHTML = `
         <div class="guardrail-card">
-          <div class="badge">Safety Circuit Breaker</div>
-          <div class="title">Supervisor 1-Click Sign-Off Required</div>
-          <p style="font-size:11px; color:#92400e; line-height:1.4;">
-            ${state.hitl_reason}
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="badge">🛡️ Safety Circuit Breaker</div>
+            <span style="font-size:10px; font-weight:700; color:#b45309; background:#fef3c7; padding:2px 8px; border-radius:9999px; border:1px solid #fde68a;">Action Required</span>
+          </div>
+          <div class="title">Supervisor 1-Click Authorization Desk</div>
+          <p style="font-size:11px; color:#475569; line-height:1.45; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:9px 12px; margin:0;">
+            ⚠️ <strong>${state.hitl_reason}</strong>
           </p>
           <div class="dossier-grid">
-            <div class="row"><span class="key">RRN Number:</span><span class="val">${state.rrn}</span></div>
-            <div class="row"><span class="key">Amount:</span><span class="val" style="color:var(--paytm-navy);">₹${state.amount.toFixed(2)}</span></div>
-            <div class="row"><span class="key">Bank Switch:</span><span class="val" style="color:var(--paytm-green);">${state.bank_status}</span></div>
-            <div class="row"><span class="key">Device Signal:</span><span class="val">${state.soundbox_telemetry ? state.soundbox_telemetry.rssi_dbm : -88} dBm</span></div>
+            <div class="row"><span class="key">RRN Number</span><span class="val">${state.rrn}</span></div>
+            <div class="row"><span class="key">Amount</span><span class="val" style="color:var(--paytm-navy); font-size:14px;">₹${state.amount.toFixed(2)}</span></div>
+            <div class="row"><span class="key">Bank Switch</span><span class="val" style="color:#059669;">● ${state.bank_status || 'SUCCESS'}</span></div>
+            <div class="row"><span class="key">Device Telemetry</span><span class="val">${state.soundbox_telemetry ? state.soundbox_telemetry.rssi_dbm : -88} dBm</span></div>
           </div>
-          <button class="btn-approve-settle" onclick="approveSupervisor('${state.dispute_id}')">
-            ⚡ 1-Click Approve & Settle Now
-          </button>
+          <div style="display:flex; gap:8px; margin-top:4px;">
+            <button class="btn-approve-settle" style="flex:1.2;" onclick="approveSupervisor('${state.dispute_id}')">
+              ⚡ Approve & Settle (₹${state.amount.toFixed(0)})
+            </button>
+            <button class="btn-reject-dispute" style="flex:1;" onclick="rejectSupervisor('${state.dispute_id}')">
+              ✕ Reject Claim
+            </button>
+          </div>
         </div>
       `;
     }
@@ -2253,6 +2290,18 @@ Bhaiya 400 rupaye kata par Soundbox nahi bola. RRN number hai 410294820192"></te
         action: 'APPROVE_HITL',
         dispute_id: disputeId,
         supervisor_notes: 'Approved via Paytm Operations Supervisor Desk after verifying clearing logs.',
+      }));
+    }
+
+    function rejectSupervisor(disputeId) {
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        alert('WebSocket is reconnecting. Please wait a second.');
+        return;
+      }
+      ws.send(JSON.stringify({
+        action: 'REJECT_HITL',
+        dispute_id: disputeId,
+        supervisor_notes: 'Dispute rejected by Operations Supervisor after switch clearing logs audit. Discrepancy confirmed.',
       }));
     }
 
